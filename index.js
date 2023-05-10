@@ -194,6 +194,11 @@ app.post('/login', async (req, res) => {
 });
 
 
+app.get('/recipe', (req, res) => {
+  res.render('recipe');
+});
+
+
 
 app.use(express.static(__dirname + "/public"));
 
