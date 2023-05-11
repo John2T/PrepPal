@@ -1,15 +1,15 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-<%- include("templates/header") %> 
+<%- include("templates/header") %>
 <div class="container">
     <div class="card mb-3">
         <div class="row g-0">
             <div class="col-md-4">
-              <img src="https://i2.wp.com/www.downshiftology.com/wp-content/uploads/2018/12/Shakshuka-19.jpg" class="img-fluid">
+              <img src= <%= recipe.image %> class="img-fluid">
             </div>
             <div class="col-md-8">
               <div class="d-flex justify-content-between align-items-center">
-                <h1 class="card-title">Recipe Name</h1>
+                <h1 class="card-title"><%= recipe.label %></h1>
                 <div class="d-flex justify-content-end ml-auto">
                   <button class="btn btn-outline-danger btn-sm">
                     <span class="material-symbols-outlined">favorite</span>
@@ -26,18 +26,19 @@
               </div>
             </div>
           </div>
-          
-      
+
+
       <div class="card-body">
         <div class="col-12">
           <hr>
         </div>
         <div class="row">
+          
           <div class="col-4">
             <p>Spiciness: Medium</p>
           </div>
           <div class="col-4">
-            <p>Cook time: 45 minutes</p>
+            <p>Cook time: <%= recipe.totalTime %> minutes</p>
           </div>
           <div class="col-4">
             <p>Difficulty: Intermediate</p>
@@ -49,11 +50,9 @@
       <div class="card-body">
         <h2 class="card-title">Ingredients</h2>
         <ul class="list-unstyled">
-          <li>Ingredient 1</li>
-          <li>Ingredient 2</li>
-          <li>Ingredient 3</li>
-          <li>Ingredient 4</li>
-          <li>Ingredient 5</li>
+          <% recipe.ingredientLines.forEach(function(ingredient) { %>
+            <li><%= ingredient %></li>
+          <% }); %>
         </ul>
       </div>
     </div>
@@ -71,29 +70,32 @@
           </thead>
           <tbody>
             <tr>
-              <td>300</td>
-              <td>20g</td>
-              <td>30g</td>
-              <td>10g</td>
-            </tr>
-          </tbody>
-
-        </table>
+              <td><%= parseInt(recipe.calories) %></td>
+              <td><%= parseInt(recipe.totalNutrients.PROCNT.quantity) %></td>
+              <td><%= parseInt(recipe.totalNutrients.CHOCDF.quantity) %></td>
+              <td><%= parseInt(recipe.totalNutrients.FAT.quantity)%></td>
+              </tr>
+              </tbody>
+              </table>
       </div>
     </div>
+
     <div class="card mb-3">
       <div class="card-body">
-        <h2 class="card-title">Steps</h2>
-        <ol>
-          <li>Step 1</li>
-          <li>Step 2</li>
-          <li>Step 3</li>
-          <li>Step 4</li>
-          <li>Step 5</li>
+        <h2 class="card-title">Instructions</h2>
+        <ol class="list-unstyled">
+          <% recipe.ingredientLines.forEach(function(ingredient) { %>
+            <li><%= ingredient %></li>
+          <% }); %>
         </ol>
       </div>
     </div>
-  </div>
+              
+             
 
-  
-  <%- include("templates/footer") %> 
+
+
+              <%- include("templates/footer") %>
+
+
+

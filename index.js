@@ -1,4 +1,3 @@
-
 require("./utils.js");
 
 require('dotenv').config();
@@ -8,6 +7,12 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
 const saltRounds = 12;
+
+/**
+ * Html Scrapping
+ */
+const axios = require('axios');
+const cheerio = require('cheerio');
 
 const port = process.env.PORT || 3000;
 
@@ -194,8 +199,24 @@ app.post('/login', async (req, res) => {
 });
 
 
+// Assuming you are using Express.js to render the template
 app.get('/recipe', (req, res) => {
-  res.render('recipe');
+  // Make the API request
+  fetch(apiCall)
+    .then(response => response.json())
+    .then(data => {
+      // Handle the recipe data here
+      console.log(data.hits);
+      const recipe = data.hits[0].recipe;
+      const ingredients = recipe.ingredients;
+
+      // Render the EJS template with the recipe data
+      res.render('recipe', { recipe: recipe });
+    })
+    .catch(error => {
+      // Handle any errors here
+      console.error(error);
+    });
 });
 
 
@@ -211,3 +232,115 @@ app.get("*", (req, res) => {
 app.listen(port, () => {
 	console.log("Node application listening on port "+port);
 }); 
+
+
+
+
+/**
+ * Api Call Testing for recipe.ejs file
+ * Please leave this at the bottom for now
+ * */
+
+
+/**Edaman API Setup 
+// Replace {your app ID} and {your app key} with your Edamam API credentials
+const app_id = "e8912d59";
+const app_key = "2183188cdf78bc95dfdf3cf28f15643c";
+
+
+// Replace {query} with your search query
+const query = "chicken";
+
+// Construct the API request URL
+const apiCall = `https://api.edamam.com/search?q=${query}&app_id=${app_id}&app_key=${app_key}`;
+
+// Make the API request
+fetch(apiCall)
+  .then(response => response.json())
+  .then(data => {
+    // Handle the recipe data here
+    //console.log(data.hits);
+    const recipe = data.hits[1].recipe;
+    console.log(recipe);
+    const ingredients = recipe.ingredients;
+    const instructions = recipe.url; // recipe instructions
+    //console.log(instructions);
+    //console.log(ingredients);
+    //console.log(typeof recipe.totalNutrients.FAT.quantity);
+    //console.log("Instruction test");
+    //htmlScrap(instructions);
+
+
+  })
+  .catch(error => {
+    // Handle any errors here
+    console.error(error);
+  });
+  */
+
+  // Replace {your api key} with your Spoonacular API key
+const api_key = "05adf25cf1be4acbaf7a00dc9265edf3";
+
+// Replace {query} with your search query
+const query = "chicken";
+
+// Construct the API request URL
+const api_call = `https://api.spoonacular.com/recipes/search?query=${query}&apiKey=${api_key}`;
+
+// Make the API request
+fetch(api_call)
+  .then(response => response.json())
+  .then(data => {
+    // Handle the recipe data here
+    const recipe = data.results[0];
+    // Get the recipe instructions
+    const recipe_id = recipe.id;
+    const instruction_api_call = `https://api.spoonacular.com/recipes/${recipe_id}/analyzedInstructions?apiKey=${api_key}`;
+    fetch(instruction_api_call)
+      .then(response => response.json())
+      .then(instruction_data => {
+        // Handle the instruction data here
+        const instructions = instruction_data[0].steps.map(step => step.step);
+        console.log(instructions);
+      })
+      .catch(error => {
+        // Handle any errors here
+        console.error(error);
+      });
+  })
+  .catch(error => {
+    // Handle any errors here
+    console.error(error);
+  });
+
+
+  function renderIngredients(recipe) {
+    let html = '';
+    recipe.ingredientLines.forEach(function(ingredient) {
+      html += `<li>${ingredient}</li>`;
+    });
+    return html;
+  }
+
+
+  
+  function htmlScrap(url) {
+    axios.get(url)
+      .then(response => {
+        const $ = cheerio.load(response.data);
+        const instructions = [];
+  
+        $('div#recipe__steps-content_1-0 ol li').each((i, el) => {
+          instructions.push($(el).text().trim());
+        });
+  
+        console.log(instructions);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+  
+  
+
+  
