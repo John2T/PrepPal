@@ -1,0 +1,49 @@
+<%- include("templates/header") %> 
+
+<div class="px-4 py-2 my-5 ">
+    <img class="d-block mx-auto mb-4" src="/logo.jpeg" alt="" width="150" height="150">
+
+    
+<div class="d-flex  justify-content-center ">
+    <form class="text-center" method="POST" action="/login">
+      <p>Username:</p>
+
+      <div class="form-group">
+        <input type="text" class="form-control" id="floatingUsername" name="username">
+
+      </div>
+      <br>
+
+      <p>Email:</p>
+      <div class="form-group">
+        <input type="email" class="form-control" id="floatingEmail"  name="email">
+
+      </div>
+      <br>
+
+      <p>Date of Birth:</p>
+      <div class="form-group">
+        <input type="date" class="form-control" id="floatingDate"  name="dob">
+
+        <br>
+        <hr>
+        <p>Vegetarian  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<input type="checkbox" class="form-check-input" id="exampleCheck1"></p>
+        <hr>
+    </div>
+
+    <br>
+    <br>
+    <h1>Browsing History</h1>
+    <h1>My Shopping List</h1>
+    <h1><a href="/settings">Settings</a></h1>
+
+      </div>
+      </div>   
+    </form>
+    </div>
+  </div>
+</div>  
+
+
+
+<%- include("templates/footer") %> 
