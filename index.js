@@ -9,7 +9,7 @@ const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
 const saltRounds = 12;
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3010;
 
 const app = express();
 
@@ -136,6 +136,15 @@ app.post('/logout', (req, res) => {
       res.redirect('/');
     }
   });
+});
+
+// <!---------------------------------------search page------------------------------
+app.get('/search', (req, res) => {
+  if(!req.session.loggedin) {
+    res.redirect('/');
+  }else{
+    res.render('search');
+  }
 });
 
 
