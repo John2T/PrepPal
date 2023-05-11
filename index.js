@@ -38,6 +38,8 @@ const node_session_secret = process.env.NODE_SESSION_SECRET;
 var {database} = include('databaseConnection');
 
 const userCollection = database.db(mongodb_database).collection('users');
+const favourites = database.db(mongodb_database).collection('favourites');
+
 
 app.set('view engine', 'ejs');
 
@@ -221,6 +223,7 @@ app.get('/recipe', (req, res) => {
 
 
 
+
 app.use(express.static(__dirname + "/public"));
 
 app.get("*", (req, res) => {
@@ -236,6 +239,23 @@ app.listen(port, () => {
 
 
 
+app.post('/favorite', (req, res) => {
+  let username =req.session.username;
+  const { label, totalTime, ingredientLines, calories, protein, carbs, fat } = req.body;
+  const favoriteRecipe = { username, label, totalTime, ingredientLines, calories, protein, carbs, fat };
+
+  favourites.insertOne(favoriteRecipe, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.sendStatus(500);
+    } else {
+      res.redirect('back');
+    }
+  });
+});
+
+
+
 /**
  * Api Call Testing for recipe.ejs file
  * Please leave this at the bottom for now
@@ -243,6 +263,7 @@ app.listen(port, () => {
 
 
 /**Edaman API Setup 
+ * */
 // Replace {your app ID} and {your app key} with your Edamam API credentials
 const app_id = "e8912d59";
 const app_key = "2183188cdf78bc95dfdf3cf28f15643c";
@@ -260,7 +281,7 @@ fetch(apiCall)
   .then(data => {
     // Handle the recipe data here
     //console.log(data.hits);
-    const recipe = data.hits[1].recipe;
+    const recipe = data.hits[0].recipe;
     console.log(recipe);
     const ingredients = recipe.ingredients;
     const instructions = recipe.url; // recipe instructions
@@ -276,8 +297,10 @@ fetch(apiCall)
     // Handle any errors here
     console.error(error);
   });
-  */
+ 
 
+  /**Spponacular Setup */
+  /**
   // Replace {your api key} with your Spoonacular API key
 const api_key = "05adf25cf1be4acbaf7a00dc9265edf3";
 
@@ -312,7 +335,7 @@ fetch(api_call)
     // Handle any errors here
     console.error(error);
   });
-
+*/
 
   function renderIngredients(recipe) {
     let html = '';
