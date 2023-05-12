@@ -1,4 +1,3 @@
-
 require("./utils.js");
 
 require('dotenv').config();
@@ -41,6 +40,8 @@ const node_session_secret = process.env.NODE_SESSION_SECRET;
 var {database} = include('databaseConnection');
 
 const userCollection = database.db(mongodb_database).collection('users');
+const favourites = database.db(mongodb_database).collection('favourites');
+
 
 app.set('view engine', 'ejs');
 
@@ -282,6 +283,61 @@ app.post('/login', async (req, res) => {
 });
 
 
+app.get('/recipe/:id', (req, res) => {
+  const recipeId = req.params.id;
+  const api_key = "3640854786784e75b2b4956ea4822dc5";
+  const detailed_recipe = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${api_key}`;
+
+  // Nested API call to get detailed recipe information
+  fetch(detailed_recipe)
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      const details = data;
+      const ingredients = data.extendedIngredients;
+      const instructions_api_call = `https://api.spoonacular.com/recipes/${recipeId}/analyzedInstructions?apiKey=${api_key}`;
+
+      // Nested API call to get recipe instructions
+      fetch(instructions_api_call)
+        .then(response => response.json())
+        .then(data => {
+          const instructions = data[0].steps;
+          data[0].steps.forEach(function(step) {
+            // console.log(step.step);
+          });
+
+          // Nested API call to get nutritional info
+          const nutrition_api_call = `https://api.spoonacular.com/recipes/${recipeId}/nutritionWidget.json?apiKey=${api_key}`;
+          fetch(nutrition_api_call)
+            .then(response => response.json())
+            .then(nutritionData => {
+              console.log(nutritionData);
+              const nutrition = nutritionData;
+
+              // Render the EJS template with the recipe data
+              res.render('recipe', { recipe: details, ingredients: ingredients, instructions: instructions, details: details, nutrition: nutrition });
+            })
+            .catch(error => {
+              // Handle any errors here
+              console.error(error);
+            });
+        })
+        .catch(error => {
+          // Handle any errors here
+          console.error(error);
+        });
+    })
+    .catch(error => {
+      // Handle any errors here
+      console.error(error);
+    });
+});
+
+
+
+
+
+
 
 app.use(express.static(__dirname + "/public"));
 
@@ -294,3 +350,25 @@ app.get("*", (req, res) => {
 app.listen(port, () => {
 	console.log("Node application listening on port "+port);
 }); 
+
+
+
+
+
+/**
+ * Api Call Testing for recipe.ejs file
+ * Please leave this at the bottom for now
+ * */
+
+/**
+ * Spoonacular API spare key
+ * 3640854786784e75b2b4956ea4822dc5
+ * 05adf25cf1be4acbaf7a00dc9265edf3 (No more calls May 11)
+ */
+
+
+ 
+
+
+
+ 
