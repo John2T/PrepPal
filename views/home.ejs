@@ -1,16 +1,88 @@
 <%- include("templates/header") %>
+<div class="container" style="max-width: 800px; margin-top: 20px;">
+  <h1 class="text-center">Hello, <%= username %>!</h1>
 
-<h1>Hello, <%= username %>!</h1>
-
-    <div class="row mb-3 text-center">
-      <p>This is the home page</p>
+  <div id="favorite" class="col" style="background-color: bisque;padding-top: 10px;box-shadow: 2px 2px 10px #888888;margin-bottom: 20px;">
+    <p style="font-weight: bold;" >Your favorite</p>
+    <div class="card" style="width: 100%;">
+      <div class="card" >
+        <img src="/favorite.jpg" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title" style="text-align: center;">Taco</h5>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          <a href="#" class="btn btn-primary">Check</a>
+        </div>
+      </div>
     </div>
+  </div>
 
+  <div id="top10" style="background-color: rgba(245, 249, 226, 0.864); padding: 10px; box-shadow: 2px 2px 10px #888888; margin-bottom: 20px;">
+    <h2 style="font-weight: bold; font-size: 20px;">Top Recipes</h2>
 
-<div>
-  <form method="POST" action="/logout">
-    </br><button class="btn btn-danger rounded-pill px-3" type="submit">Log out</button>
+  <% recipeData.forEach((recipe) => { %>
+    <div class="recipe-card">
+      <img src="<%= recipe.image %>" alt="<%= recipe.title %>">
+      <h3><%= recipe.title %></h3>
+      <a href="/recipe/<%= recipe.id %>" class="btn btn-primary">View Recipe</a>
+    </div>
+  <% }) %>
+
+    
+  </div>
+  
+
+  <form action="/home/browsing" method="POST">
+    <div class="d-grid gap-2">
+      <button type="submit" class="btn btn-success rounded-pill px-3" style="margin-bottom: 50px;">SEE MORE</button>
+    </div>
   </form>
-</div>
+  
 
+  <style>
+    body {
+        margin-bottom: 50px;
+    }
+    .recipe-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-gap: 20px; 
+  }
+
+  .recipe-card {
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 2px 2px 10px #888888;
+    border-radius: 5px;
+    margin-bottom: 20px; /* Added margin-bottom to create spacing between cards */
+  }
+
+  .recipe-card img {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+
+  .recipe-card h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .recipe-card p {
+    margin-bottom: 10px;
+  }
+
+  .recipe-card ul {
+    padding-left: 20px;
+    margin-bottom: 10px;
+  }
+
+  .recipe-card li {
+    margin-bottom: 5px;
+  }
+  </style>
+
+
+</div>
 <%- include("templates/footer") %>
