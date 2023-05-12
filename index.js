@@ -335,7 +335,17 @@ app.get('/recipe/:id', (req, res) => {
 
 
 
+app.get('/personal', (req, res) => {
 
+
+  var username = req.session.username;
+
+  res.render('personal', { username });
+});
+
+app.get('/settings', (req, res) => {
+res.render('settings');
+});
 
 
 

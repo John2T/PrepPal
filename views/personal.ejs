@@ -1,0 +1,59 @@
+<%- include("templates/header") %> 
+
+
+<style>
+  h1 {
+    border: 1px solid black;
+  }
+</style>
+
+<div class="px-4 py-2 my-5 ">
+  <div class="container text-center py-3 spacing-header">
+    <input type="file" id="mypic-input" accept="/*" />
+  </div>
+
+    
+<div class="d-flex  justify-content-center ">
+
+    <form class="text-center" method="POST" action="/login">
+      <p>Username:</p>
+
+      <h1> <%= username %>!</h1>
+      <br>
+
+      <p>Email:</p>
+      <h1></h1>
+      <br>
+
+      <p>Date of Birth:</p>
+      <div>
+        <h1>N/A</h1>
+
+        <br>
+        <hr>
+        <p>Vegetarian  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<input type="checkbox" class="form-check-input" id="exampleCheck1"></p>
+        <hr>
+    </div>
+
+    <br>
+    <br>
+    <div>
+      <h1><span class="fs-5">History</span></h1>
+  </div>
+    <h1><span class="fs-5">My Shopping List</span></h1>
+    <h1><span class="fs-5"><a href="/settings">Settings</a></span></h1>
+
+    <br>
+    <br>
+    <button class="w-100 btn  btn-secondary" type="submit">Save</button>
+
+      </div>
+      </div>   
+    </form>
+    </div>
+  </div>
+</div>  
+
+
+
+<%- include("templates/footer") %> 
