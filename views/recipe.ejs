@@ -84,8 +84,8 @@
       <div class="card-body">
         <h2 class="card-title text-center">Instructions</h2>
       <ol>
-        <% instructions.forEach(function(step, index) { %>
-          <li><%= index+1 %>. <%= step.step %></li>
+        <% instructions.forEach(function(step) { %>
+          <li><%= step.step %></li>
         <% }); %>
       </ol>
     </div>

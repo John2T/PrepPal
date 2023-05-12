@@ -132,36 +132,6 @@ app.post('/signup', async (req, res) => {
 });
 
 
-// app.get('/home', async (req, res) => {
-//   try {
-//     if (!req.session.loggedin) {
-//       // User is not logged in, redirect to home page
-//       res.redirect('/');
-//     } else {
-//       // User is logged in, make an API request to fetch random vegetarian dessert recipes
-//       var username = req.session.username;
-
-//       // Make an API request using axios
-//       const response = await axios.get('https://api.spoonacular.com/recipes/random', {
-//         params: {
-//           number: 10, // Fetch 10 recipes
-//           tags: 'vegetarian,dessert',
-//           apiKey: 'eee50a7c34334ab8a771c279417525c0' // Replace with your actual Spoonacular API key
-//         }
-//       });
-      
-//       console.log(response.data.recipes); // Check the structure of the API response
-      
-//       const recipeData = response.data.recipes;
-//       //res.render('home', { username, recipeData });
-//       res.render('home', {username, stripTags: stripTags, recipeData: recipeData });
-//     }
-//   } catch (error) {
-//     console.error('Error:', error);
-//     res.status(500).send('Internal Server Error');
-//   }
-// });
-
 app.get('/home', async (req, res) => {
   try {
     if (!req.session.loggedin) {
@@ -181,7 +151,7 @@ app.get('/home', async (req, res) => {
         params: {
           number: req.session.recipeCount, // Fetch the current recipe count
           tags: 'vegetarian,dessert',
-          apiKey: 'eee50a7c34334ab8a771c279417525c0' // Replace with your actual Spoonacular API key
+          apiKey: '53820c84e1cb476c90044eea130dbf6c' // Replace with your actual Spoonacular API key
         }
       });
 
@@ -393,7 +363,7 @@ app.post('/login', async (req, res) => {
 
 app.get('/recipe/:id', (req, res) => {
   const recipeId = req.params.id;
-  const api_key = "3640854786784e75b2b4956ea4822dc5";
+  const api_key = "1bb15cce3c994921aaa86ea7d011cd20";
   const detailed_recipe = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${api_key}`;
 
   // Nested API call to get detailed recipe information
@@ -443,6 +413,32 @@ app.get('/recipe/:id', (req, res) => {
 
 
 
+app.get('/personal', (req, res) => {
+  const username = req.session.username;
+  const email = req.session.email || '';
+  const dateOfBirth = req.session.dateOfBirth || ''; // Assuming the user's date of birth is stored in req.session.dateOfBirth
+  res.render('personal', { username, email, dateOfBirth });
+});
+
+
+
+
+app.get('/settings', (req, res) => {
+  res.render('settings');
+});
+
+app.post('/settings', (req, res) => {
+  const dateOfBirth = req.body.dateOfBirth; // Assuming the date of birth input field has the name "dateOfBirth"
+  
+  // Save the date of birth in the session or database for the current user
+  req.session.dateOfBirth = dateOfBirth; // Storing it in the session for demonstration purposes
+  
+  res.redirect('/personal'); // Redirect back to the personal page after saving
+});
+
+app.get('/DOB', (req, res) => {
+  res.render('DOB');
+});
 
 
 
