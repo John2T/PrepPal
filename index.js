@@ -6,6 +6,9 @@ const express = require('express');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
+
+//Jsonwebtoken to send OTP, reset password
+const jwt = require('jsonwebtoken');
 const saltRounds = 12;
 
 const port = process.env.PORT || 3000;
@@ -35,6 +38,8 @@ const mongodb_database = process.env.MONGODB_DATABASE;
 const mongodb_session_secret = process.env.MONGODB_SESSION_SECRET;
 
 const node_session_secret = process.env.NODE_SESSION_SECRET;
+
+const jwt_secret = process.env.JWT_SECRET;
 /* END secret section */
 
 var {database} = include('databaseConnection');
@@ -45,6 +50,7 @@ const favourites = database.db(mongodb_database).collection('favourites');
 
 app.set('view engine', 'ejs');
 
+app.use(express.json());
 
 app.use(express.urlencoded({extended: false}));
 
@@ -197,6 +203,107 @@ app.post('/logout', (req, res) => {
   });
 });
 
+//-----------------------------------search page-----------------------------------
+app.get('/search', (req, res) => {
+  if(!req.session.loggedin) {
+    res.redirect('/');
+  }else{
+    res.render('search');
+  }
+});
+//---------------------------------------------------------------------------------
+
+//-----------------------------------Forgot password-------------------------------
+app.get('/forgotpassword', (req, res, next) =>{
+  res.render('forgotPassword');
+});
+
+app.post('/forgotpassword', async (req, res, next) =>{
+  const {email} = req.body;
+  const existingUser = await userCollection.findOne({ email: email });
+  //check if user exist
+  if (!existingUser) {
+    res.send('<p>user not registered</p>');
+    return;
+  //user exist and create OTP
+  }
+  const pwObj = await userCollection.findOne({email: email}, {projection: {password: 1, _id: 1}});
+  const pw = pwObj.password;
+  const id = pwObj._id;
+  const secret = jwt_secret + pw;
+  const payload = {
+    email: pwObj.email,
+    id: pwObj.id
+  }
+  const token = jwt.sign(payload, secret, {expiresIn: "5m" });
+  const link = `http://localhost:${port}/reset-password/${id}/${token}`;
+  console.log(link);
+  res.send("A reset password link has been send to your email addess");
+  
+});
+//---------------------------------------------------------------------------------
+
+//------------------------------------Reset passsword------------------------------
+app.get('/reset-password/:id/:token', async(req, res, next) =>{
+  const {id, token} = req.params;
+  console.log
+  
+  //check if this id exist in database
+  const existingId = await userCollection.findOne({ _id: ObjectId(id) });
+  if(!existingId){
+    return res.status(400).send('Invalid user ID');
+  }
+
+  //id is valid
+  const secret = jwt_secret + existingId.password;
+  try {
+    const payload = jwt.verify(token, secret);
+    res.render('resetPassword', {email: existingId.email});
+
+  } catch (error) {
+    console.log(error.message);
+    res.send(error.message);
+  }
+  
+  console.log(secret);
+});
+
+app.post('/reset-password/:id/:token', async (req, res, next) =>{
+  const {id, token} = req.params;
+  const {password, password2} = req.body;
+  console.log(password + " " + password2); 
+
+    //check if this id exist in database
+    const existingId = await userCollection.findOne({ _id: ObjectId(id) });
+    if(!existingId){
+      return res.status(400).send('Invalid user ID');
+    }
+
+    const secret = jwt_secret + existingId.password;
+    try {
+      const payload = jwt.verify(token, secret);
+      //validate password and password2 should match
+      if(String(password).trim() !== String(password2).trim()){
+        return res.status(400).send('Passwords do not match');
+      }
+      //password match
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // update the user's password in the database
+      const result = await userCollection.updateOne(
+      { _id: ObjectId(id) },
+      { $set: { password: hashedPassword } }
+      );
+
+      res.redirect('/login');
+
+    } catch (error) {
+      console.log(error.message);
+      res.send(error.message);
+    }
+});
+//---------------------------------------------------------------------------------
+
 
 app.get('/nosql-injection', async (req,res) => {
 	var username = req.query.user;
@@ -245,6 +352,7 @@ app.post('/login', async (req, res) => {
   if (user && await bcrypt.compare(password, user.password)) {
     req.session.loggedin = true;
     req.session.username = user.name;
+    req.session.email = user.email;
     req.session.user = user;
     res.redirect('/home');
   } else {

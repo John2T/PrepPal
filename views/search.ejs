@@ -1,0 +1,29 @@
+<%- include("templates/header") %>
+<!--Search bar and logo-->
+<div class="container">
+  <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-center">
+    <a href="/" class="d-flex align-items-center my-2 link-body-emphasis text-decoration-none">
+      <img class="mb-4" src="/logo.jpeg" alt="" width="100" height="100">
+    </a>
+    <form class="col-12 mb-3 mb-lg-0 me-lg-3" role="search">
+      <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
+    </form>
+  </div>
+</div>
+<!--Ingredient list-->
+<div class="container my-5 py-5 rounded" style="border: 1px solid black; background-color: bisque;">
+  <div class="d-flex justify-content-start">
+    <div class="col-sm-8 mx-auto justify-content-start">
+      <h3 class="display-8 fw-normal">Your List </h1>
+    </div>
+  </div>
+</div>
+  <% for(var i = 0; i < 5; i++) {%>
+  <%- include("templates/ingredientCard") %>
+  <% } %>
+<div class="container">
+  <button>Show More</button>
+</div>  
+
+<%- include("templates/footer") %>
+<!-- <%%> -->
