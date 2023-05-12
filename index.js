@@ -8,12 +8,6 @@ const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
 const saltRounds = 12;
 
-/**
- * Html Scrapping
- */
-const axios = require('axios');
-const cheerio = require('cheerio');
-
 const port = process.env.PORT || 3000;
 
 const app = express();
@@ -287,51 +281,41 @@ app.post('/login', async (req, res) => {
     res.render('login', { errorMessage: 'User and password not found.'});
   }
 });
-app.get('/recipe', (req, res) => {
-  // Make the API request
-  fetch(api_call)
+
+
+app.get('/recipe/:id', (req, res) => {
+  const recipeId = req.params.id;
+  const api_key = "3640854786784e75b2b4956ea4822dc5";
+  const detailed_recipe = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${api_key}`;
+
+  // Nested API call to get detailed recipe information
+  fetch(detailed_recipe)
     .then(response => response.json())
     .then(data => {
-      // Handle the recipe data here
-      const recipe = data.results[2];
-      const id = recipe.id;
+      console.log(data);
+      const details = data;
+      const ingredients = data.extendedIngredients;
+      const instructions_api_call = `https://api.spoonacular.com/recipes/${recipeId}/analyzedInstructions?apiKey=${api_key}`;
 
-      const detailed_recipe = `https://api.spoonacular.com/recipes/${id}/information?apiKey=${api_key}`;
-
-      // Nested API call to get detailed recipe information
-      fetch(detailed_recipe)
+      // Nested API call to get recipe instructions
+      fetch(instructions_api_call)
         .then(response => response.json())
         .then(data => {
-          console.log(data);
-          const details = data;
-          const ingredients = data.extendedIngredients;
-          //console.log("ingredients here " + ingredients);
+          const instructions = data[0].steps;
+          data[0].steps.forEach(function(step) {
+            // console.log(step.step);
+          });
 
-          // Nested API call to get recipe instructions
-          const instructions_api_call = `https://api.spoonacular.com/recipes/${id}/analyzedInstructions?apiKey=${api_key}`;
-          fetch(instructions_api_call)
+          // Nested API call to get nutritional info
+          const nutrition_api_call = `https://api.spoonacular.com/recipes/${recipeId}/nutritionWidget.json?apiKey=${api_key}`;
+          fetch(nutrition_api_call)
             .then(response => response.json())
-            .then(data => {
-              const instructions = data[0].steps;
-              data[0].steps.forEach(function(step) {
-               // console.log(step.step);
-              });
+            .then(nutritionData => {
+              console.log(nutritionData);
+              const nutrition = nutritionData;
 
-              // Nested API call to get nutritional info
-              const nutrition_api_call = `https://api.spoonacular.com/recipes/${id}/nutritionWidget.json?apiKey=${api_key}`;
-              fetch(nutrition_api_call)
-                .then(response => response.json())
-                .then(nutritionData => {
-                  console.log(nutritionData);
-                  const nutrition = nutritionData;
-
-                  // Render the EJS template with the recipe data
-                  res.render('recipe', { recipe: recipe, ingredients: ingredients, instructions: instructions, details: details, nutrition: nutrition });
-                })
-                .catch(error => {
-                  // Handle any errors here
-                  console.error(error);
-                });
+              // Render the EJS template with the recipe data
+              res.render('recipe', { recipe: details, ingredients: ingredients, instructions: instructions, details: details, nutrition: nutrition });
             })
             .catch(error => {
               // Handle any errors here
@@ -376,35 +360,13 @@ app.listen(port, () => {
  * Please leave this at the bottom for now
  * */
 
-
-/**Spoonacular API
- * */
-const api_key = "3640854786784e75b2b4956ea4822dc5";
-
-
-// Replace {query} with your search query
-const query = "chicken";
-const includeNutrition = true;
-
-// Construct the API request URL
-const api_call = `https://api.spoonacular.com/recipes/search?query=${query}&includeNutrition=${includeNutrition}&apiKey=${api_key}`;
+/**
+ * Spoonacular API spare key
+ * 3640854786784e75b2b4956ea4822dc5
+ * 05adf25cf1be4acbaf7a00dc9265edf3 (No more calls May 11)
+ */
 
 
-// Make the API request
-fetch(api_call)
-  .then(response => response.json())
-  .then(data => {
-    // Handle the recipe data here
-    //console.log(data.hits);
-    const recipe = data.results[2];
-    //console.log(recipe);
-
-
-  })
-  .catch(error => {
-    // Handle any errors here
-    console.error(error);
-  });
  
 
 
