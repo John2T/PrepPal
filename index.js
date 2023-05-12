@@ -199,27 +199,70 @@ app.post('/login', async (req, res) => {
     res.render('login', { errorMessage: 'User and password not found.'});
   }
 });
-
-
-// Assuming you are using Express.js to render the template
 app.get('/recipe', (req, res) => {
   // Make the API request
-  fetch(apiCall)
+  fetch(api_call)
     .then(response => response.json())
     .then(data => {
       // Handle the recipe data here
-      console.log(data.hits);
-      const recipe = data.hits[0].recipe;
-      const ingredients = recipe.ingredients;
+      const recipe = data.results[2];
+      const id = recipe.id;
 
-      // Render the EJS template with the recipe data
-      res.render('recipe', { recipe: recipe });
+      const detailed_recipe = `https://api.spoonacular.com/recipes/${id}/information?apiKey=${api_key}`;
+
+      // Nested API call to get detailed recipe information
+      fetch(detailed_recipe)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          const details = data;
+          const ingredients = data.extendedIngredients;
+          //console.log("ingredients here " + ingredients);
+
+          // Nested API call to get recipe instructions
+          const instructions_api_call = `https://api.spoonacular.com/recipes/${id}/analyzedInstructions?apiKey=${api_key}`;
+          fetch(instructions_api_call)
+            .then(response => response.json())
+            .then(data => {
+              const instructions = data[0].steps;
+              data[0].steps.forEach(function(step) {
+               // console.log(step.step);
+              });
+
+              // Nested API call to get nutritional info
+              const nutrition_api_call = `https://api.spoonacular.com/recipes/${id}/nutritionWidget.json?apiKey=${api_key}`;
+              fetch(nutrition_api_call)
+                .then(response => response.json())
+                .then(nutritionData => {
+                  console.log(nutritionData);
+                  const nutrition = nutritionData;
+
+                  // Render the EJS template with the recipe data
+                  res.render('recipe', { recipe: recipe, ingredients: ingredients, instructions: instructions, details: details, nutrition: nutrition });
+                })
+                .catch(error => {
+                  // Handle any errors here
+                  console.error(error);
+                });
+            })
+            .catch(error => {
+              // Handle any errors here
+              console.error(error);
+            });
+        })
+        .catch(error => {
+          // Handle any errors here
+          console.error(error);
+        });
     })
     .catch(error => {
       // Handle any errors here
       console.error(error);
     });
 });
+
+
+
 
 
 
@@ -239,22 +282,6 @@ app.listen(port, () => {
 
 
 
-app.post('/favorite', (req, res) => {
-  let username =req.session.username;
-  const { label, totalTime, ingredientLines, calories, protein, carbs, fat } = req.body;
-  const favoriteRecipe = { username, label, totalTime, ingredientLines, calories, protein, carbs, fat };
-
-  favourites.insertOne(favoriteRecipe, (err, result) => {
-    if (err) {
-      console.log(err);
-      res.sendStatus(500);
-    } else {
-      res.redirect('back');
-    }
-  });
-});
-
-
 
 /**
  * Api Call Testing for recipe.ejs file
@@ -262,34 +289,27 @@ app.post('/favorite', (req, res) => {
  * */
 
 
-/**Edaman API Setup 
+/**Spoonacular API
  * */
-// Replace {your app ID} and {your app key} with your Edamam API credentials
-const app_id = "e8912d59";
-const app_key = "2183188cdf78bc95dfdf3cf28f15643c";
+const api_key = "05adf25cf1be4acbaf7a00dc9265edf3";
 
 
 // Replace {query} with your search query
 const query = "chicken";
+const includeNutrition = true;
 
 // Construct the API request URL
-const apiCall = `https://api.edamam.com/search?q=${query}&app_id=${app_id}&app_key=${app_key}`;
+const api_call = `https://api.spoonacular.com/recipes/search?query=${query}&includeNutrition=${includeNutrition}&apiKey=${api_key}`;
+
 
 // Make the API request
-fetch(apiCall)
+fetch(api_call)
   .then(response => response.json())
   .then(data => {
     // Handle the recipe data here
     //console.log(data.hits);
-    const recipe = data.hits[0].recipe;
-    console.log(recipe);
-    const ingredients = recipe.ingredients;
-    const instructions = recipe.url; // recipe instructions
-    //console.log(instructions);
-    //console.log(ingredients);
-    //console.log(typeof recipe.totalNutrients.FAT.quantity);
-    //console.log("Instruction test");
-    //htmlScrap(instructions);
+    const recipe = data.results[2];
+    //console.log(recipe);
 
 
   })
@@ -299,71 +319,6 @@ fetch(apiCall)
   });
  
 
-  /**Spponacular Setup */
-  /**
-  // Replace {your api key} with your Spoonacular API key
-const api_key = "05adf25cf1be4acbaf7a00dc9265edf3";
-
-// Replace {query} with your search query
-const query = "chicken";
-
-// Construct the API request URL
-const api_call = `https://api.spoonacular.com/recipes/search?query=${query}&apiKey=${api_key}`;
-
-// Make the API request
-fetch(api_call)
-  .then(response => response.json())
-  .then(data => {
-    // Handle the recipe data here
-    const recipe = data.results[0];
-    // Get the recipe instructions
-    const recipe_id = recipe.id;
-    const instruction_api_call = `https://api.spoonacular.com/recipes/${recipe_id}/analyzedInstructions?apiKey=${api_key}`;
-    fetch(instruction_api_call)
-      .then(response => response.json())
-      .then(instruction_data => {
-        // Handle the instruction data here
-        const instructions = instruction_data[0].steps.map(step => step.step);
-        console.log(instructions);
-      })
-      .catch(error => {
-        // Handle any errors here
-        console.error(error);
-      });
-  })
-  .catch(error => {
-    // Handle any errors here
-    console.error(error);
-  });
-*/
-
-  function renderIngredients(recipe) {
-    let html = '';
-    recipe.ingredientLines.forEach(function(ingredient) {
-      html += `<li>${ingredient}</li>`;
-    });
-    return html;
-  }
 
 
-  
-  function htmlScrap(url) {
-    axios.get(url)
-      .then(response => {
-        const $ = cheerio.load(response.data);
-        const instructions = [];
-  
-        $('div#recipe__steps-content_1-0 ol li').each((i, el) => {
-          instructions.push($(el).text().trim());
-        });
-  
-        console.log(instructions);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }
-  
-  
-
-  
+ 
