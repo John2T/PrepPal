@@ -414,16 +414,32 @@ app.get('/recipe/:id', (req, res) => {
 
 
 app.get('/personal', (req, res) => {
-
-
-  var username = req.session.username;
-
-  res.render('personal', { username });
+  const username = req.session.username;
+  const email = req.session.email || '';
+  const dateOfBirth = req.session.dateOfBirth || ''; // Assuming the user's date of birth is stored in req.session.dateOfBirth
+  res.render('personal', { username, email, dateOfBirth });
 });
+
+
+
 
 app.get('/settings', (req, res) => {
-res.render('settings');
+  res.render('settings');
 });
+
+app.post('/settings', (req, res) => {
+  const dateOfBirth = req.body.dateOfBirth; // Assuming the date of birth input field has the name "dateOfBirth"
+  
+  // Save the date of birth in the session or database for the current user
+  req.session.dateOfBirth = dateOfBirth; // Storing it in the session for demonstration purposes
+  
+  res.redirect('/personal'); // Redirect back to the personal page after saving
+});
+
+app.get('/DOB', (req, res) => {
+  res.render('DOB');
+});
+
 
 
 
