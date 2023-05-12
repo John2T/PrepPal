@@ -9,38 +9,42 @@
         </div>
         <div class="col-md-8">
           <div class="d-flex justify-content-between align-items-center">
-            <h1 class="card-title"><%= recipe.title %></h1>
-            <div class="d-flex justify-content-end ml-auto">
+            <h1 class="card-title text-center p-3"><%= recipe.title %></h1>
+            <div class="d-flex justify-content-end ml-auto p-3">
               <form method="POST" action="/favorite">
-                <button id="favoriteButton" class="btn btn-outline-danger btn-sm">
-                  <span class="material-symbols-outlined">favorite</span>
+                <button id="favoriteButton" class="btn btn-outline-danger btn-sm ">
+                  <span class="material-symbols-outlined ">favorite</span>
                 </button>
               </form>
             </div>
           </div>
-          <div><%- details.summary %></div>
+          <hr>
+          
+          <div class = p-3><%- details.summary %></div>
         </div>
       </div>
     </div>
     <div class="card mb-3">
       <div class="card-body">
-        <h2 class="card-title">Recipe Details</h2>
-        <div class="row">
-          <div class="col-4">
+        <h2 class="card-title text-center">Recipe Details</h2>
+    
+        <div class="row justify-content-between">
+          <div class="col-3 d-flex justify-content-start">
             <p>Health Score: <%= details.healthScore %> </p>
           </div>
-          <div class="col-4">
+          <div class="col-3 d-flex justify-content-center">
             <p>Cook time: <%= details.readyInMinutes %>m</p>
           </div>
-          <div class="col-4">
-            <p>Weight Watcher Smart Points: <%= details.weightWatcherSmartPoints %></p>
+          <div class="col-3 d-flex justify-content-end">
+            <p>Weight Watcher Points: <%= details.weightWatcherSmartPoints %></p>
           </div>
         </div>
       </div>
     </div>
+    
     <div class="card mb-3">
       <div class="card-body">
-        <h2 class="card-title">Ingredients</h2>
+        <h2 class="card-title text-center">Ingredients (Servings: <%= details.servings %>)</h2>
         <ul class="list-unstyled">
           <% ingredients.forEach(function(ingredient) { %>
             <li><%= ingredient.original %></li>
@@ -50,30 +54,35 @@
     </div>
     <div class="card mb-3">
       <div class="card-body">
-        <h2 class="card-title">Nutritional Information</h2>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Calories</th>
-              <th>Protein</th>
-              <th>Carbs</th>
-              <th>Fat</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><%= nutrition.nutrients[0].amount%><%= nutrition.nutrients[0].unit%></td>
-              <td><%= nutrition.nutrients[8].amount%><%= nutrition.nutrients[8].unit%></td>
-              <td><%= nutrition.nutrients[3].amount%><%= nutrition.nutrients[3].unit%></td>
-              <td><%= nutrition.nutrients[1].amount%><%= nutrition.nutrients[1].unit%></td>
-            </tr>
-          </tbody>
-        </table>
+        <h2 class="card-title text-center">Nutritional Information</h2>
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Calories</th>
+                  <th>Protein</th>
+                  <th>Carbs</th>
+                  <th>Fat</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><%= nutrition.nutrients[0].amount%><%= nutrition.nutrients[0].unit%></td>
+                  <td><%= nutrition.nutrients[8].amount%><%= nutrition.nutrients[8].unit%></td>
+                  <td><%= nutrition.nutrients[3].amount%><%= nutrition.nutrients[3].unit%></td>
+                  <td><%= nutrition.nutrients[1].amount%><%= nutrition.nutrients[1].unit%></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
+      
     </div>
     <div class="card mb-3">
       <div class="card-body">
-        <h2 class="card-title">Instructions</h2>
+        <h2 class="card-title text-center">Instructions</h2>
       <ol>
         <% instructions.forEach(function(step, index) { %>
           <li><%= index+1 %>. <%= step.step %></li>

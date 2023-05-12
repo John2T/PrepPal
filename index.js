@@ -291,7 +291,7 @@ app.listen(port, () => {
 
 /**Spoonacular API
  * */
-const api_key = "05adf25cf1be4acbaf7a00dc9265edf3";
+const api_key = "3640854786784e75b2b4956ea4822dc5";
 
 
 // Replace {query} with your search query
