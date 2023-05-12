@@ -337,7 +337,7 @@ app.get('/recipe/:id', (req, res) => {
 
 app.get('/personal', (req, res) => {
 
-  // User is logged in, display home page
+
   var username = req.session.username;
 
   res.render('personal', { username });
