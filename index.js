@@ -151,7 +151,7 @@ app.get('/home', async (req, res) => {
         params: {
           number: req.session.recipeCount, // Fetch the current recipe count
           tags: 'vegetarian,dessert',
-          apiKey: '7427d37ed1324af7829fa87695c81c40' // Replace with your actual Spoonacular API key
+          apiKey: '53820c84e1cb476c90044eea130dbf6c' // Replace with your actual Spoonacular API key
         }
       });
 
@@ -363,7 +363,7 @@ app.post('/login', async (req, res) => {
 
 app.get('/recipe/:id', (req, res) => {
   const recipeId = req.params.id;
-  const api_key = "7427d37ed1324af7829fa87695c81c40";
+  const api_key = "1bb15cce3c994921aaa86ea7d011cd20";
   const detailed_recipe = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${api_key}`;
 
   // Nested API call to get detailed recipe information
