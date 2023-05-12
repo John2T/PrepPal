@@ -1,4 +1,3 @@
-
 require("./utils.js");
 
 require('dotenv').config();
@@ -9,9 +8,17 @@ const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
 const saltRounds = 12;
 
-const port = process.env.PORT || 3030;
+const port = process.env.PORT || 3000;
 
 const app = express();
+
+const axios = require('axios'); // Import the axios library for making HTTP requests
+const striptags = require('striptags');
+
+function stripTags(html) {
+  return striptags(html);
+}
+
 
 const Joi = require("joi");
 
@@ -33,6 +40,8 @@ const node_session_secret = process.env.NODE_SESSION_SECRET;
 var {database} = include('databaseConnection');
 
 const userCollection = database.db(mongodb_database).collection('users');
+const favourites = database.db(mongodb_database).collection('favourites');
+
 
 app.set('view engine', 'ejs');
 
@@ -40,7 +49,7 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: false}));
 
 var mongoStore = MongoStore.create({
-	mongoUrl: `mongodb+srv://Ly:ly@cluster0.owu76cn.mongodb.net/?retryWrites=true&w=majority`,
+	mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
 	crypto: {
 		secret: mongodb_session_secret
 	}
@@ -116,16 +125,66 @@ app.post('/signup', async (req, res) => {
   }
 });
 
-app.get('/home', (req, res) => {
-  if (!req.session.loggedin) {
-    // User is not logged in, redirect to home page
-    res.redirect('/');
-  } else {
-    // User is logged in, display home page
-    var username = req.session.username;
-    res.render('home', { username });
+
+app.get('/home', async (req, res) => {
+  try {
+    if (!req.session.loggedin) {
+      // User is not logged in, redirect to home page
+      res.redirect('/');
+    } else {
+      // Check if the session variable for recipe count exists, and initialize it if not
+      if (!req.session.recipeCount) {
+        req.session.recipeCount = 5;
+      }
+
+      // User is logged in
+      var username = req.session.username;
+
+      // Make an API request using axios
+      const response = await axios.get('https://api.spoonacular.com/recipes/random', {
+        params: {
+          number: req.session.recipeCount, // Fetch the current recipe count
+          tags: 'vegetarian,dessert',
+          apiKey: 'eee50a7c34334ab8a771c279417525c0' // Replace with your actual Spoonacular API key
+        }
+      });
+
+      console.log(response.data.recipes); // Check the structure of the API response
+
+      const recipeData = response.data.recipes;
+      res.render('home', { username, recipeData });
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send('Internal Server Error');
   }
 });
+
+app.post('/home/browsing', (req, res) => {
+  try {
+    // Check if the session variable for click count exists, and initialize it if not
+    if (!req.session.clickCount) {
+      req.session.clickCount = 0;
+    }
+
+    // Increment the click count
+    req.session.clickCount += 1;
+
+    // Check if the click count exceeds the limit
+    if (req.session.clickCount <= 2) {
+      // Increment the recipe count by 5
+      req.session.recipeCount += 5;
+    }
+
+    // Redirect back to the home page
+    res.redirect('/home');
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
 
 
 app.post('/logout', (req, res) => {
@@ -194,17 +253,85 @@ app.post('/login', async (req, res) => {
 });
 
 
-app.get('/recipe', (req, res) => {
-  res.render('recipe');
+app.get('/recipe/:id', (req, res) => {
+  const recipeId = req.params.id;
+  const api_key = "3640854786784e75b2b4956ea4822dc5";
+  const detailed_recipe = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${api_key}`;
+
+  // Nested API call to get detailed recipe information
+  fetch(detailed_recipe)
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      const details = data;
+      const ingredients = data.extendedIngredients;
+      const instructions_api_call = `https://api.spoonacular.com/recipes/${recipeId}/analyzedInstructions?apiKey=${api_key}`;
+
+      // Nested API call to get recipe instructions
+      fetch(instructions_api_call)
+        .then(response => response.json())
+        .then(data => {
+          const instructions = data[0].steps;
+          data[0].steps.forEach(function(step) {
+            // console.log(step.step);
+          });
+
+          // Nested API call to get nutritional info
+          const nutrition_api_call = `https://api.spoonacular.com/recipes/${recipeId}/nutritionWidget.json?apiKey=${api_key}`;
+          fetch(nutrition_api_call)
+            .then(response => response.json())
+            .then(nutritionData => {
+              console.log(nutritionData);
+              const nutrition = nutritionData;
+
+              // Render the EJS template with the recipe data
+              res.render('recipe', { recipe: details, ingredients: ingredients, instructions: instructions, details: details, nutrition: nutrition });
+            })
+            .catch(error => {
+              // Handle any errors here
+              console.error(error);
+            });
+        })
+        .catch(error => {
+          // Handle any errors here
+          console.error(error);
+        });
+    })
+    .catch(error => {
+      // Handle any errors here
+      console.error(error);
+    });
 });
 
+
+
 app.get('/personal', (req, res) => {
-  res.render('personal');
+  const username = req.session.username;
+  const email = req.session.email || '';
+  const dateOfBirth = req.session.dateOfBirth || ''; // Assuming the user's date of birth is stored in req.session.dateOfBirth
+  res.render('personal', { username, email, dateOfBirth });
 });
+
+
+
 
 app.get('/settings', (req, res) => {
   res.render('settings');
 });
+
+app.post('/settings', (req, res) => {
+  const dateOfBirth = req.body.dateOfBirth; // Assuming the date of birth input field has the name "dateOfBirth"
+  
+  // Save the date of birth in the session or database for the current user
+  req.session.dateOfBirth = dateOfBirth; // Storing it in the session for demonstration purposes
+  
+  res.redirect('/personal'); // Redirect back to the personal page after saving
+});
+
+app.get('/DOB', (req, res) => {
+  res.render('DOB');
+});
+
 
 
 
@@ -219,3 +346,25 @@ app.get("*", (req, res) => {
 app.listen(port, () => {
 	console.log("Node application listening on port "+port);
 }); 
+
+
+
+
+
+/**
+ * Api Call Testing for recipe.ejs file
+ * Please leave this at the bottom for now
+ * */
+
+/**
+ * Spoonacular API spare key
+ * 3640854786784e75b2b4956ea4822dc5
+ * 05adf25cf1be4acbaf7a00dc9265edf3 (No more calls May 11)
+ */
+
+
+ 
+
+
+
+ 

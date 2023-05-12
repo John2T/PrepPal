@@ -1,99 +1,96 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-<%- include("templates/header") %> 
+<%- include("templates/header") %>
 <div class="container">
+  <div class="card mb-3 p-3 bg-light" style="background-color: rgba(245, 249, 226, 0.864);">
     <div class="card mb-3">
-        <div class="row g-0">
-            <div class="col-md-4">
-              <img src="https://i2.wp.com/www.downshiftology.com/wp-content/uploads/2018/12/Shakshuka-19.jpg" class="img-fluid">
-            </div>
-            <div class="col-md-8">
-              <div class="d-flex justify-content-between align-items-center">
-                <h1 class="card-title">Recipe Name</h1>
-                <div class="d-flex justify-content-end ml-auto">
-                  <button class="btn btn-outline-danger btn-sm">
-                    <span class="material-symbols-outlined">favorite</span>
-                  </button>
-                </div>
-              </div>
-              <div class="rating">
-                <span class="material-symbols-outlined">star</span>
-                <span class="material-symbols-outlined">star</span>
-                <span class="material-symbols-outlined">star</span>
-                <span class="material-symbols-outlined">star</span>
-                <span class="material-symbols-outlined">star</span>
-                <p>X Ratings</p>
-              </div>
-            </div>
-          </div>
-          
-      
-      <div class="card-body">
-        <div class="col-12">
-          <hr>
+      <div class="row g-0 flex-wrap">
+        <div class="col-md-4 text-center d-flex align-items-center justify-content-center">
+          <img src="<%= details.image %>" class="img-fluid" alt="Recipe Image">
         </div>
-        <div class="row">
-          <div class="col-4">
-            <p>Spiciness: Medium</p>
+        <div class="col-md-8">
+          <div class="d-flex justify-content-between align-items-center">
+            <h1 class="card-title text-center p-3"><%= recipe.title %></h1>
+            <div class="d-flex justify-content-end ml-auto p-3">
+              <form method="POST" action="/favorite">
+                <button id="favoriteButton" class="btn btn-outline-danger btn-sm ">
+                  <span class="material-symbols-outlined ">favorite</span>
+                </button>
+              </form>
+            </div>
           </div>
-          <div class="col-4">
-            <p>Cook time: 45 minutes</p>
-          </div>
-          <div class="col-4">
-            <p>Difficulty: Intermediate</p>
-          </div>
+          <hr>
+          
+          <div class = p-3><%- details.summary %></div>
         </div>
       </div>
     </div>
     <div class="card mb-3">
       <div class="card-body">
-        <h2 class="card-title">Ingredients</h2>
+        <h2 class="card-title text-center">Recipe Details</h2>
+    
+        <div class="row justify-content-between">
+          <div class="col-3 d-flex justify-content-start">
+            <p>Health Score: <%= details.healthScore %> </p>
+          </div>
+          <div class="col-3 d-flex justify-content-center">
+            <p>Cook time: <%= details.readyInMinutes %>m</p>
+          </div>
+          <div class="col-3 d-flex justify-content-end">
+            <p>Weight Watcher Points: <%= details.weightWatcherSmartPoints %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card mb-3">
+      <div class="card-body">
+        <h2 class="card-title text-center">Ingredients (Servings: <%= details.servings %>)</h2>
         <ul class="list-unstyled">
-          <li>Ingredient 1</li>
-          <li>Ingredient 2</li>
-          <li>Ingredient 3</li>
-          <li>Ingredient 4</li>
-          <li>Ingredient 5</li>
+          <% ingredients.forEach(function(ingredient) { %>
+            <li><%= ingredient.original %></li>
+          <% }); %>
         </ul>
       </div>
     </div>
     <div class="card mb-3">
       <div class="card-body">
-        <h2 class="card-title">Nutritional Information</h2>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Calories</th>
-              <th>Protein</th>
-              <th>Carbs</th>
-              <th>Fat</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>300</td>
-              <td>20g</td>
-              <td>30g</td>
-              <td>10g</td>
-            </tr>
-          </tbody>
-
-        </table>
+        <h2 class="card-title text-center">Nutritional Information</h2>
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Calories</th>
+                  <th>Protein</th>
+                  <th>Carbs</th>
+                  <th>Fat</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><%= nutrition.nutrients[0].amount%><%= nutrition.nutrients[0].unit%></td>
+                  <td><%= nutrition.nutrients[8].amount%><%= nutrition.nutrients[8].unit%></td>
+                  <td><%= nutrition.nutrients[3].amount%><%= nutrition.nutrients[3].unit%></td>
+                  <td><%= nutrition.nutrients[1].amount%><%= nutrition.nutrients[1].unit%></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
+      
     </div>
     <div class="card mb-3">
       <div class="card-body">
-        <h2 class="card-title">Steps</h2>
-        <ol>
-          <li>Step 1</li>
-          <li>Step 2</li>
-          <li>Step 3</li>
-          <li>Step 4</li>
-          <li>Step 5</li>
-        </ol>
-      </div>
+        <h2 class="card-title text-center">Instructions</h2>
+      <ol>
+        <% instructions.forEach(function(step, index) { %>
+          <li><%= index+1 %>. <%= step.step %></li>
+        <% }); %>
+      </ol>
     </div>
   </div>
-
-  
-  <%- include("templates/footer") %> 
+</div>
+</div>
+<script src="/recipe.js"></script>
+<%- include("templates/footer") %>    
