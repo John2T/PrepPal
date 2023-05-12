@@ -1,55 +1,127 @@
-<%- include("templates/header") %> 
-
+<%- include("templates/header") %>
 
 <style>
-  h1 {
+  .bordered-heading {
     border: 1px solid black;
+    padding: 8px;
+    margin: 0;
+  }
+
+  .centered-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    max-width: 600px; /* Increase the max-width for a longer form */
+    margin: 0 auto; /* Center the form horizontally */
+  }
+
+  .form-container {
+    width: 80%; /* Adjust the width of the form container */
+    padding: 16px;
+    border-radius: 5px;
+  }
+
+  .form-container p {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .form-container h1 {
+    margin: 8px 0;
+    font-size: 18px;
+  }
+
+  .form-container hr {
+    margin: 16px 0;
+  }
+
+  .form-container .fs-5 {
+    font-size: 14px;
+    text-align: center; /* Center the text within the fs-5 class */
+  }
+
+  .form-container .section {
+    margin-top: 8px;
+  }
+
+  .section.highlight {
+    background-color: #f8f9fa;
+    border: 2px solid #343a40;
+    border-radius: 5px;
+    padding: 12px; /* Increase the padding for wider boxes */
+  }
+
+  .box-title {
+    font-weight: bold;
+    font-size: 14px;
+    margin: 0;
+  }
+
+  .w-100.btn {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  /* Increase the width of the input fields */
+  input[type="text"],
+  input[type="email"] {
+    width: 100%;
+  }
+
+  /* Override text-align for specific elements */
+  .center-text {
+    text-align: center;
+  }
+
+  /* Align username field to the left */
+  .left-align {
+    text-align: left;
   }
 </style>
 
 
+<div class="centered-form">
+  <div class="form-container">
+    <form method="POST" action="/login">
+      <p class="left-align">Username:</p>
+      <h1 class="bordered-heading left-align"><%= username %>!</h1>
 
-    
-<div class="d-flex  justify-content-center ">
-
-    <form class="text-center" method="POST" action="/login">
-      <p>Username:</p>
-
-      <h1> <%= username %>!</h1>
-      <br>
 
       <p>Email:</p>
-      <h1></h1>
+      <h1 class="bordered-heading center-text"></h1>
+
+
+      <div class="section">
+        <p>Date of Birth:</p>
+        <div>
+          <h1 class="bordered-heading">N/A</h1>
+        </div>
+      </div>
+
+      <hr>
+      <div class="section highlight">
+        <h1 class="bordered-heading fs-5">
+          <span class="box-title">History</span>
+        </h1>
+      </div>
+
+      <div class="section highlight">
+        <h1 class="bordered-heading fs-5">
+          <span class="box-title">My Shopping List</span>
+        </h1>
+      </div>
+
+      <div class="section highlight">
+        <h1 class="bordered-heading fs-5">
+          <span class="box-title"><a href="/settings">Settings</a></span>
+        </h1>
+      </div>
+
       <br>
 
-      <p>Date of Birth:</p>
-      <div>
-        <h1>N/A</h1>
+      <button class="w-100 btn btn-secondary" type="submit">Save</button>
+      </form>
 
-        <br>
-        <hr>
-        <hr>
-    </div>
-
-    <br>
-    <br>
-    <div>
-      <h1><span class="fs-5">History</span></h1>
-  </div>
-    <h1><span class="fs-5">My Shopping List</span></h1>
-    <h1><span class="fs-5"><a href="/settings">Settings</a></span></h1>
-
-    <br>
-    <br>
-    <button class="w-100 btn  btn-secondary" type="submit">Save</button>
-
-      </div>
-      </div>   
-    </form>
-    </div>
-  </div>
-</div>  
-
-
-
-<%- include("templates/footer") %> 
+ 
+      <%- include("templates/footer") %> 
