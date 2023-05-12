@@ -18,6 +18,12 @@
     </div>
   </div>
 </div>
-<%- include("templates/ingredientCard") %>
-<button>Show More</button>
+  <% for(var i = 0; i < 5; i++) {%>
+  <%- include("templates/ingredientCard") %>
+  <% } %>
+<div class="container">
+  <button>Show More</button>
+</div>  
+
 <%- include("templates/footer") %>
+<!-- <%%> -->
