@@ -126,36 +126,6 @@ app.post('/signup', async (req, res) => {
 });
 
 
-// app.get('/home', async (req, res) => {
-//   try {
-//     if (!req.session.loggedin) {
-//       // User is not logged in, redirect to home page
-//       res.redirect('/');
-//     } else {
-//       // User is logged in, make an API request to fetch random vegetarian dessert recipes
-//       var username = req.session.username;
-
-//       // Make an API request using axios
-//       const response = await axios.get('https://api.spoonacular.com/recipes/random', {
-//         params: {
-//           number: 10, // Fetch 10 recipes
-//           tags: 'vegetarian,dessert',
-//           apiKey: 'eee50a7c34334ab8a771c279417525c0' // Replace with your actual Spoonacular API key
-//         }
-//       });
-      
-//       console.log(response.data.recipes); // Check the structure of the API response
-      
-//       const recipeData = response.data.recipes;
-//       //res.render('home', { username, recipeData });
-//       res.render('home', {username, stripTags: stripTags, recipeData: recipeData });
-//     }
-//   } catch (error) {
-//     console.error('Error:', error);
-//     res.status(500).send('Internal Server Error');
-//   }
-// });
-
 app.get('/home', async (req, res) => {
   try {
     if (!req.session.loggedin) {
