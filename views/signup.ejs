@@ -1,0 +1,42 @@
+<%- include("templates/header") %> 
+<main class="form-signin w-100 m-auto">
+  <div class="d-flex gap-2 justify-content-center py-5">
+    <form class="text-center" method="POST" action="/signup">
+      <img class="mb-4" src="/logo.jpeg" alt="" width="100" height="100">
+      <h1 class="h3 mb-3 fw-normal">Please sign up</h1>
+
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="floatingInput" placeholder="UserName" name="name">
+        <label for="floatingInput">User Name</label>
+      </div>
+      
+      <div class="form-floating mb-3">
+        <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="email">
+        <label for="floatingInput">Email address</label>
+      </div>
+      
+      <div class="form-floating mb-3">
+        <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password">
+        <label for="floatingPassword">Password</label>
+      </div>
+      
+
+    
+
+      <button class="w-100 btn btn-lg btn-primary mb-3" type="submit">Sign up</button>
+      
+      <div>
+        <a href="/login">Already have an account? Sign In</a>
+      </div>
+    </form>
+  </div>
+</main>
+
+
+<% if (typeof errorMessage !== 'undefined') { %>
+  <div><%= errorMessage %></div>
+<% } %>
+
+
+<%- include("templates/footer") %> 
+

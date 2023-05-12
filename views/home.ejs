@@ -1,0 +1,16 @@
+<%- include("templates/header") %>
+
+<h1>Hello, <%= username %>!</h1>
+
+    <div class="row mb-3 text-center">
+      <p>This is the home page</p>
+    </div>
+
+
+<div>
+  <form method="POST" action="/logout">
+    </br><button class="btn btn-danger rounded-pill px-3" type="submit">Log out</button>
+  </form>
+</div>
+
+<%- include("templates/footer") %>
