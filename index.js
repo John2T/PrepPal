@@ -413,17 +413,13 @@ app.get('/recipe/:id', (req, res) => {
 
 
 
+// Inside the /personal route handler
 app.get('/personal', (req, res) => {
-
-
-  var username = req.session.username;
-
-  res.render('personal', { username });
+  const username = req.session.username;
+  const email = req.session.email || ''; // Assuming the user's email is stored in req.session.email
+  res.render('personal', { username, email });
 });
 
-app.get('/settings', (req, res) => {
-res.render('settings');
-});
 
 
 
