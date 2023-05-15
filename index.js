@@ -392,8 +392,14 @@ app.get('/recipe/:id', (req, res) => {
             .then(nutritionData => {
               //console.log(nutritionData);
               const nutrition = nutritionData;
+
+              //Favourite? Check
+               // Check if the recipe is favorited
+               const userEmail = req.session.email; // Assuming the user's email is stored in req.user.email
+               const isFavorited = checkRecipeIsFavourited(userEmail, recipeId);
+
               // Render the EJS template with the recipe data
-              res.render('recipe', { recipe: details, ingredients: ingredients, instructions: instructions, details: details, nutrition: nutrition });
+              res.render('recipe', { recipe: details, ingredients: ingredients, instructions: instructions, details: details, nutrition: nutrition , isFavorited: isFavorited});
             })
             .catch(error => {
               // Handle any errors here
@@ -521,6 +527,17 @@ app.listen(port, () => {
 }); 
 
 
+
+async function checkRecipeIsFavourited(email, recipeId) {
+  const query = {
+    email: email,
+    recipeId: recipeId
+  };
+
+  const favorite = await favourites.findOne(query);
+  return favorite ? 1 : 0;
+
+}
 
 
 
