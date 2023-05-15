@@ -58,6 +58,7 @@ app.use(express.json());
 
 app.use(express.urlencoded({extended: false}));
 
+
 var mongoStore = MongoStore.create({
 	mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
 	crypto: {
@@ -76,8 +77,8 @@ app.use(session({
 
 //---------------------------------------home page------------------------------
 app.get('/', (req, res) => {
-  console.log(req.url);
-  console.log(url.parse(req.url).pathname);
+  //console.log(req.url);
+  //console.log(url.parse(req.url).pathname);
   const loggedin = req.session.loggedin;
   const username = req.session.username || '';
   res.render('index', { loggedin, username });
@@ -159,13 +160,13 @@ app.get('/home', async (req, res) => {
         }
       });
 
-      console.log(response.data.recipes); // Check the structure of the API response
+      //console.log(response.data.recipes); // Check the structure of the API response
 
       const recipeData = response.data.recipes;
       res.render('home', { username, recipeData });
     }
-  } catch (error) {
-    console.error('Error:', error);
+  }catch (error) {
+    //console.error('Error:', error);
     res.status(500).send('Internal Server Error');
   }
 });
@@ -200,7 +201,7 @@ app.post('/home/browsing', (req, res) => {
 app.post('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      console.log(err);
+      //console.log(err);
     } else {
       res.redirect('/');
     }
@@ -242,6 +243,11 @@ app.post('/forgotpassword', async (req, res, next) =>{
   const token = jwt.sign(payload, secret, {expiresIn: "5m" });
   const link = `http://localhost:${port}/reset-password/${id}/${token}`;
 
+  //console.log(link);
+  res.send("A reset password link has been send to your email addess");
+  
+=======
+
   //Use NodeMailer so send email to user
   const transporter = nodeMailer.createTransport({
     host: 'smtp.gmail.com',
@@ -265,7 +271,7 @@ app.post('/forgotpassword', async (req, res, next) =>{
 //------------------------------------Reset passsword------------------------------
 app.get('/reset-password/:id/:token', async(req, res, next) =>{
   const {id, token} = req.params;
-  console.log
+  //console.log
   
   //check if this id exist in database
   const existingId = await userCollection.findOne({ _id: ObjectId(id) });
@@ -280,17 +286,17 @@ app.get('/reset-password/:id/:token', async(req, res, next) =>{
     res.render('resetPassword', {email: existingId.email});
 
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
     res.send(error.message);
   }
   
-  console.log(secret);
+  //console.log(secret);
 });
 
 app.post('/reset-password/:id/:token', async (req, res, next) =>{
   const {id, token} = req.params;
   const {password, password2} = req.body;
-  console.log(password + " " + password2); 
+  //console.log(password + " " + password2); 
 
     //check if this id exist in database
     const existingId = await userCollection.findOne({ _id: ObjectId(id) });
@@ -317,7 +323,7 @@ app.post('/reset-password/:id/:token', async (req, res, next) =>{
       res.redirect('/login');
 
     } catch (error) {
-      console.log(error.message);
+      //console.log(error.message);
       res.send(error.message);
     }
 });
@@ -331,20 +337,20 @@ app.get('/nosql-injection', async (req,res) => {
 		res.send(`<h3>no user provided - try /nosql-injection?user=name</h3> <h3>or /nosql-injection?user[$ne]=name</h3>`);
 		return;
 	}
-	console.log("user: "+username);
+	//console.log("user: "+username);
 
 	const schema = Joi.string().max(20).required();
 	const validationResult = schema.validate(username);
 
 	if (validationResult.error != null) {  
-	   console.log(validationResult.error);
+	   //console.log(validationResult.error);
 	   res.send("<h1 style='color:darkred;'>A NoSQL injection attack was detected!!</h1>");
 	   return;
 	}	
 
 	const result = await userCollection.find({username: username}).project({username: 1, password: 1, _id: 1}).toArray();
 
-	console.log(result);
+	//console.log(result);
 
     res.send(`<h1>Hello ${username}</h1>`);
 });
@@ -389,7 +395,7 @@ app.get('/recipe/:id', (req, res) => {
   fetch(detailed_recipe)
     .then(response => response.json())
     .then(data => {
-      console.log(data);
+      //console.log(data);
       const details = data;
       const ingredients = data.extendedIngredients;
       const instructions_api_call = `https://api.spoonacular.com/recipes/${recipeId}/analyzedInstructions?apiKey=${api_key}`;
@@ -408,11 +414,16 @@ app.get('/recipe/:id', (req, res) => {
           fetch(nutrition_api_call)
             .then(response => response.json())
             .then(nutritionData => {
-              console.log(nutritionData);
+              //console.log(nutritionData);
               const nutrition = nutritionData;
 
+              //Favourite? Check
+               // Check if the recipe is favorited
+               const userEmail = req.session.email; // Assuming the user's email is stored in req.user.email
+               const isFavorited = checkRecipeIsFavourited(userEmail, recipeId);
+
               // Render the EJS template with the recipe data
-              res.render('recipe', { recipe: details, ingredients: ingredients, instructions: instructions, details: details, nutrition: nutrition });
+              res.render('recipe', { recipe: details, ingredients: ingredients, instructions: instructions, details: details, nutrition: nutrition , isFavorited: isFavorited});
             })
             .catch(error => {
               // Handle any errors here
@@ -429,6 +440,71 @@ app.get('/recipe/:id', (req, res) => {
       console.error(error);
     });
 });
+
+app.post('/favorite', (req, res) => {
+  if (!req.session.loggedin) {
+    res.redirect('/login');
+    return;
+  }
+
+  const user = req.session.user;
+  const email = req.session.email;
+  const {
+    recipeId,
+    title,
+    image,
+    details,
+    healthScore,
+    cookTime,
+    wwPoints,
+    servings,
+    cal,
+    pro,
+    carbs,
+    fat
+  } = req.body;
+
+
+  const ingredients = [];
+  for (let i = 0; i < req.body.ingredientsCount; i++) {
+    ingredients.push(req.body[`ingredient${i}`]);
+  }
+
+  const instructions = [];
+  for (let i = 0; i < req.body.instructionsCount; i++) {
+    instructions.push(req.body[`instruction${i}`]);
+  }
+
+  const favorite = {
+    user: user, 
+    email: email,
+    recipeId,
+    title,
+    details,
+    healthScore,
+    cookTime,
+    wwPoints,
+    servings,
+    ingredients,
+    cal,
+    pro,
+    carbs,
+    fat,
+    instructions,
+    image
+  };
+
+  // Save the favorite in the database
+  favourites.insertOne(favorite, (err) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error saving favorite');
+    } else {
+      res.redirect('/home');
+    }
+  });
+});
+
 
 
 
@@ -475,6 +551,17 @@ app.listen(port, () => {
 }); 
 
 
+
+async function checkRecipeIsFavourited(email, recipeId) {
+  const query = {
+    email: email,
+    recipeId: recipeId
+  };
+
+  const favorite = await favourites.findOne(query);
+  return favorite ? 1 : 0;
+
+}
 
 
 
