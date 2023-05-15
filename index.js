@@ -246,7 +246,7 @@ app.post('/forgotpassword', async (req, res, next) =>{
   //console.log(link);
   res.send("A reset password link has been send to your email addess");
   
-=======
+
 
   //Use NodeMailer so send email to user
   const transporter = nodeMailer.createTransport({
@@ -422,6 +422,7 @@ app.get('/recipe/:id', (req, res) => {
                const userEmail = req.session.email; // Assuming the user's email is stored in req.user.email
                checkRecipeIsFavourited(userEmail, recipeId)
                .then(isFavorited => {
+                console.log(isFavorited);
                  // Render the EJS template with the recipe data
                  res.render('recipe', { recipe: details, ingredients: ingredients, instructions: instructions, details: details, nutrition: nutrition , isFavorited: isFavorited});
                })

@@ -1,14 +1,6 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" /><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,300,1,0" />
 
-<style>
-  .material-symbols-outlined {
-    font-variation-settings:
-    'FILL' 1,
-    'wght' 300,
-    'GRAD' 0,
-    'opsz' 48
-  }
-  </style>
+
 
 
 <%- include("templates/header") %>
@@ -52,7 +44,7 @@
                 
                 
                 <button id="favoriteButton" class="btn btn-outline-danger btn-sm">
-                  <span id="favIcon" class="material-symbols-outlined" style="font-variation-settings: 'FILL <%= parseInt(isFavorited) %> ', 'wght' 300, 'GRAD' 0, 'opsz' 48;">
+                  <span id="favIcon" class="material-symbols-outlined" style="font-variation-settings: 'FILL' <%= parseInt(isFavorited) %>, 'wght' 300, 'GRAD' 0, 'opsz' 48;">
                     
                     
                     favorite</span>
