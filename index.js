@@ -9,6 +9,10 @@ const bcrypt = require('bcrypt');
 
 //Jsonwebtoken to send OTP, reset password
 const jwt = require('jsonwebtoken');
+
+//NodeMailer to send email to user
+const nodeMailer = require('nodemailer');
+
 const saltRounds = 12;
 
 const port = process.env.PORT || 3000;
@@ -228,7 +232,7 @@ app.post('/forgotpassword', async (req, res, next) =>{
     return;
   //user exist and create OTP
   }
-  const pwObj = await userCollection.findOne({email: email}, {projection: {password: 1, _id: 1}});
+  const pwObj = await userCollection.findOne({email: email}, {projection: {password: 1, _id: 1, name: 1}});
   const pw = pwObj.password;
   const id = pwObj._id;
   const secret = jwt_secret + pw;
@@ -238,9 +242,29 @@ app.post('/forgotpassword', async (req, res, next) =>{
   }
   const token = jwt.sign(payload, secret, {expiresIn: "5m" });
   const link = `http://localhost:${port}/reset-password/${id}/${token}`;
+
   //console.log(link);
   res.send("A reset password link has been send to your email addess");
   
+=======
+
+  //Use NodeMailer so send email to user
+  const transporter = nodeMailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+      user: 'preppal36@gmail.com',
+      pass: process.env.APP_PASSWORD
+    }
+  });
+
+  const info = await transporter.sendMail({
+    from: 'PrepPal team <preppal36@gmail.com>',
+    to: email,
+    subject: `Reset Password for ${pwObj.name}`,
+    html: link
+  })
 });
 //---------------------------------------------------------------------------------
 
