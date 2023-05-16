@@ -15,7 +15,7 @@ const nodeMailer = require('nodemailer');
 
 const saltRounds = 12;
 
-const port = process.env.PORT || 3010;
+const port = process.env.PORT || 8080;
 
 const app = express();
 
@@ -240,7 +240,10 @@ app.post('/forgotpassword', async (req, res, next) =>{
     id: pwObj.id
   }
   const token = jwt.sign(payload, secret, {expiresIn: "5m" });
-  const link = `http://localhost:${port}/reset-password/${id}/${token}`;
+  // const link = `http://localhost:${port}/reset-password/${id}/${token}`;
+  const domain = 'rbqidcvhag.eu09.qoddiapp.com';
+  const hostedport = 8080; // Make sure this matches the port set in your code
+  const link = `http://${domain}:${hostedport}/reset-password/${id}/${token}`;
 
   //Use NodeMailer so send email to user
   const transporter = nodeMailer.createTransport({
@@ -259,6 +262,7 @@ app.post('/forgotpassword', async (req, res, next) =>{
     subject: `Reset Password for ${pwObj.name}`,
     html: link
   })
+  console.log('Reset password link has been sent' + link);
 });
 //---------------------------------------------------------------------------------
 
