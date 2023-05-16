@@ -75,7 +75,7 @@ app.use(session({
 ));
 
 
-//---------------------------------------home page------------------------------
+//---------------------------------------index page------------------------------
 app.get('/', (req, res) => {
   //console.log(req.url);
   //console.log(url.parse(req.url).pathname);
@@ -135,8 +135,7 @@ app.post('/signup', async (req, res) => {
     res.render('signup', { errorMessage });
   }
 });
-
-
+//---------------------------------------home page------------------------------
 app.get('/home', async (req, res) => {
   try {
     if (!req.session.loggedin) {
@@ -145,7 +144,7 @@ app.get('/home', async (req, res) => {
     } else {
       // Check if the session variable for recipe count exists, and initialize it if not
       if (!req.session.recipeCount) {
-        req.session.recipeCount = 5;
+        req.session.recipeCount = 3;
       }
 
       // User is logged in
@@ -156,20 +155,29 @@ app.get('/home', async (req, res) => {
         params: {
           number: req.session.recipeCount, // Fetch the current recipe count
           tags: 'vegetarian,dessert',
-          apiKey: '53820c84e1cb476c90044eea130dbf6c' // Replace with your actual Spoonacular API key
+          apiKey: 'c55f1cebd8b648a9a121f036ed8bc51b' // Replace with your actual Spoonacular API key
         }
       });
 
+      // Retrieve the user's favorite recipes from the database
+      const userEmail = req.session.email; // Assuming the user's email is stored in req.session.email
+      const favoriteRecipes = await favourites.find({ email: userEmail }).limit(2).toArray(); // Limit the result to 2 recipes
+
+
+      console.log(favoriteRecipes);
       //console.log(response.data.recipes); // Check the structure of the API response
 
       const recipeData = response.data.recipes;
-      res.render('home', { username, recipeData });
+      res.render('home', { username, recipeData,favoriteRecipes });
     }
   }catch (error) {
     //console.error('Error:', error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).send('Internal Server Error----');
   }
-});
+}); 
+
+
+
 
 app.post('/home/browsing', (req, res) => {
   try {
@@ -183,15 +191,15 @@ app.post('/home/browsing', (req, res) => {
 
     // Check if the click count exceeds the limit
     if (req.session.clickCount <= 2) {
-      // Increment the recipe count by 5
-      req.session.recipeCount += 5;
+      // Increment the recipe count by 3
+      req.session.recipeCount += 3;
     }
 
     // Redirect back to the home page
     res.redirect('/home');
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).send('Internal Server Error---111');
   }
 });
 
@@ -385,10 +393,10 @@ app.post('/login', async (req, res) => {
   }
 });
 
-
+//---------------------------------------recipe page------------------------------
 app.get('/recipe/:id', (req, res) => {
   const recipeId = req.params.id;
-  const api_key = "3640854786784e75b2b4956ea4822dc5";
+  const api_key = "e8f2c8d49b43488b9f1b2822629feded";//change api-------------------------------------------------------------------------------------------
   const detailed_recipe = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${api_key}`;
 
   // Nested API call to get detailed recipe information
@@ -532,7 +540,7 @@ app.post('/favorite', (req, res) => {
 
 
 
-
+//---------------------------------------personal page------------------------------
 app.get('/personal', (req, res) => {
   const username = req.session.username;
   const email = req.session.email || '';
@@ -542,7 +550,7 @@ app.get('/personal', (req, res) => {
 
 
 
-
+//---------------------------------------setting page------------------------------
 app.get('/settings', (req, res) => {
   res.render('settings');
 });
