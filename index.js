@@ -162,19 +162,21 @@ app.get('/home', async (req, res) => {
       // Retrieve the user's favorite recipes from the database
       const userEmail = req.session.email; // Assuming the user's email is stored in req.session.email
       const favoriteRecipes = await favourites.find({ email: userEmail }).limit(2).toArray(); // Limit the result to 2 recipes
-
+      const favoriteRecipesNum = await favourites.find({ email: userEmail }).count(); // Count the number of favorite recipes
 
       console.log(favoriteRecipes);
+
       //console.log(response.data.recipes); // Check the structure of the API response
 
       const recipeData = response.data.recipes;
-      res.render('home', { username, recipeData,favoriteRecipes });
+      res.render('home', { username, recipeData, favoriteRecipes, favoriteRecipesNum });
     }
-  }catch (error) {
+  } catch (error) {
     //console.error('Error:', error);
     res.status(500).send('Internal Server Error----');
   }
-}); 
+});
+
 
 
 
@@ -395,6 +397,9 @@ app.post('/login', async (req, res) => {
 
 //---------------------------------------recipe page------------------------------
 app.get('/recipe/:id', (req, res) => {
+  if (!req.session.loggedin){
+    res.redirect('/login');
+  }
   const recipeId = req.params.id;
   const api_key = "e8f2c8d49b43488b9f1b2822629feded";//change api-------------------------------------------------------------------------------------------
   const detailed_recipe = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${api_key}`;
@@ -433,7 +438,7 @@ app.get('/recipe/:id', (req, res) => {
                 //console.log(isFavorited);
                  // Render the EJS template with the recipe data
              
-                
+                console.log("Recipe:" + isFavorited);
                  res.render('recipe', { recipe: details, ingredients: ingredients, instructions: instructions, details: details, nutrition: nutrition , isFavorited: isFavorited});
                })
                .catch(error => {
@@ -457,84 +462,119 @@ app.get('/recipe/:id', (req, res) => {
     });
 });
 
-
-app.post('/favorite', (req, res) => {
+app.post('/favorite', async (req, res) => {
   if (!req.session.loggedin) {
     res.redirect('/login');
     return;
   }
 
-  const user = req.session.user;
   const email = req.session.email;
-  const {
-    recipeId,
-    title,
-    image,
-    details,
-    healthScore,
-    cookTime,
-    wwPoints,
-    servings,
-    ingredients,
-    cal,
-    pro,
-    carbs,
-    fat,
-    instructions
-  } = req.body;
+  const { recipeId } = req.body;
+
+  try {
+    const existingFavorite = await favourites.findOne({ email, recipeId });
+
+    if (existingFavorite) {
+      // Recipe is already favorited, so delete it
+      await favourites.deleteOne({ email, recipeId });
+      res.redirect('back');
+    } else {
+      // Recipe is not favorited, so save it
+      const {
+        title,
+        image,
+        details,
+        healthScore,
+        cookTime,
+        wwPoints,
+        servings,
+        ingredients,
+        cal,
+        pro,
+        carbs,
+        fat,
+        instructions
+      } = req.body;
+
+      const favorite = {
+        email,
+        recipeId,
+        title,
+        image,
+        details,
+        healthScore,
+        cookTime,
+        wwPoints,
+        servings,
+        ingredients: JSON.parse(ingredients),
+        cal,
+        pro,
+        carbs,
+        fat,
+        instructions: JSON.parse(instructions)
+      };
+
+      await favourites.insertOne(favorite);
+      res.redirect('back');
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 
-    
-    const ingredients2 = JSON.parse(req.body.ingredients);
-    const instructions2 = JSON.parse(req.body.instructions);
+
+app.get('/allFavourites', async (req, res) => {
+  try {
+    if (!req.session.loggedin) {
+      // User is not logged in, redirect to home page or handle accordingly
+      res.redirect('/');
+      return;
+    }
+    const userFavorites = await favourites.find({ email: req.session.email }).toArray();
+
+    // Convert userFavorites to JSON
+    const jsonFavorites = JSON.stringify(userFavorites);
+
+    // Pass the JSON data to the render template
+    res.render('allFavourites', { favorites: jsonFavorites });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 
-  const favorite = {
-    user: user, 
-    email: email,
-    recipeId,
-    title,
-    details,
-    healthScore,
-    cookTime,
-    wwPoints,
-    servings,
-    ingredients2,
-    cal,
-    pro,
-    carbs,
-    fat,
-    instructions2,
-    image
-  };
-  
+app.get('/allFavourites/:recipeId', (req, res) => {
+  const recipeId = req.params.recipeId;
 
-  // Check if the recipe is already favorited by the user
-  favourites.findOneAndDelete(
-    { user: user, recipeId: recipeId },
-    (err, result) => {
-      if (err) {
-        console.error(err);
-        res.status(500).send('Error removing favorite');
-      } else {
-        // If the recipe is already favorited, it is removed
-        if (result.value) {
-          res.redirect('back');
+  // Favourite? Check
+  // Check if the recipe is favorited
+  const userEmail = req.session.email; // Assuming the user's email is stored in req.session.email
+  checkRecipeIsFavourited(userEmail, recipeId)
+    .then(isFavorited => {
+      // Find the favorite recipe
+      favourites.findOne({ recipeId: recipeId }, (err, favoriteRecipe) => {
+        if (err) {
+          console.error(err);
+          res.render('recipeNotFound');
           return;
         }
 
-        // Save the favorite in the database
-        favourites.insertOne(favorite, (err) => {
-          if (err) {
-            console.error(err);
-            res.status(500).send('Error saving favorite');
-          } else {
-            res.redirect('back');
-          }
-        });
-      }
-    }
-  );
+        if (favoriteRecipe) {
+          // Render the recipe page template with the favorite recipe details
+          res.render('favouriteRecipe', { recipe: favoriteRecipe, isFavorited: isFavorited });
+        } else {
+          // Handle the case where the recipe is not found
+          res.redirect('/allFavourites');
+        }
+      });
+    })
+    .catch(error => {
+      console.error(error);
+      res.render('recipeNotFound');
+    });
 });
 
 
