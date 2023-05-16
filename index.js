@@ -75,7 +75,7 @@ app.use(session({
 ));
 
 
-//---------------------------------------home page------------------------------
+//---------------------------------------index page------------------------------
 app.get('/', (req, res) => {
   //console.log(req.url);
   //console.log(url.parse(req.url).pathname);
@@ -135,7 +135,7 @@ app.post('/signup', async (req, res) => {
     res.render('signup', { errorMessage });
   }
 });
-
+//---------------------------------------home page------------------------------
 app.get('/home', async (req, res) => {
   try {
     if (!req.session.loggedin) {
@@ -393,7 +393,7 @@ app.post('/login', async (req, res) => {
   }
 });
 
-
+//---------------------------------------recipe page------------------------------
 app.get('/recipe/:id', (req, res) => {
   const recipeId = req.params.id;
   const api_key = "e8f2c8d49b43488b9f1b2822629feded";//change api-------------------------------------------------------------------------------------------
@@ -540,7 +540,7 @@ app.post('/favorite', (req, res) => {
 
 
 
-
+//---------------------------------------personal page------------------------------
 app.get('/personal', (req, res) => {
   const username = req.session.username;
   const email = req.session.email || '';
@@ -550,7 +550,7 @@ app.get('/personal', (req, res) => {
 
 
 
-
+//---------------------------------------setting page------------------------------
 app.get('/settings', (req, res) => {
   res.render('settings');
 });
