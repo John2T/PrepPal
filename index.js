@@ -387,6 +387,9 @@ app.post('/login', async (req, res) => {
 
 
 app.get('/recipe/:id', (req, res) => {
+  if (!req.session.loggedin){
+    res.redirect('/login');
+  }
   const recipeId = req.params.id;
   const api_key = "39d5b85cc8dc417abc57dcfb0bb132b0";
   const detailed_recipe = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${api_key}`;
@@ -482,7 +485,6 @@ app.post('/favorite', (req, res) => {
 
 
   const favorite = {
-    user: user, 
     email: email,
     recipeId,
     title,
@@ -528,6 +530,31 @@ app.post('/favorite', (req, res) => {
     }
   );
 });
+
+
+app.get('/allFavourites', async (req, res) => {
+  try {
+    if (!req.session.loggedin) {
+      // User is not logged in, redirect to home page or handle accordingly
+      res.redirect('/');
+      return;
+    }
+    const userFavorites = await favourites.find({ email: req.session.email }).toArray();
+
+    // Convert userFavorites to JSON
+    const jsonFavorites = JSON.stringify(userFavorites);
+
+    // Pass the JSON data to the render template
+    res.render('allFavourites', { favorites: jsonFavorites });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
+
 
 
 
