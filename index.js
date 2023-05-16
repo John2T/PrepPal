@@ -240,10 +240,11 @@ app.post('/forgotpassword', async (req, res, next) =>{
     id: pwObj.id
   }
   const token = jwt.sign(payload, secret, {expiresIn: "5m" });
-  // const link = `http://localhost:${port}/reset-password/${id}/${token}`;
-  const domain = 'rbqidcvhag.eu09.qoddiapp.com';
-  const hostedport = 8080; // Make sure this matches the port set in your code
-  const link = `http://${domain}:${hostedport}/reset-password/${id}/${token}`;
+  const link = `http://localhost:${port}/reset-password/${id}/${token}`;
+  // const domain = 'rbqidcvhag.eu09.qoddiapp.com';
+  // // const link = `http://${domain}/reset-password/${id}/${token}`;
+  // const link = `http://${domain}/reset-password/${encodeURIComponent(id)}/${encodeURIComponent(token)}`;
+
 
   //Use NodeMailer so send email to user
   const transporter = nodeMailer.createTransport({
@@ -256,13 +257,20 @@ app.post('/forgotpassword', async (req, res, next) =>{
     }
   });
 
-  const info = await transporter.sendMail({
-    from: 'PrepPal team <preppal36@gmail.com>',
-    to: email,
-    subject: `Reset Password for ${pwObj.name}`,
-    html: link
-  })
-  console.log('Reset password link has been sent' + link);
+  const htmlContent = `
+  <p>Click on the following link to reset your password:</p>
+  <a href="${link}">${link}</a>
+`;
+
+const info = await transporter.sendMail({
+  from: 'PrepPal team <preppal36@gmail.com>',
+  to: email,
+  subject: `Reset Password for ${pwObj.name}`,
+  html: htmlContent
+});
+
+  console.log(link);
+  console.log("token 1:" + token);
 });
 //---------------------------------------------------------------------------------
 
@@ -492,10 +500,3 @@ app.listen(port, () => {
  * 3640854786784e75b2b4956ea4822dc5
  * 05adf25cf1be4acbaf7a00dc9265edf3 (No more calls May 11)
  */
-
-
- 
-
-
-
- 
