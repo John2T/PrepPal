@@ -162,19 +162,21 @@ app.get('/home', async (req, res) => {
       // Retrieve the user's favorite recipes from the database
       const userEmail = req.session.email; // Assuming the user's email is stored in req.session.email
       const favoriteRecipes = await favourites.find({ email: userEmail }).limit(2).toArray(); // Limit the result to 2 recipes
-
+      const favoriteRecipesNum = await favourites.find({ email: userEmail }).count(); // Count the number of favorite recipes
 
       console.log(favoriteRecipes);
+
       //console.log(response.data.recipes); // Check the structure of the API response
 
       const recipeData = response.data.recipes;
-      res.render('home', { username, recipeData,favoriteRecipes });
+      res.render('home', { username, recipeData, favoriteRecipes, favoriteRecipesNum });
     }
-  }catch (error) {
+  } catch (error) {
     //console.error('Error:', error);
     res.status(500).send('Internal Server Error----');
   }
-}); 
+});
+
 
 
 
@@ -562,7 +564,6 @@ app.get('/allFavourites/:recipeId', (req, res) => {
 
         if (favoriteRecipe) {
           // Render the recipe page template with the favorite recipe details
-          console.log("AllFavs" + isFavorited);
           res.render('favouriteRecipe', { recipe: favoriteRecipe, isFavorited: isFavorited });
         } else {
           // Handle the case where the recipe is not found

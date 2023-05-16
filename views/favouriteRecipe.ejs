@@ -64,14 +64,15 @@
             <div class="card-body">
             <h2 class="card-title text-center">Ingredients (Servings: <%= recipe.servings %>)</h2>
             <ul id="ingredients" class="list-unstyled">
-            <% if (recipe.ingredients2 && recipe.ingredients2.length > 0) { %>
-            <% recipe.ingredients2.forEach(function(ingredient, index) { %>
-            <li data-ingredient="<%= index %>"><%= ingredient.original %></li>
-            <% }); %>
-            <% } else { %>
-            <li>No ingredients found.</li>
-            <% } %>
-            </ul>
+                <% if (recipe.ingredients && recipe.ingredients.length > 0) { %>
+                  <% recipe.ingredients.forEach(function(ingredient, index) { %>
+                    <li data-ingredient="<%= index %>"><%= ingredient.original %></li>
+                  <% }); %>
+                <% } else { %>
+                  <li>No ingredients found.</li>
+                <% } %>
+              </ul>
+              
             </div>
             </div>
             <div class="card mb-3">
@@ -105,14 +106,15 @@
             <div class="card-body">
             <h2 class="card-title text-center">Instructions</h2>
             <ol id="instructions">
-            <% if (recipe.instructions2 && recipe.instructions2.length > 0) { %>
-            <% recipe.instructions2.forEach(function(instruction, index) { %>
-            <li data-instruction="<%= index %>"><%= instruction.step %></li>
-            <% }); %>
-            <% } else { %>
-            <li>No instructions found.</li>
-            <% } %>
-            </ol>
+                <% if (recipe.instructions && recipe.instructions.length > 0) { %>
+                  <% recipe.instructions.forEach(function(instruction, index) { %>
+                    <li data-instruction="<%= index %>"><%= instruction.step %></li>
+                  <% }); %>
+                <% } else { %>
+                  <li>No instructions found.</li>
+                <% } %>
+              </ol>
+              
             </div>
             </div>
             
