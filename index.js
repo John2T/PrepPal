@@ -422,8 +422,10 @@ app.get('/recipe/:id', (req, res) => {
                const userEmail = req.session.email; // Assuming the user's email is stored in req.user.email
                checkRecipeIsFavourited(userEmail, recipeId)
                .then(isFavorited => {
-                console.log(isFavorited);
+                //console.log(isFavorited);
                  // Render the EJS template with the recipe data
+             
+                
                  res.render('recipe', { recipe: details, ingredients: ingredients, instructions: instructions, details: details, nutrition: nutrition , isFavorited: isFavorited});
                })
                .catch(error => {
@@ -447,6 +449,7 @@ app.get('/recipe/:id', (req, res) => {
     });
 });
 
+
 app.post('/favorite', (req, res) => {
   if (!req.session.loggedin) {
     res.redirect('/login');
@@ -464,22 +467,19 @@ app.post('/favorite', (req, res) => {
     cookTime,
     wwPoints,
     servings,
+    ingredients,
     cal,
     pro,
     carbs,
-    fat
+    fat,
+    instructions
   } = req.body;
 
 
-  const ingredients = [];
-  for (let i = 0; i < req.body.ingredientsCount; i++) {
-    ingredients.push(req.body[`ingredient${i}`]);
-  }
+    
+    const ingredients2 = JSON.parse(req.body.ingredients);
+    const instructions2 = JSON.parse(req.body.instructions);
 
-  const instructions = [];
-  for (let i = 0; i < req.body.instructionsCount; i++) {
-    instructions.push(req.body[`instruction${i}`]);
-  }
 
   const favorite = {
     user: user, 
@@ -491,25 +491,44 @@ app.post('/favorite', (req, res) => {
     cookTime,
     wwPoints,
     servings,
-    ingredients,
+    ingredients2,
     cal,
     pro,
     carbs,
     fat,
-    instructions,
+    instructions2,
     image
   };
+  
 
-  // Save the favorite in the database
-  favourites.insertOne(favorite, (err) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send('Error saving favorite');
-    } else {
-      res.redirect('/home');
+  // Check if the recipe is already favorited by the user
+  favourites.findOneAndDelete(
+    { user: user, recipeId: recipeId },
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error removing favorite');
+      } else {
+        // If the recipe is already favorited, it is removed
+        if (result.value) {
+          res.redirect('back');
+          return;
+        }
+
+        // Save the favorite in the database
+        favourites.insertOne(favorite, (err) => {
+          if (err) {
+            console.error(err);
+            res.status(500).send('Error saving favorite');
+          } else {
+            res.redirect('back');
+          }
+        });
+      }
     }
-  });
+  );
 });
+
 
 
 
