@@ -246,7 +246,7 @@ app.post('/forgotpassword', async (req, res, next) =>{
   //console.log(link);
   res.send("A reset password link has been send to your email addess");
   
-=======
+
 
   //Use NodeMailer so send email to user
   const transporter = nodeMailer.createTransport({
@@ -388,7 +388,7 @@ app.post('/login', async (req, res) => {
 
 app.get('/recipe/:id', (req, res) => {
   const recipeId = req.params.id;
-  const api_key = "1bb15cce3c994921aaa86ea7d011cd20";
+  const api_key = "3640854786784e75b2b4956ea4822dc5";
   const detailed_recipe = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${api_key}`;
 
   // Nested API call to get detailed recipe information
@@ -420,10 +420,18 @@ app.get('/recipe/:id', (req, res) => {
               //Favourite? Check
                // Check if the recipe is favorited
                const userEmail = req.session.email; // Assuming the user's email is stored in req.user.email
-               const isFavorited = checkRecipeIsFavourited(userEmail, recipeId);
-
-              // Render the EJS template with the recipe data
-              res.render('recipe', { recipe: details, ingredients: ingredients, instructions: instructions, details: details, nutrition: nutrition , isFavorited: isFavorited});
+               checkRecipeIsFavourited(userEmail, recipeId)
+               .then(isFavorited => {
+                //console.log(isFavorited);
+                 // Render the EJS template with the recipe data
+             
+                
+                 res.render('recipe', { recipe: details, ingredients: ingredients, instructions: instructions, details: details, nutrition: nutrition , isFavorited: isFavorited});
+               })
+               .catch(error => {
+                 // Handle any errors here
+                 console.error(error);
+               });
             })
             .catch(error => {
               // Handle any errors here
@@ -440,6 +448,7 @@ app.get('/recipe/:id', (req, res) => {
       console.error(error);
     });
 });
+
 
 app.post('/favorite', (req, res) => {
   if (!req.session.loggedin) {
@@ -458,22 +467,19 @@ app.post('/favorite', (req, res) => {
     cookTime,
     wwPoints,
     servings,
+    ingredients,
     cal,
     pro,
     carbs,
-    fat
+    fat,
+    instructions
   } = req.body;
 
 
-  const ingredients = [];
-  for (let i = 0; i < req.body.ingredientsCount; i++) {
-    ingredients.push(req.body[`ingredient${i}`]);
-  }
+    
+    const ingredients2 = JSON.parse(req.body.ingredients);
+    const instructions2 = JSON.parse(req.body.instructions);
 
-  const instructions = [];
-  for (let i = 0; i < req.body.instructionsCount; i++) {
-    instructions.push(req.body[`instruction${i}`]);
-  }
 
   const favorite = {
     user: user, 
@@ -485,25 +491,44 @@ app.post('/favorite', (req, res) => {
     cookTime,
     wwPoints,
     servings,
-    ingredients,
+    ingredients2,
     cal,
     pro,
     carbs,
     fat,
-    instructions,
+    instructions2,
     image
   };
+  
 
-  // Save the favorite in the database
-  favourites.insertOne(favorite, (err) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send('Error saving favorite');
-    } else {
-      res.redirect('/home');
+  // Check if the recipe is already favorited by the user
+  favourites.findOneAndDelete(
+    { user: user, recipeId: recipeId },
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error removing favorite');
+      } else {
+        // If the recipe is already favorited, it is removed
+        if (result.value) {
+          res.redirect('back');
+          return;
+        }
+
+        // Save the favorite in the database
+        favourites.insertOne(favorite, (err) => {
+          if (err) {
+            console.error(err);
+            res.status(500).send('Error saving favorite');
+          } else {
+            res.redirect('back');
+          }
+        });
+      }
     }
-  });
+  );
 });
+
 
 
 
@@ -551,17 +576,32 @@ app.listen(port, () => {
 }); 
 
 
-
 async function checkRecipeIsFavourited(email, recipeId) {
   const query = {
     email: email,
     recipeId: recipeId
   };
 
-  const favorite = await favourites.findOne(query);
-  return favorite ? 1 : 0;
+  try {
+    const favorite = await favourites.findOne(query);
+    let val = 0;
 
+    if (favorite) {
+      val = 1;
+      //console.log(val);
+      return val;
+    } else {
+      //console.log(val);
+      return val;
+    }
+  } catch (error) {
+    console.error(error);
+    return 0; // or throw the error if you want to handle it differently
+  }
 }
+
+
+
 
 
 
@@ -572,8 +612,17 @@ async function checkRecipeIsFavourited(email, recipeId) {
 
 /**
  * Spoonacular API spare key
- * 3640854786784e75b2b4956ea4822dc5
- * 05adf25cf1be4acbaf7a00dc9265edf3 (No more calls May 11)
+ ** 3640854786784e75b2b4956ea4822dc5
+ * 05adf25cf1be4acbaf7a00dc9265edf3 
+ * 322b73e9c1964f1ca8f162c7f6a3456d
+ * 80b86de0a010484a99e42715a36a8ab6 (Used for recipe page at the moment)
+ * 7f3eb9302f924154be8533178d011761
+ * 7427d37ed1324af7829fa87695c81c40 (Used on Home Page)
+* bebbab558c1d470e802944e8d07ca845
+* 53820c84e1cb476c90044eea130dbf6c
+* 1bb15cce3c994921aaa86ea7d011cd20
+*  e8c352e2ce2e47fb81599dc7db3d39ce
+ * 39d5b85cc8dc417abc57dcfb0bb132b0
  */
 
 
