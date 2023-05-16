@@ -4,19 +4,23 @@
   <div id="favorite" class="col" style="background-color: rgba(245, 249, 226, 0.864); padding: 20px; box-shadow: 2px 2px 10px #888888; margin-bottom: 20px;">
     <p style="font-weight: bold;">Your favorite</p>
     <% if (favoriteRecipes.length > 0) { %>
-      <% favoriteRecipes.forEach((recipe) => { %>
-        <div class="card" style="width: 100%;">
-          <img src="<%= recipe.image %>" class="card-img-top" alt="<%= recipe.title %>">
-          <div class="card-body">
-            <h5 class="card-title" style="text-align: center;"><%= recipe.title %></h5>
-            <a href="#" class="btn btn-primary">Check</a>
+      <div class="card-group" style="display: flex;">
+        <% favoriteRecipes.slice(0, 2).forEach((recipe) => { %>
+          <div class="card" style="width: 200px; margin-right: 10px;">
+            <img src="<%= recipe.image %>" class="card-img-top" alt="<%= recipe.title %>">
+            <div class="card-body">
+              <h5 class="card-title" style="text-align: center;"><%= recipe.title %></h5>
+              <a href="/recipe/<%= recipe.recipeId %>" class="btn btn-primary">Check</a>
+            </div>
           </div>
-        </div>
-      <% }) %>
+        <% }) %>
+      </div>
     <% } else { %>
       <p>You haven't saved any favorite recipes yet.</p>
     <% } %>
-  </div>
+  </div>  
+  
+  
 
   <div id="top10" style="background-color: rgba(245, 249, 226, 0.864); padding: 10px; box-shadow: 2px 2px 10px #888888; margin-bottom: 20px;">
     <h2 style="font-weight: bold; font-size: 20px;">Top Recipes</h2>

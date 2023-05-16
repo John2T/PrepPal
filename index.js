@@ -136,7 +136,6 @@ app.post('/signup', async (req, res) => {
   }
 });
 
-
 app.get('/home', async (req, res) => {
   try {
     if (!req.session.loggedin) {
@@ -161,8 +160,8 @@ app.get('/home', async (req, res) => {
       });
 
       // Retrieve the user's favorite recipes from the database
-const userEmail = req.session.email; // Assuming the user's email is stored in req.session.email
-const favoriteRecipes = await favourites.find({ email: userEmail }).toArray();
+      const userEmail = req.session.email; // Assuming the user's email is stored in req.session.email
+      const favoriteRecipes = await favourites.find({ email: userEmail }).limit(2).toArray(); // Limit the result to 2 recipes
 
 
       console.log(favoriteRecipes);
@@ -175,7 +174,10 @@ const favoriteRecipes = await favourites.find({ email: userEmail }).toArray();
     //console.error('Error:', error);
     res.status(500).send('Internal Server Error----');
   }
-});
+}); 
+
+
+
 
 app.post('/home/browsing', (req, res) => {
   try {
