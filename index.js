@@ -388,7 +388,7 @@ app.post('/login', async (req, res) => {
 
 app.get('/recipe/:id', (req, res) => {
   const recipeId = req.params.id;
-  const api_key = "3640854786784e75b2b4956ea4822dc5";
+  const api_key = "39d5b85cc8dc417abc57dcfb0bb132b0";
   const detailed_recipe = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${api_key}`;
 
   // Nested API call to get detailed recipe information
