@@ -208,13 +208,39 @@ app.post('/logout', (req, res) => {
 });
 
 //-----------------------------------search page-----------------------------------
-app.get('/search', (req, res) => {
-  if(!req.session.loggedin) {
+app.get('/search', async (req, res) => {
+  if (!req.session.loggedin) {
     res.redirect('/');
-  }else{
-    res.render('search');
+  }
+  try {
+    const apiKey = "b9a29f4972e9477eba5e959e98248dbc";
+    const numberOfIngredients = 10; // Number of ingredients to fetch
+  
+    const response = await axios.get('https://api.spoonacular.com/food/ingredients/search/apiKey=${}', {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      params: {
+        query: '', // Leave it empty to fetch all ingredients
+        number: numberOfIngredients,
+        apiKey: apiKey // Include the apiKey as a query parameter
+      }
+    });
+  
+    const ingredients = response.data.results.map((result) => ({
+      name: result.name,
+      image: result.image
+    }));
+
+    console.log(ingredients);
+
+    res.render('search', { list: ingredients }); // Pass the ingredients to your EJS template
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
   }
 });
+
 //---------------------------------------------------------------------------------
 
 //-----------------------------------Forgot password-------------------------------
@@ -240,11 +266,10 @@ app.post('/forgotpassword', async (req, res, next) =>{
     id: pwObj.id
   }
   const token = jwt.sign(payload, secret, {expiresIn: "5m" });
-  const link = `http://localhost:${port}/reset-password/${id}/${token}`;
-  // const domain = 'rbqidcvhag.eu09.qoddiapp.com';
-  // // const link = `http://${domain}/reset-password/${id}/${token}`;
-  // const link = `http://${domain}/reset-password/${encodeURIComponent(id)}/${encodeURIComponent(token)}`;
-
+  
+  //Qoddi domain and url link send to user email
+  const domain = 'http://rbqidcvhag.eu09.qoddiapp.com';
+  const link = `${domain}/reset-password/${id}/${token}`;
 
   //Use NodeMailer so send email to user
   const transporter = nodeMailer.createTransport({
@@ -290,7 +315,6 @@ app.get('/reset-password/:id/:token', async(req, res, next) =>{
   try {
     const payload = jwt.verify(token, secret);
     res.render('resetPassword', {email: existingId.email});
-
   } catch (error) {
     console.log(error.message);
     res.send(error.message);
@@ -302,7 +326,6 @@ app.get('/reset-password/:id/:token', async(req, res, next) =>{
 app.post('/reset-password/:id/:token', async (req, res, next) =>{
   const {id, token} = req.params;
   const {password, password2} = req.body;
-  console.log(password + " " + password2); 
 
     //check if this id exist in database
     const existingId = await userCollection.findOne({ _id: ObjectId(id) });
@@ -318,7 +341,7 @@ app.post('/reset-password/:id/:token', async (req, res, next) =>{
         return res.status(400).send('Passwords do not match');
       }
       //password match
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
 
       // update the user's password in the database
       const result = await userCollection.updateOne(

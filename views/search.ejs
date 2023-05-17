@@ -18,12 +18,11 @@
     </div>
   </div>
 </div>
-  <% for(var i = 0; i < 5; i++) {%>
+  <% for(var i = 0; i < list.length; i+=2) {%>
   <%- include("templates/ingredientCard") %>
   <% } %>
-<div class="container">
-  <button>Show More</button>
-</div>  
-
+  <div class=" conatiner mx-auto my-5 p-2" style="width: 200px">
+    <button class="btn btn-primary rounded-pill px-3" type="button" style="margin-left: 55px; margin-top: 10px;">More</button>
+  </div>
 <%- include("templates/footer") %>
 <!-- <%%> -->
