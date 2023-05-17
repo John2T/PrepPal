@@ -496,12 +496,12 @@ app.post('/favorite', async (req, res) => {
         instructions
       } = req.body;
 
-      console.log("Details Before: " + details);
+      //console.log("Details Before: " + details);
       
       // Decode HTML entities and remove HTML tags
       const sanitizedDetails = stripTags(details);
 
-      console.log("After: " + sanitizedDetails);
+      //console.log("After: " + sanitizedDetails);
 
       const favorite = {
         email,

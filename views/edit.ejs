@@ -1,28 +1,5 @@
 <%- include("templates/header") %>
 
-
-<script>
-  const addInstructionButton = document.getElementById('addInstructionBtn');
-  const instructionList = document.getElementById('instructionList');
-
-  let instructionCount = <%= recipe.instructions.length %>;
-
-  addInstructionButton.addEventListener('click', function() {
-    const newInstructionLi = document.createElement('li');
-    newInstructionLi.className = 'list-group-item';
-    newInstructionLi.innerHTML = `
-      <div class="row">
-        <div class="col-md-2">${instructionCount + 1}.</div>
-        <div class="col-md-10">
-          <textarea class="form-control" id="instruction${instructionCount}" name="instructions" rows="1" required></textarea>
-        </div>
-      </div>
-    `;
-    instructionList.appendChild(newInstructionLi);
-    instructionCount++;
-  });
-</script>
-
 <div class="container pb-5">
   <h1>Edit Recipe</h1>
 
@@ -76,32 +53,107 @@
       <label for="fat">Fat</label>
       <input type="text" class="form-control" id="fat" name="fat" value="<%= recipe.fat %>" required>
     </div>
-
-    <div class="form-group mb-3">
-      <label for="instructions">Instructions</label>
-      <ol class="list-group" id="instructionList">
-        <% for (let i = 0; i < recipe.instructions.length; i++) { %>
-          <li class="list-group-item">
-            <div class="row">
-              <div class="col-md-2">
-                <%= i + 1 %>.
+    <div class="form-group border p-3 mb-3">
+      <div class="form-group mb-3">
+        <label for="instructions">Instructions</label>
+        <ol class="list-group" id="instructionList">
+          <% for (let i = 0; i < recipe.instructions.length; i++) { %>
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-md-2">
+                  <%= i + 1 %>.
+                </div>
+                <div class="col-md-8">
+                  <% const instruction = recipe.instructions[i].step; %>
+                  <textarea class="form-control" id="instruction<%= i %>" name="instructions" rows="<%= Math.ceil(instruction.length / 80) %>" required><%= instruction %></textarea>
+                </div>
+                <div class="col-md-2">
+                  <button type="button" class="btn btn-secondary removeInstructionBtn">-</button>
+                  <button type="button" class="btn btn-secondary addInstructionBtn">+</button>
+                </div>
               </div>
-              <div class="col-md-10">
-                <% const instruction = recipe.instructions[i].step; %>
-                <textarea class="form-control" id="instruction<%= i %>" name="instructions" rows="<%= Math.ceil(instruction.length / 80) %>" required><%= instruction %></textarea>
-              </div>
-            </div>
-          </li>
-        <% } %>
-      </ol>
+            </li>
+          <% } %>
+        </ol>
+      </div>
     </div>
+    
 
-    <button type="button" class="btn btn-primary mb-3" id="addInstructionBtn">Add Instruction</button>
+
 
     <button type="submit" class="btn btn-primary float-end">Submit</button>
   </form>
 </div>
 
+
+<script>
+  const instructionList = document.getElementById('instructionList');
+
+  instructionList.addEventListener('click', function(event) {
+    const target = event.target;
+
+    // Check if the clicked button is a remove instruction button
+    if (target.classList.contains('removeInstructionBtn')) {
+      const instructionItem = target.closest('.list-group-item');
+      instructionItem.remove();
+    }
+
+    // Check if the clicked button is an add instruction button
+    if (target.classList.contains('addInstructionBtn')) {
+      const instructionItem = target.closest('.list-group-item');
+      const newInstructionLi = document.createElement('li');
+      newInstructionLi.className = 'list-group-item';
+      newInstructionLi.innerHTML = `
+        <div class="row">
+          <div class="col-md-2">${instructionCount + 1}.</div>
+          <div class="col-md-8">
+            <textarea class="form-control" id="instruction${instructionCount}" name="instructions" rows="1" required></textarea>
+          </div>
+          <div class="col-md-2">
+            <button type="button" class="btn btn-secondary removeInstructionBtn">-</button>
+            <button type="button" class="btn btn-secondary addInstructionBtn">+</button>
+          </div>
+        </div>
+      `;
+      instructionItem.insertAdjacentElement('afterend', newInstructionLi);
+      instructionCount++;
+
+      // Add event listener to remove the instruction when the minus sign is clicked
+      const removeInstructionButton = newInstructionLi.querySelector('.removeInstructionBtn');
+      removeInstructionButton.addEventListener('click', function() {
+        newInstructionLi.remove();
+      });
+    }
+  });
+
+  const addInstructionButton = document.getElementById('addInstructionBtn');
+  let instructionCount = <%= recipe.instructions.length %>;
+
+  addInstructionButton.addEventListener('click', function() {
+    const newInstructionLi = document.createElement('li');
+    newInstructionLi.className = 'list-group-item';
+    newInstructionLi.innerHTML = `
+      <div class="row">
+        <div class="col-md-2">${instructionCount + 1}.</div>
+        <div class="col-md-8">
+          <textarea class="form-control" id="instruction${instructionCount}" name="instructions" rows="1" required></textarea>
+        </div>
+        <div class="col-md-2">
+          <button type="button" class="btn btn-secondary removeInstructionBtn">-</button>
+          <button type="button" class="btn btn-secondary addInstructionBtn">+</button>
+        </div>
+      </div>
+    `;
+    instructionList.appendChild(newInstructionLi);
+    instructionCount++;
+
+    // Add event listener to remove the instruction when the minus sign is clicked
+    const removeInstructionButton = newInstructionLi.querySelector('.removeInstructionBtn');
+    removeInstructionButton.addEventListener('click', function() {
+      newInstructionLi.remove();
+    });
+  });
+</script>
 
 
 
