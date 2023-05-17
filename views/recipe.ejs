@@ -37,9 +37,6 @@
                 <span id="favIcon" class="material-symbols-outlined" style="font-variation-settings: 'FILL' <%= parseInt(isFavorited) %>, 'wght' 300, 'GRAD' 0, 'opsz' 48;">
                     favorite</span>
                 </button>
-                
-                
-                
               </form>
               
             </div>
@@ -77,7 +74,19 @@
           <% }); %>
         </ul>
         
+        <form id="list" method="POST" action="/create-shoppinglist">
+          <input type="hidden" name="recipeId" value="<%= recipe.id %>">
+          <input type="hidden" name="title" value="<%= recipe.title %>">
+          <input type="hidden" name="ingredients" value="<%= JSON.stringify(ingredients) %>">
+          <button type="submit">Create Shopping List</button>
+        </form>
+        
+
       </div>
+    </div>
+      
+      </div>
+
     </div>
     <div class="card mb-3">
       <div class="card-body">
@@ -121,4 +130,4 @@
 </div>
 </div>
 
-<%- include("templates/footer") %>    
+<%- include("templates/footer") %> 
