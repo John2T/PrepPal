@@ -401,7 +401,7 @@ app.get('/recipe/:id', (req, res) => {
     res.redirect('/login');
   }
   const recipeId = req.params.id;
-  const api_key = "e8f2c8d49b43488b9f1b2822629feded";//change api-------------------------------------------------------------------------------------------
+  const api_key = "e8c352e2ce2e47fb81599dc7db3d39ce";//change api-------------------------------------------------------------------------------------------
   const detailed_recipe = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${api_key}`;
 
   // Nested API call to get detailed recipe information
@@ -438,7 +438,7 @@ app.get('/recipe/:id', (req, res) => {
                 //console.log(isFavorited);
                  // Render the EJS template with the recipe data
              
-                console.log("Recipe:" + isFavorited);
+            
                  res.render('recipe', { recipe: details, ingredients: ingredients, instructions: instructions, details: details, nutrition: nutrition , isFavorited: isFavorited});
                })
                .catch(error => {
@@ -576,6 +576,32 @@ app.get('/allFavourites/:recipeId', (req, res) => {
       res.render('recipeNotFound');
     });
 });
+
+
+app.post('/allFavourites/:id/edit', async function(req, res) {
+
+ 
+  const recipeId = req.params.id;
+
+  try {
+    // Find the recipe in the database based on recipeId
+    const recipe = await favourites.findOne({ recipeId: recipeId });
+
+    if (!recipe) {
+      // Recipe not found
+      res.status(404).send('Recipe not found');
+      return;
+    }
+    // Pass the recipe to the associated page for editing
+    res.render('edit', { recipe: recipe });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
 
 
 
