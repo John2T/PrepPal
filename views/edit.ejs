@@ -1,4 +1,28 @@
 <%- include("templates/header") %>
+
+
+<script>
+  const addInstructionButton = document.getElementById('addInstructionBtn');
+  const instructionList = document.getElementById('instructionList');
+
+  let instructionCount = <%= recipe.instructions.length %>;
+
+  addInstructionButton.addEventListener('click', function() {
+    const newInstructionLi = document.createElement('li');
+    newInstructionLi.className = 'list-group-item';
+    newInstructionLi.innerHTML = `
+      <div class="row">
+        <div class="col-md-2">${instructionCount + 1}.</div>
+        <div class="col-md-10">
+          <textarea class="form-control" id="instruction${instructionCount}" name="instructions" rows="1" required></textarea>
+        </div>
+      </div>
+    `;
+    instructionList.appendChild(newInstructionLi);
+    instructionCount++;
+  });
+</script>
+
 <div class="container pb-5">
   <h1>Edit Recipe</h1>
 
@@ -9,8 +33,9 @@
     </div>
     <div class="form-group mb-3">
       <label for="details">Details</label>
-      <textarea class="form-control" id="details" name="details" rows="12" required><%= recipe.details %></textarea>
+      <textarea class="form-control" id="details" name="details" rows="12" required><%= recipe.details%></textarea>
     </div>
+    
     <div class="form-group mb-3">
       <label for="healthScore">Health Score</label>
       <input type="number" class="form-control" id="healthScore" name="healthScore" value="<%= recipe.healthScore %>" required>
@@ -54,7 +79,7 @@
 
     <div class="form-group mb-3">
       <label for="instructions">Instructions</label>
-      <ol class="list-group">
+      <ol class="list-group" id="instructionList">
         <% for (let i = 0; i < recipe.instructions.length; i++) { %>
           <li class="list-group-item">
             <div class="row">
@@ -71,7 +96,13 @@
       </ol>
     </div>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="button" class="btn btn-primary mb-3" id="addInstructionBtn">Add Instruction</button>
+
+    <button type="submit" class="btn btn-primary float-end">Submit</button>
   </form>
 </div>
+
+
+
+
 <%- include("templates/footer") %>

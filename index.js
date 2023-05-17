@@ -164,7 +164,7 @@ app.get('/home', async (req, res) => {
       const favoriteRecipes = await favourites.find({ email: userEmail }).limit(2).toArray(); // Limit the result to 2 recipes
       const favoriteRecipesNum = await favourites.find({ email: userEmail }).count(); // Count the number of favorite recipes
 
-      console.log(favoriteRecipes);
+      
 
       //console.log(response.data.recipes); // Check the structure of the API response
 
@@ -401,7 +401,7 @@ app.get('/recipe/:id', (req, res) => {
     res.redirect('/login');
   }
   const recipeId = req.params.id;
-  const api_key = "e8c352e2ce2e47fb81599dc7db3d39ce";//change api-------------------------------------------------------------------------------------------
+  const api_key = "3640854786784e75b2b4956ea4822dc5";//change api-------------------------------------------------------------------------------------------
   const detailed_recipe = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${api_key}`;
 
   // Nested API call to get detailed recipe information
@@ -496,12 +496,19 @@ app.post('/favorite', async (req, res) => {
         instructions
       } = req.body;
 
+      console.log("Details Before: " + details);
+      
+      // Decode HTML entities and remove HTML tags
+      const sanitizedDetails = stripTags(details);
+
+      console.log("After: " + sanitizedDetails);
+
       const favorite = {
         email,
         recipeId,
         title,
         image,
-        details,
+        details: sanitizedDetails,
         healthScore,
         cookTime,
         wwPoints,
@@ -522,7 +529,6 @@ app.post('/favorite', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-
 
 
 app.get('/allFavourites', async (req, res) => {
@@ -673,6 +679,8 @@ async function checkRecipeIsFavourited(email, recipeId) {
     return 0; // or throw the error if you want to handle it differently
   }
 }
+
+
 
 
 
