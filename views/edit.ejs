@@ -104,6 +104,8 @@
 
 
 <script>
+
+
 //This script was created with the assistence of Chat GPT
 const ingredientList = document.getElementById('ingredientList');
 
@@ -159,125 +161,70 @@ const updateIngredientNumbers = () => {
   });
 };
 
-const addIngredientButtons = ingredientList.getElementsByClassName('addIngredientBtn');
 let ingredientCount = <%= recipe.ingredients.length %>;
 
-Array.from(addIngredientButtons).forEach(function(addIngredientButton) {
-  addIngredientButton.addEventListener('click', function() {
-    const newIngredientLi = document.createElement('li');
-    newIngredientLi.className = 'list-group-item';
-    newIngredientLi.innerHTML = `
+
+
+
+
+
+
+
+
+
+const instructionList = document.getElementById('instructionList');
+
+instructionList.addEventListener('click', function(event) {
+  const target = event.target;
+
+  // Check if the clicked button is a remove instruction button
+  if (target.classList.contains('removeInstructionBtn')) {
+    const instructionItem = target.closest('.list-group-item');
+    instructionItem.remove();
+    updateInstructionNumbers();
+  }
+
+  // Check if the clicked button is an add instruction button
+  if (target.classList.contains('addInstructionBtn')) {
+    const instructionItem = target.closest('.list-group-item');
+    const newInstructionLi = document.createElement('li');
+    newInstructionLi.className = 'list-group-item';
+    newInstructionLi.innerHTML = `
       <div class="row">
-        <div class="col-md-10">
-          <textarea class="form-control" id="ingredient${ingredientCount}" name="ingredients" rows="1" required></textarea>
+        <div class="col-md-2">${instructionItem.querySelector('.col-md-2').textContent.trim()}</div>
+        <div class="col-md-8">
+          <textarea class="form-control" id="instruction${instructionCount}" name="instructions" rows="1" required></textarea>
         </div>
         <div class="col-md-2">
-          <button type="button" class="btn btn-secondary addIngredientBtn">+</button>
-          <button type="button" class="btn btn-secondary removeIngredientBtn">-</button>
+          <button type="button" class="btn btn-secondary addInstructionBtn">+</button>
+          <button type="button" class="btn btn-secondary removeInstructionBtn">-</button>
         </div>
       </div>
     `;
-    ingredientList.appendChild(newIngredientLi);
-    ingredientCount++;
+    instructionItem.insertAdjacentElement('afterend', newInstructionLi);
+    instructionCount++;
 
-    // Add event listener to remove the ingredient when the minus sign is clicked
-    const removeIngredientButton = newIngredientLi.querySelector('.removeIngredientBtn');
-    removeIngredientButton.addEventListener('click', function() {
-      newIngredientLi.remove();
-      updateIngredientNumbers();
+    // Update the instruction numbers for the remaining instructions
+    updateInstructionNumbers();
+
+    // Add event listener to remove the instruction when the minus sign is clicked
+    const removeInstructionButton = newInstructionLi.querySelector('.removeInstructionBtn');
+    removeInstructionButton.addEventListener('click', function() {
+      newInstructionLi.remove();
+      updateInstructionNumbers();
     });
-  });
+  }
 });
 
-
-
-
-
-
-
-
-
-  const instructionList = document.getElementById('instructionList');
-
-  instructionList.addEventListener('click', function(event) {
-    const target = event.target;
-
-    // Check if the clicked button is a remove instruction button
-    if (target.classList.contains('removeInstructionBtn')) {
-      const instructionItem = target.closest('.list-group-item');
-      instructionItem.remove();
-      updateInstructionNumbers();
-    }
-
-    // Check if the clicked button is an add instruction button
-    if (target.classList.contains('addInstructionBtn')) {
-      const instructionItem = target.closest('.list-group-item');
-      const newInstructionLi = document.createElement('li');
-      newInstructionLi.className = 'list-group-item';
-      newInstructionLi.innerHTML = `
-        <div class="row">
-          <div class="col-md-2">${instructionItem.querySelector('.col-md-2').textContent.trim()}</div>
-          <div class="col-md-8">
-            <textarea class="form-control" id="instruction${instructionCount}" name="instructions" rows="1" required></textarea>
-          </div>
-          <div class="col-md-2">
-            <button type="button" class="btn btn-secondary addInstructionBtn">+</button>
-            <button type="button" class="btn btn-secondary removeInstructionBtn">-</button>
-          </div>
-        </div>
-      `;
-      instructionItem.insertAdjacentElement('afterend', newInstructionLi);
-      instructionCount++;
-
-      // Update the instruction numbers for the remaining instructions
-      updateInstructionNumbers();
-
-      // Add event listener to remove the instruction when the minus sign is clicked
-      const removeInstructionButton = newInstructionLi.querySelector('.removeInstructionBtn');
-      removeInstructionButton.addEventListener('click', function() {
-        newInstructionLi.remove();
-        updateInstructionNumbers();
-      });
-    }
+const updateInstructionNumbers = () => {
+  const instructions = Array.from(instructionList.getElementsByClassName('list-group-item'));
+  instructions.forEach((item, index) => {
+    item.querySelector('.col-md-2').textContent = `${index + 1}.`;
   });
+};
 
-  const updateInstructionNumbers = () => {
-    const instructions = Array.from(instructionList.getElementsByClassName('list-group-item'));
-    instructions.forEach((item, index) => {
-      item.querySelector('.col-md-2').textContent = `${index + 1}.`;
-    });
-  };
+let instructionCount = <%= recipe.instructions.length %>;
 
-  const addInstructionButtons = instructionList.getElementsByClassName('addInstructionBtn');
-  let instructionCount = <%= recipe.instructions.length %>;
-
-  Array.from(addInstructionButtons).forEach(function(addInstructionButton) {
-    addInstructionButton.addEventListener('click', function() {
-      const newInstructionLi = document.createElement('li');
-      newInstructionLi.className = 'list-group-item';
-      newInstructionLi.innerHTML = `
-        <div class="row">
-          <div class="col-md-2">${instructionCount + 1}.</div>
-          <div class="col-md-8">
-            <textarea class="form-control" id="instruction${instructionCount}" name="instructions" rows="1" required></textarea>
-          </div>
-          <div class="col-md-2">
-            <button type="button" class="btn btn-secondary addInstructionBtn">+</button>
-            <button type="button" class="btn btn-secondary removeInstructionBtn">-</button>
-          </div>
-        </div>
-      `;
-      instructionList.appendChild(newInstructionLi);
-      instructionCount++;
-
-      // Add event listener to remove the instruction when the minus sign is clicked
-      const removeInstructionButton = newInstructionLi.querySelector('.removeInstructionBtn');
-      removeInstructionButton.addEventListener('click', function() {
-        newInstructionLi.remove();
-        updateInstructionNumbers();
-      });
-    });
-  });
 </script>
 
 
