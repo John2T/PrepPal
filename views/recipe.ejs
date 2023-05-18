@@ -5,7 +5,7 @@
 
 
 <%- include("templates/header") %>
-<div class="container">
+<div class="container pb-5">
   <div class="card mb-3 p-3 bg-light" style="background-color: rgba(245, 249, 226, 0.864);">
     <div class="card mb-3">
       <div class="row g-0 flex-wrap">
@@ -38,11 +38,6 @@
                 <span id="favIcon" class="material-symbols-outlined" style="font-variation-settings: 'FILL' <%= parseInt(isFavorited) %>, 'wght' 300, 'GRAD' 0, 'opsz' 48;">
                     favorite</span>
                 </button>
-
-
-                
-                
-                
               </form>
               
             </div>
@@ -93,47 +88,48 @@
       
       </div>
 
-    </div>
-    <div class="card mb-3">
-      <div class="card-body">
-        <h2 class="card-title text-center">Nutritional Information</h2>
-        <div class="row justify-content-center">
-          <div class="col-md-8">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Calories</th>
-                  <th>Protein</th>
-                  <th>Carbs</th>
-                  <th>Fat</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td id = "cal"><%= nutrition.nutrients[0].amount%><%= nutrition.nutrients[0].unit%></td>
-                  <td id = "pro"><%= nutrition.nutrients[8].amount%><%= nutrition.nutrients[8].unit%></td>
-                  <td id = "carb"><%= nutrition.nutrients[3].amount%><%= nutrition.nutrients[3].unit%></td>
-                  <td id = "fat"><%= nutrition.nutrients[1].amount%><%= nutrition.nutrients[1].unit%></td>
-                </tr>
-              </tbody>
-            </table>
+
+      <div class="card mb-3">
+        <div class="card-body">
+          <h2 class="card-title text-center">Nutritional Information</h2>
+          <div class="row justify-content-center">
+            <div class="col-md-8">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Calories</th>
+                    <th>Protein</th>
+                    <th>Carbs</th>
+                    <th>Fat</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td id = "cal"><%= nutrition.nutrients[0].amount%><%= nutrition.nutrients[0].unit%></td>
+                    <td id = "pro"><%= nutrition.nutrients[8].amount%><%= nutrition.nutrients[8].unit%></td>
+                    <td id = "carb"><%= nutrition.nutrients[3].amount%><%= nutrition.nutrients[3].unit%></td>
+                    <td id = "fat"><%= nutrition.nutrients[1].amount%><%= nutrition.nutrients[1].unit%></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </div>
-      
-    </div>
-    <div class="card mb-3">
-      <div class="card-body">
-        <h2 class="card-title text-center">Instructions</h2>
-        <ol id="instructions">
-          <% instructions.forEach(function(step, index) { %>
-            <li data-instruction="<%= index %>"><%= step.step %></li>
-          <% }); %>
-        </ol>
         
+      </div>
+      <div class="card mb-3">
+        <div class="card-body">
+          <h2 class="card-title text-center">Instructions</h2>
+          <ol id="instructions">
+            <% instructions.forEach(function(step, index) { %>
+              <li data-instruction="<%= index %>"><%= step.step %></li>
+            <% }); %>
+          </ol>
+          
+      </div>
     </div>
-  </div>
-</div>
-</div>
+  
 
+    </div>
+    
 <%- include("templates/footer") %> 
