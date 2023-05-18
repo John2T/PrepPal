@@ -50,7 +50,7 @@ var {database} = include('databaseConnection');
 
 const userCollection = database.db(mongodb_database).collection('users');
 const favourites = database.db(mongodb_database).collection('favourites');
-
+const shoppinglist = database.db(mongodb_database).collection('shoppinglist');
 
 app.set('view engine', 'ejs');
 
@@ -401,7 +401,7 @@ app.get('/recipe/:id', (req, res) => {
     res.redirect('/login');
   }
   const recipeId = req.params.id;
-  const api_key = "3640854786784e75b2b4956ea4822dc5";//change api-------------------------------------------------------------------------------------------
+  const api_key = "1bb15cce3c994921aaa86ea7d011cd20";//change api-------------------------------------------------------------------------------------------
   const detailed_recipe = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${api_key}`;
 
   // Nested API call to get detailed recipe information
@@ -461,6 +461,83 @@ app.get('/recipe/:id', (req, res) => {
       console.error(error);
     });
 });
+
+//---------------------------------------------------------------------shopping list-------------------------------------------
+
+app.post('/create-shoppinglist', async (req, res) => {
+  if (!req.session.loggedin) {
+    res.redirect('/login');
+    return;
+  }
+
+  const email = req.session.email;
+  const { recipeId, title, ingredients } = req.body;
+
+  try {
+    const existingItem = await shoppinglist.findOne({ email, recipeId });
+
+    if (existingItem) {
+      // Recipe is already in the shopping list
+      const message = 'This recipe is already in your shopping list.';
+      res.redirect('/shoppinglist');
+    } else {
+      // Recipe is not in the shopping list, so add it
+      const shoppingListItem = {
+        email,
+        recipeId,
+        title,
+        ingredients: JSON.parse(ingredients)
+      };
+
+      await shoppinglist.insertOne(shoppingListItem);
+
+      // Redirect to the shopping list page
+      res.redirect('/shoppinglist');
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error on shoppinglist page');
+  }
+});
+
+
+
+app.get('/shoppinglist', async (req, res) => {
+  if (!req.session.loggedin) {
+    res.redirect('/login');
+    return;
+  }
+
+  const email = req.session.email;
+
+  try {
+    const shoppingListItems = await shoppinglist.find({ email }).toArray();
+
+    res.render('shoppinglist', { shoppingListItems });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error on shoppinglist page');
+  }
+});
+
+app.post('/shoppinglist/delete/:recipeId', async (req, res) => {
+  const recipeId = req.params.recipeId;
+
+  try {
+    // delete
+    await shoppinglist.deleteOne({ _id: ObjectId(recipeId) });
+
+    // redirect to shoppinglist or refrash shoppinglist
+    res.redirect('/shoppinglist');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
+//-------------------------------------------------------------------------------------------------------------------------------
 
 app.post('/favorite', async (req, res) => {
   if (!req.session.loggedin) {
