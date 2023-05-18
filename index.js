@@ -718,8 +718,8 @@ app.post('/recipeUpdate/:id', async (req, res) => {
     }
 
     await favourites.updateOne({ recipeId: recipeId, email: email }, { $set: recipe });
+    res.redirect(`/allFavourites/${recipeId}`);
 
-    res.redirect('/'); // Redirect to the home page or any other desired page
   } catch (error) {
     console.error('Error:', error);
     res.status(500).send('Internal Server Error');
