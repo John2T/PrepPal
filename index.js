@@ -164,7 +164,7 @@ app.get('/home', async (req, res) => {
       const favoriteRecipes = await favourites.find({ email: userEmail }).limit(2).toArray(); // Limit the result to 2 recipes
       const favoriteRecipesNum = await favourites.find({ email: userEmail }).count(); // Count the number of favorite recipes
 
-      console.log(favoriteRecipes);
+      
 
       //console.log(response.data.recipes); // Check the structure of the API response
 
@@ -438,7 +438,7 @@ app.get('/recipe/:id', (req, res) => {
                 //console.log(isFavorited);
                  // Render the EJS template with the recipe data
              
-                console.log("Recipe:" + isFavorited);
+            
                  res.render('recipe', { recipe: details, ingredients: ingredients, instructions: instructions, details: details, nutrition: nutrition , isFavorited: isFavorited});
                })
                .catch(error => {
@@ -573,12 +573,19 @@ app.post('/favorite', async (req, res) => {
         instructions
       } = req.body;
 
+      //console.log("Details Before: " + details);
+      
+      // Decode HTML entities and remove HTML tags
+      const sanitizedDetails = stripTags(details);
+
+      //console.log("After: " + sanitizedDetails);
+
       const favorite = {
         email,
         recipeId,
         title,
         image,
-        details,
+        details: sanitizedDetails,
         healthScore,
         cookTime,
         wwPoints,
@@ -599,7 +606,6 @@ app.post('/favorite', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-
 
 
 app.get('/allFavourites', async (req, res) => {
@@ -653,6 +659,82 @@ app.get('/allFavourites/:recipeId', (req, res) => {
       res.render('recipeNotFound');
     });
 });
+
+
+app.post('/allFavourites/:id/edit', async function(req, res) {
+  const recipeId = req.params.id;
+
+  try {
+    // Find the recipe in the database based on recipeId
+    const recipe = await favourites.findOne({ recipeId: recipeId });
+
+    if (!recipe) {
+      // Recipe not found
+      res.status(404).send('Recipe not found');
+      return;
+    }
+    // Pass the recipe to the associated page for editing
+    res.render('edit', { recipe: recipe });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+app.post('/recipeUpdate/:id', async (req, res) => {
+  try {
+    const recipeId = req.params.id;
+    const email = req.session.email;
+    const { title, details, healthScore, cookTime, servings, ingredients, calories, protein, carbs, fat, instructions } = req.body;
+    const recipe = await favourites.findOne({ recipeId: recipeId, email: email });
+
+    recipe.title = title;
+    recipe.details = details;
+    recipe.healthScore = healthScore;
+    recipe.cookTime = cookTime;
+    recipe.servings = servings;
+
+    recipe.ingredients = [];
+
+    if (Array.isArray(ingredients)) {
+      ingredients.forEach((original) => {
+        recipe.ingredients.push({ original: original });
+      });
+    }
+
+    recipe.cal = calories;
+    recipe.pro = protein;
+    recipe.carbs = carbs;
+    recipe.fat = fat;
+
+    recipe.instructions = [];
+
+    if (Array.isArray(instructions)) {
+      instructions.forEach((step, index) => {
+        recipe.instructions.push({
+          step: step,
+          number: index + 1,
+        });
+      });
+    }
+
+    await favourites.updateOne({ recipeId: recipeId, email: email }, { $set: recipe });
+
+    res.redirect('/'); // Redirect to the home page or any other desired page
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -724,6 +806,8 @@ async function checkRecipeIsFavourited(email, recipeId) {
     return 0; // or throw the error if you want to handle it differently
   }
 }
+
+
 
 
 
