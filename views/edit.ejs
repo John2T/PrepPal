@@ -3,7 +3,8 @@
 <div class="container pb-5">
   <h1>Edit Recipe</h1>
 
-  <form id="editForm" method="POST" action="/edit"  style="padding-bottom: 60px;">
+  <form id="editForm" method="POST" action="/recipeUpdate/<%=recipe.recipeId %>" style="padding-bottom: 60px;">
+
     <div class="form-group mb-3">
       <label for="title">Title</label>
       <input type="text" class="form-control" id="title" name="title" value="<%= recipe.title %>" required>
@@ -25,6 +26,7 @@
       <label for="servings">Servings</label>
       <input type="number" class="form-control" id="servings" name="servings" value="<%= recipe.servings %>" required>
     </div>
+
     <div class="form-group border p-3 mb-3">
       <label for="ingredients">Ingredients</label>
       <ul class="list-group" id="ingredientList">
@@ -45,6 +47,7 @@
         <% } %>
       </ul>
     </div>
+    
 
     <div class="form-group mb-3">
       <label for="calories">Calories</label>
@@ -62,6 +65,8 @@
       <label for="fat">Fat</label>
       <input type="text" class="form-control" id="fat" name="fat" value="<%= recipe.fat %>" required>
     </div>
+
+    
     <div class="form-group border p-3 mb-3">
       <div class="form-group mb-3">
         <label for="instructions">Instructions</label>

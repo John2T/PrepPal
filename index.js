@@ -585,8 +585,6 @@ app.get('/allFavourites/:recipeId', (req, res) => {
 
 
 app.post('/allFavourites/:id/edit', async function(req, res) {
-
- 
   const recipeId = req.params.id;
 
   try {
@@ -605,6 +603,58 @@ app.post('/allFavourites/:id/edit', async function(req, res) {
     res.status(500).send('Internal Server Error');
   }
 });
+app.post('/recipeUpdate/:id', async (req, res) => {
+  try {
+    const recipeId = req.params.id;
+    const email = req.session.email;
+    const { title, details, healthScore, cookTime, servings, ingredients, calories, protein, carbs, fat, instructions } = req.body;
+    const recipe = await favourites.findOne({ recipeId: recipeId, email: email });
+
+    recipe.title = title;
+    recipe.details = details;
+    recipe.healthScore = healthScore;
+    recipe.cookTime = cookTime;
+    recipe.servings = servings;
+
+    recipe.ingredients = [];
+
+    if (Array.isArray(ingredients)) {
+      ingredients.forEach((original) => {
+        recipe.ingredients.push({ original: original });
+      });
+    }
+
+    recipe.cal = calories;
+    recipe.pro = protein;
+    recipe.carbs = carbs;
+    recipe.fat = fat;
+
+    recipe.instructions = [];
+
+    if (Array.isArray(instructions)) {
+      instructions.forEach((step, index) => {
+        recipe.instructions.push({
+          step: step,
+          number: index + 1,
+        });
+      });
+    }
+
+    await favourites.updateOne({ recipeId: recipeId, email: email }, { $set: recipe });
+
+    res.redirect('/'); // Redirect to the home page or any other desired page
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
+
+
+
+
 
 
 
