@@ -462,7 +462,7 @@ app.get('/recipe/:id', (req, res) => {
     });
 });
 
-//---------------------------------------------------------------------shopping list-------------------------------------------
+//---------------------------------------------------------------------shopping list page-------------------------------------------
 
 app.post('/create-shoppinglist', async (req, res) => {
   if (!req.session.loggedin) {
@@ -501,39 +501,54 @@ app.post('/create-shoppinglist', async (req, res) => {
 });
 
 
-
 app.get('/shoppinglist', async (req, res) => {
-  if (!req.session.loggedin) {
-    res.redirect('/login');
-    return;
-  }
-
   const email = req.session.email;
 
   try {
+    // Get shopping list items for the user
     const shoppingListItems = await shoppinglist.find({ email }).toArray();
 
-    res.render('shoppinglist', { shoppingListItems });
+    // Determine the message based on the shopping list items
+    let message = '';
+    if (shoppingListItems.length === 0) {
+      message = 'There is nothing in your shopping list!';
+    }
+
+    // Render the template and pass the shopping list items and message
+    res.render('shoppinglist', {
+      shoppingListItems,
+      message
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal Server Error on shoppinglist page');
+    res.status(500).send('Internal Server Error');
   }
 });
+
+
 
 app.post('/shoppinglist/delete/:recipeId', async (req, res) => {
   const recipeId = req.params.recipeId;
 
   try {
-    // delete
+    // Delete the item
     await shoppinglist.deleteOne({ _id: ObjectId(recipeId) });
 
-    // redirect to shoppinglist or refrash shoppinglist
+    // Check if there are any remaining items
+    const email = req.session.email;
+    const remainingItems = await shoppinglist.find({ email }).toArray();
+    if (remainingItems.length === 0) {
+      req.session.emptyShoppingList = true;
+    }
+
+    // Redirect to shopping list
     res.redirect('/shoppinglist');
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
   }
 });
+
 
 
 

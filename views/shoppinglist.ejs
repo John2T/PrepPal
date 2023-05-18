@@ -3,33 +3,34 @@
 <div class="container" style="max-width: 800px; margin-top: 20px;">
   <h1 class="text-center">Shopping List</h1>
 
-  <% if (shoppingListItems.length > 0) { %>
-    <div style="background-color: rgba(245, 249, 226, 0.864); padding: 10px; box-shadow: 2px 2px 10px #888888; margin-bottom: 20px;">
-      <div class="recipe-cards">
-        <% shoppingListItems.forEach((recipe) => { %>
-          <div class="recipe-card">
-            <h3><%= recipe.title %></h3>
-            <ul>
-              <% recipe.ingredients.forEach((ingredient, index) => { %>
-                <li data-ingredient="<%= index %>"><%= ingredient.original %></li>
-              <% }) %>
-            </ul>
-            <form id="deleteForm_<%= recipe._id %>" action="/shoppinglist/delete/<%= recipe._id %>" method="POST" style="display: inline;">
-              <button class="btn btn-danger" onclick="deleteRecipe('<%= recipe._id %>')">Delete</button>
-            </form>
-          </div>
-        <% }) %>
-      </div>
+<% if (shoppingListItems.length > 0) { %>
+  <div style="background-color: rgba(245, 249, 226, 0.864); padding: 10px; box-shadow: 2px 2px 10px #888888; margin-bottom: 20px;">
+    <div class="recipe-cards">
+      <% shoppingListItems.forEach((recipe) => { %>
+        <div class="recipe-card">
+          <h3><%= recipe.title %></h3>
+          <ul>
+            <% recipe.ingredients.forEach((ingredient, index) => { %>
+              <li data-ingredient="<%= index %>"><%= ingredient.original %></li>
+            <% }) %>
+          </ul>
+          <form id="deleteForm_<%= recipe._id %>" action="/shoppinglist/delete/<%= recipe._id %>" method="POST" style="display: inline;">
+            <button class="btn btn-danger" onclick="deleteRecipe('<%= recipe._id %>')">Delete</button>
+          </form>
+        </div>
+      <% }) %>
     </div>
-  <% } else { %>
-    <div class="text-center">
-      <% if (message) { %>
-        <p><%= message %></p>
-      <% } else { %>
-        <p>No shopping list to see here!</p>
-      <% } %>
-    </div>
-  <% } %>
+  </div>
+<% } else { %>
+  <div class="text-center">
+    <% if (message) { %>
+      <p><%= message %></p>
+    <% } else { %>
+      <p>You haven't created any shopping list!</p>
+    <% } %>
+  </div>
+<% } %>
+
 </div>
 
 
