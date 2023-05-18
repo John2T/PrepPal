@@ -511,7 +511,7 @@ app.get('/shoppinglist', async (req, res) => {
     // Determine the message based on the shopping list items
     let message = '';
     if (shoppingListItems.length === 0) {
-      message = 'You have not created any shopping lists!';
+      message = 'There is nothing in your shopping list!';
     }
 
     // Render the template and pass the shopping list items and message
