@@ -1,35 +1,44 @@
 <%- include("templates/header") %>
 <div class="container" style="max-width: 800px; margin-top: 20px;">
   <h1 class="text-center">Hello, <%= username %>!</h1>
-
-  <div id="favorite" class="col" style="background-color: bisque;padding-top: 10px;box-shadow: 2px 2px 10px #888888;margin-bottom: 20px;">
-    <p style="font-weight: bold;" >Your favorite</p>
-    <div class="card" style="width: 100%;">
-      <div class="card" >
-        <img src="/favorite.jpg" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title" style="text-align: center;">Taco</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a href="#" class="btn btn-primary">Check</a>
-        </div>
+  <div id="favorite" class="col" style="background-color: rgba(245, 249, 226, 0.864); padding: 20px; box-shadow: 2px 2px 10px #888888; margin-bottom: 20px;">
+    <p style="font-weight: bold;">Your favorites</p>
+    <% if (favoriteRecipes.length > 0) { %>
+      <div class="card-group" style="display: flex;">
+        <% favoriteRecipes.slice(0, 2).forEach((recipe) => { %>
+          <div class="card" style="width: 200px; margin-right: 10px;">
+            <img src="<%= recipe.image %>" class="card-img-top" alt="<%= recipe.title %>">
+            <div class="card-body">
+              <h5 class="card-title" style="text-align: center;"><%= recipe.title %></h5>
+              <a href="/allFavourites/<%= recipe.recipeId %>" class="btn btn-primary">Check</a>
+            </div>
+          </div>
+        <% }) %>
       </div>
-    </div>
+      <% if (favoriteRecipesNum >= 3) { %>
+        <div class="text-center" style="margin-top: 10px;">
+          <a href="/allFavourites" class="btn btn-primary">View All</a>
+        </div>
+      <% } %>
+    <% } else { %>
+      <p>You haven't saved any favorite recipes yet.</p>
+    <% } %>
   </div>
+
+   
+  
+  
 
   <div id="top10" style="background-color: rgba(245, 249, 226, 0.864); padding: 10px; box-shadow: 2px 2px 10px #888888; margin-bottom: 20px;">
     <h2 style="font-weight: bold; font-size: 20px;">Top Recipes</h2>
-
-  <% recipeData.forEach((recipe) => { %>
-    <div class="recipe-card">
-      <img src="<%= recipe.image %>" alt="<%= recipe.title %>">
-      <h3><%= recipe.title %></h3>
-      <a href="/recipe/<%= recipe.id %>" class="btn btn-primary">View Recipe</a>
-    </div>
-  <% }) %>
-
-    
+    <% recipeData.forEach((recipe) => { %>
+      <div class="recipe-card">
+        <img src="<%= recipe.image %>" alt="<%= recipe.title %>">
+        <h3><%= recipe.title %></h3>
+        <a href="/recipe/<%= recipe.id %>" class="btn btn-primary">View Recipe</a>
+      </div>
+    <% }) %>
   </div>
-  
 
   <form action="/home/browsing" method="POST">
     <div class="d-grid gap-2">

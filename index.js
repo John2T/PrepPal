@@ -16,7 +16,7 @@ const nodeMailer = require('nodemailer');
 
 const saltRounds = 12;
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 
 const app = express();
 
@@ -52,13 +52,14 @@ var {database} = include('databaseConnection');
 
 const userCollection = database.db(mongodb_database).collection('users');
 const favourites = database.db(mongodb_database).collection('favourites');
-
+const shoppinglist = database.db(mongodb_database).collection('shoppinglist');
 
 app.set('view engine', 'ejs');
 
 app.use(express.json());
 
 app.use(express.urlencoded({extended: false}));
+
 
 var mongoStore = MongoStore.create({
 	mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
@@ -76,10 +77,10 @@ app.use(session({
 ));
 
 
-//---------------------------------------home page------------------------------
+//---------------------------------------index page------------------------------
 app.get('/', (req, res) => {
-  console.log(req.url);
-  console.log(url.parse(req.url).pathname);
+  //console.log(req.url);
+  //console.log(url.parse(req.url).pathname);
   const loggedin = req.session.loggedin;
   const username = req.session.username || '';
   res.render('index', { loggedin, username });
@@ -136,8 +137,7 @@ app.post('/signup', async (req, res) => {
     res.render('signup', { errorMessage });
   }
 });
-
-
+//---------------------------------------home page------------------------------
 app.get('/home', async (req, res) => {
   try {
     if (!req.session.loggedin) {
@@ -146,7 +146,7 @@ app.get('/home', async (req, res) => {
     } else {
       // Check if the session variable for recipe count exists, and initialize it if not
       if (!req.session.recipeCount) {
-        req.session.recipeCount = 5;
+        req.session.recipeCount = 3;
       }
 
       // User is logged in
@@ -157,20 +157,31 @@ app.get('/home', async (req, res) => {
         params: {
           number: req.session.recipeCount, // Fetch the current recipe count
           tags: 'vegetarian,dessert',
-          apiKey: '53820c84e1cb476c90044eea130dbf6c' // Replace with your actual Spoonacular API key
+          apiKey: 'c55f1cebd8b648a9a121f036ed8bc51b' // Replace with your actual Spoonacular API key
         }
       });
 
-      console.log(response.data.recipes); // Check the structure of the API response
+      // Retrieve the user's favorite recipes from the database
+      const userEmail = req.session.email; // Assuming the user's email is stored in req.session.email
+      const favoriteRecipes = await favourites.find({ email: userEmail }).limit(2).toArray(); // Limit the result to 2 recipes
+      const favoriteRecipesNum = await favourites.find({ email: userEmail }).count(); // Count the number of favorite recipes
+
+      
+
+      //console.log(response.data.recipes); // Check the structure of the API response
 
       const recipeData = response.data.recipes;
-      res.render('home', { username, recipeData });
+      res.render('home', { username, recipeData, favoriteRecipes, favoriteRecipesNum });
     }
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).send('Internal Server Error');
+    //console.error('Error:', error);
+    res.status(500).send('Internal Server Error----');
   }
 });
+
+
+
+
 
 app.post('/home/browsing', (req, res) => {
   try {
@@ -184,22 +195,22 @@ app.post('/home/browsing', (req, res) => {
 
     // Check if the click count exceeds the limit
     if (req.session.clickCount <= 2) {
-      // Increment the recipe count by 5
-      req.session.recipeCount += 5;
+      // Increment the recipe count by 3
+      req.session.recipeCount += 3;
     }
 
     // Redirect back to the home page
     res.redirect('/home');
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).send('Internal Server Error---111');
   }
 });
 
 app.post('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      console.log(err);
+      //console.log(err);
     } else {
       res.redirect('/');
     }
@@ -319,6 +330,11 @@ app.post('/forgotpassword', async (req, res, next) =>{
   const domain = 'http://rbqidcvhag.eu09.qoddiapp.com';
   const link = `${domain}/reset-password/${id}/${token}`;
 
+  //console.log(link);
+  res.send("A reset password link has been send to your email addess");
+  
+
+
   //Use NodeMailer so send email to user
   const transporter = nodeMailer.createTransport({
     host: 'smtp.gmail.com',
@@ -350,7 +366,7 @@ const info = await transporter.sendMail({
 //------------------------------------Reset passsword------------------------------
 app.get('/reset-password/:id/:token', async(req, res, next) =>{
   const {id, token} = req.params;
-  console.log
+  //console.log
   
   //check if this id exist in database
   const existingId = await userCollection.findOne({ _id: ObjectId(id) });
@@ -364,11 +380,11 @@ app.get('/reset-password/:id/:token', async(req, res, next) =>{
     const payload = jwt.verify(token, secret);
     res.render('resetPassword', {email: existingId.email});
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
     res.send(error.message);
   }
   
-  console.log(secret);
+  //console.log(secret);
 });
 
 app.post('/reset-password/:id/:token', async (req, res, next) =>{
@@ -400,7 +416,7 @@ app.post('/reset-password/:id/:token', async (req, res, next) =>{
       res.redirect('/login');
 
     } catch (error) {
-      console.log(error.message);
+      //console.log(error.message);
       res.send(error.message);
     }
 });
@@ -414,20 +430,20 @@ app.get('/nosql-injection', async (req,res) => {
 		res.send(`<h3>no user provided - try /nosql-injection?user=name</h3> <h3>or /nosql-injection?user[$ne]=name</h3>`);
 		return;
 	}
-	console.log("user: "+username);
+	//console.log("user: "+username);
 
 	const schema = Joi.string().max(20).required();
 	const validationResult = schema.validate(username);
 
 	if (validationResult.error != null) {  
-	   console.log(validationResult.error);
+	   //console.log(validationResult.error);
 	   res.send("<h1 style='color:darkred;'>A NoSQL injection attack was detected!!</h1>");
 	   return;
 	}	
 
 	const result = await userCollection.find({username: username}).project({username: 1, password: 1, _id: 1}).toArray();
 
-	console.log(result);
+	//console.log(result);
 
     res.send(`<h1>Hello ${username}</h1>`);
 });
@@ -462,17 +478,20 @@ app.post('/login', async (req, res) => {
   }
 });
 
-
+//---------------------------------------recipe page------------------------------
 app.get('/recipe/:id', (req, res) => {
+  if (!req.session.loggedin){
+    res.redirect('/login');
+  }
   const recipeId = req.params.id;
-  const api_key = "1bb15cce3c994921aaa86ea7d011cd20";
+  const api_key = "1bb15cce3c994921aaa86ea7d011cd20";//change api-------------------------------------------------------------------------------------------
   const detailed_recipe = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${api_key}`;
 
   // Nested API call to get detailed recipe information
   fetch(detailed_recipe)
     .then(response => response.json())
     .then(data => {
-      console.log(data);
+      //console.log(data);
       const details = data;
       const ingredients = data.extendedIngredients;
       const instructions_api_call = `https://api.spoonacular.com/recipes/${recipeId}/analyzedInstructions?apiKey=${api_key}`;
@@ -491,11 +510,24 @@ app.get('/recipe/:id', (req, res) => {
           fetch(nutrition_api_call)
             .then(response => response.json())
             .then(nutritionData => {
-              console.log(nutritionData);
+              //console.log(nutritionData);
               const nutrition = nutritionData;
 
-              // Render the EJS template with the recipe data
-              res.render('recipe', { recipe: details, ingredients: ingredients, instructions: instructions, details: details, nutrition: nutrition });
+              //Favourite? Check
+               // Check if the recipe is favorited
+               const userEmail = req.session.email; // Assuming the user's email is stored in req.user.email
+               checkRecipeIsFavourited(userEmail, recipeId)
+               .then(isFavorited => {
+                //console.log(isFavorited);
+                 // Render the EJS template with the recipe data
+             
+            
+                 res.render('recipe', { recipe: details, ingredients: ingredients, instructions: instructions, details: details, nutrition: nutrition , isFavorited: isFavorited});
+               })
+               .catch(error => {
+                 // Handle any errors here
+                 console.error(error);
+               });
             })
             .catch(error => {
               // Handle any errors here
@@ -513,8 +545,299 @@ app.get('/recipe/:id', (req, res) => {
     });
 });
 
+//---------------------------------------------------------------------shopping list page-------------------------------------------
+
+app.post('/create-shoppinglist', async (req, res) => {
+  if (!req.session.loggedin) {
+    res.redirect('/login');
+    return;
+  }
+
+  const email = req.session.email;
+  const { recipeId, title, ingredients } = req.body;
+
+  try {
+    const existingItem = await shoppinglist.findOne({ email, recipeId });
+
+    if (existingItem) {
+      // Recipe is already in the shopping list
+      const message = 'This recipe is already in your shopping list.';
+      res.redirect('/shoppinglist');
+    } else {
+      // Recipe is not in the shopping list, so add it
+      const shoppingListItem = {
+        email,
+        recipeId,
+        title,
+        ingredients: JSON.parse(ingredients)
+      };
+
+      await shoppinglist.insertOne(shoppingListItem);
+
+      // Redirect to the shopping list page
+      res.redirect('/shoppinglist');
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error on shoppinglist page');
+  }
+});
 
 
+app.get('/shoppinglist', async (req, res) => {
+  const email = req.session.email;
+
+  try {
+    // Get shopping list items for the user
+    const shoppingListItems = await shoppinglist.find({ email }).toArray();
+
+    // Determine the message based on the shopping list items
+    let message = '';
+    if (shoppingListItems.length === 0) {
+      message = 'There is nothing in your shopping list!';
+    }
+
+    // Render the template and pass the shopping list items and message
+    res.render('shoppinglist', {
+      shoppingListItems,
+      message
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
+app.post('/shoppinglist/delete/:recipeId', async (req, res) => {
+  const recipeId = req.params.recipeId;
+
+  try {
+    // Delete the item
+    await shoppinglist.deleteOne({ _id: ObjectId(recipeId) });
+
+    // Check if there are any remaining items
+    const email = req.session.email;
+    const remainingItems = await shoppinglist.find({ email }).toArray();
+    if (remainingItems.length === 0) {
+      req.session.emptyShoppingList = true;
+    }
+
+    // Redirect to shopping list
+    res.redirect('/shoppinglist');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
+
+//-------------------------------------------------------------------------------------------------------------------------------
+
+app.post('/favorite', async (req, res) => {
+  if (!req.session.loggedin) {
+    res.redirect('/login');
+    return;
+  }
+
+  const email = req.session.email;
+  const { recipeId } = req.body;
+
+  try {
+    const existingFavorite = await favourites.findOne({ email, recipeId });
+
+    if (existingFavorite) {
+      // Recipe is already favorited, so delete it
+      await favourites.deleteOne({ email, recipeId });
+      res.redirect('back');
+    } else {
+      // Recipe is not favorited, so save it
+      const {
+        title,
+        image,
+        details,
+        healthScore,
+        cookTime,
+        wwPoints,
+        servings,
+        ingredients,
+        cal,
+        pro,
+        carbs,
+        fat,
+        instructions
+      } = req.body;
+
+      //console.log("Details Before: " + details);
+      
+      // Decode HTML entities and remove HTML tags
+      const sanitizedDetails = stripTags(details);
+
+      //console.log("After: " + sanitizedDetails);
+
+      const favorite = {
+        email,
+        recipeId,
+        title,
+        image,
+        details: sanitizedDetails,
+        healthScore,
+        cookTime,
+        wwPoints,
+        servings,
+        ingredients: JSON.parse(ingredients),
+        cal,
+        pro,
+        carbs,
+        fat,
+        instructions: JSON.parse(instructions)
+      };
+
+      await favourites.insertOne(favorite);
+      res.redirect('back');
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+app.get('/allFavourites', async (req, res) => {
+  try {
+    if (!req.session.loggedin) {
+      // User is not logged in, redirect to home page or handle accordingly
+      res.redirect('/');
+      return;
+    }
+    const userFavorites = await favourites.find({ email: req.session.email }).toArray();
+
+    // Convert userFavorites to JSON
+    const jsonFavorites = JSON.stringify(userFavorites);
+
+    // Pass the JSON data to the render template
+    res.render('allFavourites', { favorites: jsonFavorites });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+app.get('/allFavourites/:recipeId', (req, res) => {
+  const recipeId = req.params.recipeId;
+
+  // Favourite? Check
+  // Check if the recipe is favorited
+  const userEmail = req.session.email; // Assuming the user's email is stored in req.session.email
+  checkRecipeIsFavourited(userEmail, recipeId)
+    .then(isFavorited => {
+      // Find the favorite recipe
+      favourites.findOne({ recipeId: recipeId }, (err, favoriteRecipe) => {
+        if (err) {
+          console.error(err);
+          res.render('recipeNotFound');
+          return;
+        }
+
+        if (favoriteRecipe) {
+          // Render the recipe page template with the favorite recipe details
+          res.render('favouriteRecipe', { recipe: favoriteRecipe, isFavorited: isFavorited });
+        } else {
+          // Handle the case where the recipe is not found
+          res.redirect('/allFavourites');
+        }
+      });
+    })
+    .catch(error => {
+      console.error(error);
+      res.render('recipeNotFound');
+    });
+});
+
+
+app.post('/allFavourites/:id/edit', async function(req, res) {
+  const recipeId = req.params.id;
+
+  try {
+    // Find the recipe in the database based on recipeId
+    const recipe = await favourites.findOne({ recipeId: recipeId });
+
+    if (!recipe) {
+      // Recipe not found
+      res.status(404).send('Recipe not found');
+      return;
+    }
+    // Pass the recipe to the associated page for editing
+    res.render('edit', { recipe: recipe });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+app.post('/recipeUpdate/:id', async (req, res) => {
+  try {
+    const recipeId = req.params.id;
+    const email = req.session.email;
+    const { title, details, healthScore, cookTime, servings, ingredients, calories, protein, carbs, fat, instructions } = req.body;
+    const recipe = await favourites.findOne({ recipeId: recipeId, email: email });
+
+    recipe.title = title;
+    recipe.details = details;
+    recipe.healthScore = healthScore;
+    recipe.cookTime = cookTime;
+    recipe.servings = servings;
+
+    recipe.ingredients = [];
+
+    if (Array.isArray(ingredients)) {
+      ingredients.forEach((original) => {
+        recipe.ingredients.push({ original: original });
+      });
+    }
+
+    recipe.cal = calories;
+    recipe.pro = protein;
+    recipe.carbs = carbs;
+    recipe.fat = fat;
+
+    recipe.instructions = [];
+
+    if (Array.isArray(instructions)) {
+      instructions.forEach((step, index) => {
+        recipe.instructions.push({
+          step: step,
+          number: index + 1,
+        });
+      });
+    }
+
+    await favourites.updateOne({ recipeId: recipeId, email: email }, { $set: recipe });
+    res.redirect(`/allFavourites/${recipeId}`);
+
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//---------------------------------------personal page------------------------------
 app.get('/personal', (req, res) => {
   const username = req.session.username;
   const email = req.session.email || '';
@@ -524,7 +847,7 @@ app.get('/personal', (req, res) => {
 
 
 
-
+//---------------------------------------setting page------------------------------
 app.get('/settings', (req, res) => {
   res.render('settings');
 });
@@ -542,6 +865,29 @@ app.get('/DOB', (req, res) => {
   res.render('DOB');
 });
 
+app.post('/easter', (req, res) => {
+  res.render('easter');
+});
+
+app.get('/welcome', (req, res) => {
+  res.render('welcome');
+});
+
+app.get('/step1', (req, res) => {
+  res.render('step1');
+});
+
+app.get('/step2', (req, res) => {
+  res.render('step2');
+});
+
+app.get('/step3', (req, res) => {
+  res.render('step3');
+});
+
+app.get('/step4', (req, res) => {
+  res.render('step4');
+});
 
 app.get("*", (req, res) => {
   res.status(404);
@@ -554,6 +900,34 @@ app.listen(port, () => {
 }); 
 
 
+async function checkRecipeIsFavourited(email, recipeId) {
+  const query = {
+    email: email,
+    recipeId: recipeId
+  };
+
+  try {
+    const favorite = await favourites.findOne(query);
+    let val = 0;
+
+    if (favorite) {
+      val = 1;
+      //console.log(val);
+      return val;
+    } else {
+      //console.log(val);
+      return val;
+    }
+  } catch (error) {
+    console.error(error);
+    return 0; // or throw the error if you want to handle it differently
+  }
+}
+
+
+
+
+
 
 
 
@@ -564,6 +938,15 @@ app.listen(port, () => {
 
 /**
  * Spoonacular API spare key
- * 3640854786784e75b2b4956ea4822dc5
- * 05adf25cf1be4acbaf7a00dc9265edf3 (No more calls May 11)
+ ** 3640854786784e75b2b4956ea4822dc5
+ * 05adf25cf1be4acbaf7a00dc9265edf3 
+ * 322b73e9c1964f1ca8f162c7f6a3456d
+ * 80b86de0a010484a99e42715a36a8ab6 (Used for recipe page at the moment)
+ * 7f3eb9302f924154be8533178d011761
+ * 7427d37ed1324af7829fa87695c81c40 (Used on Home Page)
+* bebbab558c1d470e802944e8d07ca845
+* 53820c84e1cb476c90044eea130dbf6c
+* 1bb15cce3c994921aaa86ea7d011cd20
+*  e8c352e2ce2e47fb81599dc7db3d39ce
+ * 39d5b85cc8dc417abc57dcfb0bb132b0
  */

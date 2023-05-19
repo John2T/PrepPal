@@ -1,6 +1,11 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,300,1,0" />
+
+
+
+
 <%- include("templates/header") %>
-<div class="container">
+<div class="container pb-5">
   <div class="card mb-3 p-3 bg-light" style="background-color: rgba(245, 249, 226, 0.864);">
     <div class="card mb-3">
       <div class="row g-0 flex-wrap">
@@ -9,18 +14,37 @@
         </div>
         <div class="col-md-8">
           <div class="d-flex justify-content-between align-items-center">
-            <h1 class="card-title text-center p-3"><%= recipe.title %></h1>
-            <div class="d-flex justify-content-end ml-auto p-3">
-              <form method="POST" action="/favorite">
-                <button id="favoriteButton" class="btn btn-outline-danger btn-sm ">
-                  <span class="material-symbols-outlined ">favorite</span>
+            <h1 id = "title" class="card-title text-center p-3"><%= recipe.title %></h1>
+            <div class="d-flex justify-content-between ml-auto p-3">
+
+
+
+              <form id="fav" method="POST" action="/favorite">
+                <input type="hidden" name="recipeId" value="<%= recipe.id %>">
+                <input type="hidden" name="title" value="<%= recipe.title %>">
+                <input type="hidden" name="image" value="<%= details.image %>">
+                <input type="hidden" name="details" value="<%= details.summary %>">
+                <input type="hidden" name="healthScore" value="<%= details.healthScore%>">
+                <input type="hidden" name="cookTime" value="<%= details.readyInMinutes %>">
+                <input type="hidden" name="wwPoints" value="<%= details.weightWatcherSmartPoints %>">
+                <input type="hidden" name="servings" value="<%= details.servings %>">
+                <input type="hidden" name="ingredients" value="<%= JSON.stringify(ingredients) %>">
+                <input type="hidden" name="cal" value="<%= nutrition.nutrients[0].amount + nutrition.nutrients[0].unit %>">
+                <input type="hidden" name="pro" value="<%= nutrition.nutrients[8].amount + nutrition.nutrients[8].unit %>">
+                <input type="hidden" name="carbs" value="<%= nutrition.nutrients[3].amount + nutrition.nutrients[3].unit %>">
+                <input type="hidden" name="fat" value="<%= nutrition.nutrients[1].amount + nutrition.nutrients[1].unit %>">
+                <input type="hidden" name="instructions" value="<%= JSON.stringify(instructions) %>">                
+                <button id="favoriteButton" class="btn btn-outline-danger btn-sm">
+                <span id="favIcon" class="material-symbols-outlined" style="font-variation-settings: 'FILL' <%= parseInt(isFavorited) %>, 'wght' 300, 'GRAD' 0, 'opsz' 48;">
+                    favorite</span>
                 </button>
               </form>
+              
             </div>
           </div>
           <hr>
           
-          <div class = p-3><%- details.summary %></div>
+          <div id = "details" class = p-3><%- details.summary %></div>
         </div>
       </div>
     </div>
@@ -30,13 +54,13 @@
     
         <div class="row justify-content-between">
           <div class="col-3 d-flex justify-content-start">
-            <p>Health Score: <%= details.healthScore %> </p>
+            <p id = "healthScore">Health Score: <%= details.healthScore %> </p>
           </div>
           <div class="col-3 d-flex justify-content-center">
-            <p>Cook time: <%= details.readyInMinutes %>m</p>
+            <p id = "cookTime">Cook time: <%= details.readyInMinutes %>m</p>
           </div>
           <div class="col-3 d-flex justify-content-end">
-            <p>Weight Watcher Points: <%= details.weightWatcherSmartPoints %></p>
+            <p id="weightPoints">Weight Watcher Points: <%= details.weightWatcherSmartPoints %></p>
           </div>
         </div>
       </div>
@@ -45,52 +69,67 @@
     <div class="card mb-3">
       <div class="card-body">
         <h2 class="card-title text-center">Ingredients (Servings: <%= details.servings %>)</h2>
-        <ul class="list-unstyled">
-          <% ingredients.forEach(function(ingredient) { %>
-            <li><%= ingredient.original %></li>
+        <ul id="ingredients" class="list-unstyled">
+          <% ingredients.forEach(function(ingredient, index) { %>
+            <li data-ingredient="<%= index %>"><%= ingredient.original %></li>
           <% }); %>
         </ul>
+        
+        <form id="list" method="POST" action="/create-shoppinglist">
+          <input type="hidden" name="recipeId" value="<%= recipe.id %>">
+          <input type="hidden" name="title" value="<%= recipe.title %>">
+          <input type="hidden" name="ingredients" value="<%= JSON.stringify(ingredients) %>">
+          <button type="submit">Create Shopping List</button>
+        </form>
+        
+
       </div>
     </div>
-    <div class="card mb-3">
-      <div class="card-body">
-        <h2 class="card-title text-center">Nutritional Information</h2>
-        <div class="row justify-content-center">
-          <div class="col-md-8">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Calories</th>
-                  <th>Protein</th>
-                  <th>Carbs</th>
-                  <th>Fat</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><%= nutrition.nutrients[0].amount%><%= nutrition.nutrients[0].unit%></td>
-                  <td><%= nutrition.nutrients[8].amount%><%= nutrition.nutrients[8].unit%></td>
-                  <td><%= nutrition.nutrients[3].amount%><%= nutrition.nutrients[3].unit%></td>
-                  <td><%= nutrition.nutrients[1].amount%><%= nutrition.nutrients[1].unit%></td>
-                </tr>
-              </tbody>
-            </table>
+      
+      </div>
+
+
+      <div class="card mb-3">
+        <div class="card-body">
+          <h2 class="card-title text-center">Nutritional Information</h2>
+          <div class="row justify-content-center">
+            <div class="col-md-8">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Calories</th>
+                    <th>Protein</th>
+                    <th>Carbs</th>
+                    <th>Fat</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td id = "cal"><%= nutrition.nutrients[0].amount%><%= nutrition.nutrients[0].unit%></td>
+                    <td id = "pro"><%= nutrition.nutrients[8].amount%><%= nutrition.nutrients[8].unit%></td>
+                    <td id = "carb"><%= nutrition.nutrients[3].amount%><%= nutrition.nutrients[3].unit%></td>
+                    <td id = "fat"><%= nutrition.nutrients[1].amount%><%= nutrition.nutrients[1].unit%></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
+        
       </div>
-      
+      <div class="card mb-3">
+        <div class="card-body">
+          <h2 class="card-title text-center">Instructions</h2>
+          <ol id="instructions">
+            <% instructions.forEach(function(step, index) { %>
+              <li data-instruction="<%= index %>"><%= step.step %></li>
+            <% }); %>
+          </ol>
+          
+      </div>
     </div>
-    <div class="card mb-3">
-      <div class="card-body">
-        <h2 class="card-title text-center">Instructions</h2>
-      <ol>
-        <% instructions.forEach(function(step) { %>
-          <li><%= step.step %></li>
-        <% }); %>
-      </ol>
+  
+
     </div>
-  </div>
-</div>
-</div>
-<script src="/recipe.js"></script>
-<%- include("templates/footer") %>    
+    
+<%- include("templates/footer") %> 
