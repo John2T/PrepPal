@@ -782,6 +782,29 @@ app.get('/DOB', (req, res) => {
   res.render('DOB');
 });
 
+app.get('/easter', (req, res) => {
+  res.render('easter');
+});
+
+app.get('/welcome', (req, res) => {
+  res.render('welcome');
+});
+
+app.get('/step1', (req, res) => {
+  res.render('step1');
+});
+
+app.get('/step2', (req, res) => {
+  res.render('step2');
+});
+
+app.get('/step3', (req, res) => {
+  res.render('step3');
+});
+
+app.get('/step4', (req, res) => {
+  res.render('step4');
+});
 
 
 
