@@ -865,7 +865,7 @@ app.get('/DOB', (req, res) => {
   res.render('DOB');
 });
 
-app.post('/easter', (req, res) => {
+app.get('/easter', (req, res) => {
   res.render('easter');
 });
 
