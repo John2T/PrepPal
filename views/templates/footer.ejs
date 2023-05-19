@@ -1,62 +1,133 @@
-<div>
-
-<footer class=" bg-light navbar justify-content-evenly dark-turquoise fixed-bottom">
-    <div class="container py-0">
-            <div class="py-0">
-              <div class="d-flex justify-content-between" style="display: inline-flex; justify-content: space-between;">
-          
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .icon {
+      font-size: 24px;
+      color: #000000;
+      cursor: pointer;
+    }
+    .selected-icon {
+      color: #00CED1;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <footer class="bg-light navbar justify-content-evenly dark-turquoise fixed-bottom">
+      <div class="container py-0">
+        <div class="py-0">
+          <div class="d-flex justify-content-between" style="display: inline-flex; justify-content: space-between;">
             <form>
-                <div class="d-inline-block">
-                <a href="/home"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16"><path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z"></path></svg>    
+              <div class="d-inline-block">
+                <a href="/home" class="icon" id="icon1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                    <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z"></path>
+                  </svg>
                 </a>
-                </div>
+              </div>
             </form>
+          </div>
         </div>
-        </div>
 
-
-
-            <div class="py-0">
-              <div class="d-flex justify-content-between" style="display: inline-flex; justify-content: space-between;">
-          
+        <div class="py-0">
+          <div class="d-flex justify-content-between" style="display: inline-flex; justify-content: space-between;">
             <form>
-                <div class="d-inline-block">
-                <a href="/search"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg>    
+              <div class="d-inline-block">
+                <a href="/search" class="icon" id="icon2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
+                  </svg>
                 </a>
-                </div>
+              </div>
             </form>
-            </div>
-            </div>
-
-                <div class="py-0">
-                  <div class="d-flex justify-content-between" style="display: inline-flex; justify-content: space-between;">
-              
-            <form>
-                <div class="d-inline-block">
-                <a href="/recipe"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-card-list" viewBox="0 0 16 16"><path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"></path><path d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8zm0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-1-5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zM4 8a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm0 2.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z"></path></svg>
-                </a>
-                </div>
-            </form>
-        </div>
+          </div>
         </div>
 
-            <div class="py-0">
-              <div class="d-flex justify-content-between" style="display: inline-flex; justify-content: space-between;">
-          
+        <div class="py-0">
+          <div class="d-flex justify-content-between" style="display: inline-flex; justify-content: space-between;">
             <form>
-                <div class="d-inline-block">
-                <a href="/personal"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"></path></svg>
+              <div class="d-inline-block">
+                <a href="/recipe" class="icon" id="icon3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-card-list" viewBox="0 0 16 16">
+                    <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"></path>
+                    <path d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8zm0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-1-5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zM4 8a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm0 2.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z"></path>
+                  </svg>
                 </a>
-                </div>
+              </div>
             </form>
+          </div>
         </div>
+
+        <div class="py-0">
+          <div class="d-flex justify-content-between" style="display: inline-flex; justify-content: space-between;">
+            <form>
+              <div class="d-inline-block">
+                <a href="/personal" class="icon" id="icon4">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"></path>
+                  </svg>
+                </a>
+              </div>
+            </form>
+          </div>
         </div>
-        </div>
- 
-</footer>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+// Retrieve the previously selected icon from localStorage
+let selectedIcon = localStorage.getItem('selectedIcon');
+
+// Function to handle icon click event
+function handleIconClick(event) {
+  // Remove the 'selected-icon' class from all icons
+  const icons = document.querySelectorAll('.icon');
+  icons.forEach((icon) => {
+    icon.classList.remove('selected-icon');
+  });
+
+  // Add the 'selected-icon' class to the clicked icon
+  event.target.classList.add('selected-icon');
+
+  // Store the ID of the selected icon in localStorage
+  selectedIcon = event.target.id;
+  localStorage.setItem('selectedIcon', selectedIcon);
+}
+
+// Add click event listeners to the icons
+const icons = document.querySelectorAll('.icon');
+icons.forEach((icon) => {
+  icon.addEventListener('click', handleIconClick);
+});
+
+// Check if there is a previously selected icon
+if (selectedIcon) {
+  // Add the 'selected-icon' class to the previously selected icon
+  const previouslySelectedIcon = document.getElementById(selectedIcon);
+  if (previouslySelectedIcon) {
+    previouslySelectedIcon.classList.add('selected-icon');
+  }
+}
+
+// Get the current URL path
+const currentPath = window.location.pathname;
+
+// Find the matching icon based on the current URL path
+const matchingIcon = document.querySelector(`.icon[href="${currentPath}"]`);
+
+// Remove the 'selected-icon' class from all icons
+icons.forEach((icon) => {
+  icon.classList.remove('selected-icon');
+});
+
+// Add the 'selected-icon' class to the matching icon
+if (matchingIcon) {
+  matchingIcon.classList.add('selected-icon');
+}
+
+  </script>
   
-
-
-</div>
 </body>
 </html>

@@ -11,15 +11,17 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 75vh;
     max-width: 600px; /* Increase the max-width for a longer form */
     margin: 0 auto; /* Center the form horizontally */
+    background-color: #ffffff; /* Set the initial background color */
   }
 
   .form-container {
     width: 80%; /* Adjust the width of the form container */
     padding: 16px;
     border-radius: 5px;
+    background-color: white; /* Set the background color of the form container */
   }
 
   .form-container p {
@@ -53,9 +55,17 @@
   }
 
   .box-title {
+    
     font-weight: bold;
     font-size: 14px;
     margin: 0;
+  }
+
+  .card-holder {
+    border: 1px solid #00CED1;
+    border-radius: 5px;
+    padding: 12px;
+    margin-bottom: 16px;
   }
 
   .w-100.btn {
@@ -81,39 +91,227 @@
 </style>
 
 
+
+<style>
+  * {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html {
+  width: 100%;
+  height: 100%;
+}
+
+.container1 {
+  margin: 40px auto;
+  width: 200px;
+  height: 200px;
+  position: relative;
+  background: #EAEBE1;
+  border-radius: 50%;
+  overflow: hidden;
+  z-index: 100;
+}
+
+.container1 .bag {
+  position: absolute;
+  background: #C39A6F;
+  height: 100px;
+  width: 120px;
+  top: 100px;
+  left: 40px;
+  z-index: 10;
+}
+
+.container1 .bag:before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: -10px;
+  left: 0px;
+  width: 100%;
+  height: 32px;
+  z-index: 10;
+  background: linear-gradient(45deg, transparent 33.333%, #C39A6F 33.333%, #C39A6F 66.667%, transparent 66.667%), linear-gradient(-45deg, transparent 33.333%, #C39A6F 33.333%, #C39A6F 66.667%, transparent 66.667%);
+  background-size: 10px 20px;
+}
+
+.container1 .bag-shadow {
+  position: absolute;
+  border-left: 100px solid transparent;
+  border-bottom: 110px solid #B88B65;
+  top: 90px;
+  left: 60px;
+  z-index: 10;
+}
+
+.container1 .orange {
+  position: absolute;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  z-index: 5;
+}
+
+.container1 .green {
+  background: #8FAC72;
+}
+
+.container1 .red {
+  background: #ED7547;
+}
+
+.container1 .banana {
+  position: absolute;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  z-index: 5;
+}
+
+.container1 #g1 {
+  top: 75px;
+  left: 50px;
+  box-shadow: 60px 0px 0 0 #8FAC72;
+}
+
+.container1 #g2 {
+  right: -5px;
+}
+
+.container1 #r1 {
+  top: 75px;
+  left: 90px;
+}
+
+.container1 #b1 {
+  top: 55px;
+  left: 45px;
+  box-shadow: 10px 10px 0 0 #E7B659;
+}
+
+.container1 #b2 {
+  box-shadow: -15px 0px 0 0 #E7B659;
+  top: 75px;
+  right: 12px;
+}
+
+.container1 #b3 {
+  box-shadow: 5px -10px 0 0 #E7B659;
+}
+
+.container1 .trans {
+  position: absolute;
+  width: 100px;
+  height: 120px;
+  background: transparent;
+}
+
+.container1 #t1 {
+  left: -20px;
+  animation: clockwise 2s infinite;
+}
+
+.container1 #t2 {
+  left: 0px;
+  animation: clockwise 3s infinite;
+}
+
+.container1 #t3 {
+  right: 0px;
+  animation: counter-clockwise 2.5s infinite;
+}
+
+@keyframes clockwise {
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(180deg);
+    opacity: 0;
+  }
+}
+
+@keyframes counter-clockwise {
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(-180deg);
+    opacity: 0;
+  }
+}
+
+</style>
+
+<div class="container1">
+  <div class="bag"></div>
+  <div class="bag-shadow"></div>
+  <div class="orange green" id="g1"></div>
+  <div class="orange red" id="r1"></div>
+  <div class="banana" id="b1"></div>
+  <div class="banana" id="b2"></div>
+  <div class="trans" id="t1">
+    <div class="orange red"></div>
+  </div>
+  <div class="trans" id="t2">
+    <div class="banana" id="b3"></div>
+  </div>
+  <div class="trans" id="t3">
+    <div class="orange green" id="g2"></div>
+  </div>
+</div>
+
+
 <div class="centered-form">
-  <div class="form-container">
+  <div class="form-container" >
     <form method="POST" action="/login">
-      <p class="left-align">Username:</p>
-      <h1 class="bordered-heading left-align"><%= username %>!</h1>
 
+      <div class="card-holder">
+        <p class="left-align">Username:</p>
+        <h1 class="bordered-heading left-align"><%= username %></h1>
+      </div>
 
-      <p>Email:</p>
-      <h1 class="bordered-heading left-align"><%= email %></h1>
+      <div class="card-holder">
+        <p>Email:</p>
+        <h1 class="bordered-heading left-align"><%= email %></h1>
+      </div>
 
-
-      <div class="section">
-        <p>Date of Birth:</p>
-        <div>
-          <h1 class="bordered-heading left-align"><%= dateOfBirth %></h1>
+      <div class="card-holder">
+        <div class="section">
+          <p>Date of Birth:</p>
+          <div>
+            <h1 class="bordered-heading left-align"><%= dateOfBirth %></h1>
+          </div>
         </div>
       </div>
 
       <hr>
-      <div class="section highlight">
+
+      <div class="card-holder section highlight">
         <h1 class="bordered-heading fs-5">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stopwatch" viewBox="0 0 16 16">
+            <path d="M8.5 5.6a.5.5 0 1 0-1 0v2.9h-3a.5.5 0 0 0 0 1H8a.5.5 0 0 0 .5-.5V5.6z"/>
+            <path d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64a.715.715 0 0 1 .012-.013l.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354a.512.512 0 0 1-.013.012A7 7 0 1 1 7 2.071V1.5a.5.5 0 0 1-.5-.5zM8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3z"/>
+          </svg>
           <span class="box-title">History</span>
         </h1>
       </div>
 
-
-
-      <div class="section highlight">
+      <div class="card-holder section highlight">
         <h1 class="bordered-heading fs-5">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
+            <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
+            <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/>
+          </svg>
           <span class="box-title"><a href="/settings">Settings</a></span>
         </h1>
       </div>
-      </form>
 
- 
-      <%- include("templates/footer") %> 
+    </form>
+  </div>
+</div>
+
+<%- include("templates/footer") %>
