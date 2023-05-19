@@ -1,0 +1,65 @@
+<%- include("templates/header") %>
+<!--Search bar and logo-->
+<div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-center">
+  <a href="/" class="d-flex align-items-center my-2 link-body-emphasis text-decoration-none">
+    <img class="mb-4" src="/logo.jpeg" alt="" width="100" height="100">
+  </a>
+  <form class="col-12 mb-3 mb-lg-0 me-lg-3" role="search" action="/search" method="GET">
+    <input type="search" class="form-control" name="query" placeholder="Search..." aria-label="Search">
+  </form>
+</div>
+
+<!-- Ingredient list -->
+<div class="container my-5 py-5 rounded" style="border: 1px solid black; background-color: bisque;">
+  <div class="d-flex justify-content-start">
+    <div class="col-sm-8 mx-auto justify-content-start">
+      <h3 class="display-8 fw-normal">Your List </h1>
+      <ul class="nav nav-pills" id="selectedIngredientsList"></ul>
+    </div>
+  </div>
+  <form action="/easter" method="post">
+    <button class="btn btn-primary" type="submit" style="float: right;">Get Recipe</button>
+  </form>
+</div>
+
+<!-- Ingredient cards  -->
+<div class="album py-5 bg-body-tertiary">
+  <div class="container">
+    <div class="row row-cols-2 g-3">
+      <% for(var i = 0; i < list.length; i++) {%>
+      <%- include("templates/ingredientCard", {ingredient: list[i], url: image_url[i]}) %>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Function to add an ingredient to the list
+  function addToIngredientList(ingredientName) {
+    const ingredientList = document.getElementById('selectedIngredientsList');
+    const listItem = document.createElement('li');
+    listItem.textContent = ingredientName;
+    listItem.classList.add('nav-item');
+    listItem.style.backgroundColor = 'yellow';
+    listItem.style.borderRadius = "25px";
+
+    const removeButton = document.createElement('button');
+    removeButton.textContent = 'x';
+    removeButton.classList.add('remove-button');
+    removeButton.onclick = () => {
+      ingredientList.removeChild(listItem);
+    };
+
+    listItem.appendChild(removeButton);
+    ingredientList.appendChild(listItem);
+  }
+
+  // Function to remove an ingredient from the list
+  function removeFromIngredientList(event) {
+    const listItem = event.target.parentNode;
+    listItem.remove();
+  }
+
+  
+</script>
+<%- include("templates/footer") %>   

@@ -1,0 +1,26 @@
+<%- include("templates/header") %> 
+<% if (loggedin) { %>
+    <h1>Hello, <%= username %>!</h1>
+    <div>
+      <a href="/home"><button class="btn btn-success rounded-pill px-3" type="button">Go to Home page</button></a></br></br>
+      
+      <form method="post" action="/logout">
+        <button class="btn btn-danger rounded-pill px-3" type="submit">Log out</button>
+      </form>
+    </div>
+  <% } else { %>
+    <div class="px-4 py-5 my-5 text-center">
+      <img class="d-block mx-auto mb-4" src="/logo.jpeg" alt="" width="150" height="150">
+      <h1 class="display-5 fw-bold text-body-emphasis">Welcome to PrepPal!</h1>
+      <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">Please sign up or sign in to start using our service.</p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+          <a href="/signup"><button type="button" class="btn btn-primary btn-lg px-4 gap-3" style="color: white;">Sign up</button></a>
+          <a href="/login"><button type="button" class="btn btn-outline-secondary btn-lg px-4">Log in</button></a>
+        </div>
+      </div>
+    </div>
+  <% } %>
+  
+</body>
+</html>
