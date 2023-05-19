@@ -6,6 +6,7 @@ const express = require('express');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
+const fs = require('fs');
 
 //Jsonwebtoken to send OTP, reset password
 const jwt = require('jsonwebtoken');
@@ -21,6 +22,7 @@ const app = express();
 
 const axios = require('axios'); // Import the axios library for making HTTP requests
 const striptags = require('striptags');
+app.use(express.static(__dirname + "/public"));
 
 function stripTags(html) {
   return striptags(html);
@@ -205,9 +207,6 @@ app.post('/home/browsing', (req, res) => {
   }
 });
 
-
-
-
 app.post('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
@@ -219,13 +218,88 @@ app.post('/logout', (req, res) => {
 });
 
 //-----------------------------------search page-----------------------------------
-app.get('/search', (req, res) => {
-  if(!req.session.loggedin) {
+//This page use to search for ingredients
+app.get('/search', async (req, res) => {
+  if (!req.session.loggedin) {
     res.redirect('/');
-  }else{
-    res.render('search');
+    return;
   }
+
+  //API #1: 9d2d1b2f8727419fb36bba5c995a49b5
+  const apiKey = "09e317b538d94d98b7941e9d77ff593e";
+  const numberOfIngredients = 50; // Number of ingredients to fetch
+  let query = req.query.query; // Get the value of the "query" parameter from the request
+  if(!query){
+    const defaultCategories = ['spice', 'meat', 'vegetable', 'bread', 'fruit'];
+    const randomCategory = defaultCategories[Math.floor(Math.random() * defaultCategories.length)];
+    query = randomCategory;
+  }
+
+  if(query.trim() == "dinosaur"){
+    const misteryObj = {name : "T-rex thigh whole"};
+    const ingredients = [];
+    const images = [];
+    ingredients.push(misteryObj);
+    images.push("/dinomeat.jpg")
+    res.render('search', {list: ingredients, image_url:images});
+    return;
+  }
+
+  const url = `https://api.spoonacular.com/food/ingredients/search?query=${query}&number=${numberOfIngredients}&apiKey=${apiKey}`;
+
+  fetch(url)
+  .then(response => response.json())
+  .then(data => {
+    // Process the ingredients list and display them on your ingredient page
+    const ingredients = data.results;
+    const names = [];
+
+    ingredients.forEach(ingredient => {
+      const ingredientImageFileName = ingredient.image;
+      const ingredientImageUrl = `https://spoonacular.com/cdn/ingredients_100x100/${ingredientImageFileName}`;
+      names.push(ingredientImageUrl);
+    });
+    
+    res.render('search', {list: ingredients, image_url: names});
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
 });
+//---------------------------------------------------------------------------------
+
+//-----------------------------Add and Remove ingredient function------------------
+// Receive ingredient name and add it to the list
+app.post('/getList', (req, res) => {
+  const { ingredientName } = req.body.ingredientName;
+
+  if (!ingredientList.includes(ingredientName)) {
+    ingredientList.push(ingredientName);
+  }
+
+  console.log(ingredientList);
+
+  res.json({ success: true });
+});
+
+// Remove ingredient from the list
+app.post('/removeIngredient', (req, res) => {
+  const { ingredientName } = req.body;
+
+  // Perform any necessary validation or data manipulation
+
+  // Send a response indicating success or failure
+  res.json({ success: true });
+});
+
+//---------------------------------------------------------------------------------
+
+//-----------------------------------Recipe page-----------------------------------
+/* This page will show the recipe that 
+   include the ingredients user input in the search page*/
+
+   ingredientList = [];
+
 //---------------------------------------------------------------------------------
 
 //-----------------------------------Forgot password-------------------------------
@@ -251,7 +325,10 @@ app.post('/forgotpassword', async (req, res, next) =>{
     id: pwObj.id
   }
   const token = jwt.sign(payload, secret, {expiresIn: "5m" });
-  const link = `http://localhost:${port}/reset-password/${id}/${token}`;
+  
+  //Qoddi domain and url link send to user email
+  const domain = 'http://rbqidcvhag.eu09.qoddiapp.com';
+  const link = `${domain}/reset-password/${id}/${token}`;
 
   //console.log(link);
   res.send("A reset password link has been send to your email addess");
@@ -269,12 +346,20 @@ app.post('/forgotpassword', async (req, res, next) =>{
     }
   });
 
-  const info = await transporter.sendMail({
-    from: 'PrepPal team <preppal36@gmail.com>',
-    to: email,
-    subject: `Reset Password for ${pwObj.name}`,
-    html: link
-  })
+  const htmlContent = `
+  <p>Click on the following link to reset your password:</p>
+  <a href="${link}">${link}</a>
+`;
+
+const info = await transporter.sendMail({
+  from: 'PrepPal team <preppal36@gmail.com>',
+  to: email,
+  subject: `Reset Password for ${pwObj.name}`,
+  html: htmlContent
+});
+
+  console.log(link);
+  console.log("token 1:" + token);
 });
 //---------------------------------------------------------------------------------
 
@@ -294,7 +379,6 @@ app.get('/reset-password/:id/:token', async(req, res, next) =>{
   try {
     const payload = jwt.verify(token, secret);
     res.render('resetPassword', {email: existingId.email});
-
   } catch (error) {
     //console.log(error.message);
     res.send(error.message);
@@ -306,7 +390,6 @@ app.get('/reset-password/:id/:token', async(req, res, next) =>{
 app.post('/reset-password/:id/:token', async (req, res, next) =>{
   const {id, token} = req.params;
   const {password, password2} = req.body;
-  //console.log(password + " " + password2); 
 
     //check if this id exist in database
     const existingId = await userCollection.findOne({ _id: ObjectId(id) });
@@ -322,7 +405,7 @@ app.post('/reset-password/:id/:token', async (req, res, next) =>{
         return res.status(400).send('Passwords do not match');
       }
       //password match
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
 
       // update the user's password in the database
       const result = await userCollection.updateOne(
@@ -782,7 +865,7 @@ app.get('/DOB', (req, res) => {
   res.render('DOB');
 });
 
-app.get('/easter', (req, res) => {
+app.post('/easter', (req, res) => {
   res.render('easter');
 });
 
@@ -805,10 +888,6 @@ app.get('/step3', (req, res) => {
 app.get('/step4', (req, res) => {
   res.render('step4');
 });
-
-
-
-app.use(express.static(__dirname + "/public"));
 
 app.get("*", (req, res) => {
   res.status(404);
@@ -871,10 +950,3 @@ async function checkRecipeIsFavourited(email, recipeId) {
 *  e8c352e2ce2e47fb81599dc7db3d39ce
  * 39d5b85cc8dc417abc57dcfb0bb132b0
  */
-
-
- 
-
-
-
- 
