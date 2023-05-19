@@ -6,6 +6,7 @@ const express = require('express');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
+const fs = require('fs');
 
 //Jsonwebtoken to send OTP, reset password
 const jwt = require('jsonwebtoken');
@@ -21,6 +22,7 @@ const app = express();
 
 const axios = require('axios'); // Import the axios library for making HTTP requests
 const striptags = require('striptags');
+app.use(express.static(__dirname + "/public"));
 
 function stripTags(html) {
   return striptags(html);
@@ -194,9 +196,6 @@ app.post('/home/browsing', (req, res) => {
   }
 });
 
-
-
-
 app.post('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
@@ -208,38 +207,87 @@ app.post('/logout', (req, res) => {
 });
 
 //-----------------------------------search page-----------------------------------
+//This page use to search for ingredients
 app.get('/search', async (req, res) => {
   if (!req.session.loggedin) {
     res.redirect('/');
+    return;
   }
-  try {
-    const apiKey = "b9a29f4972e9477eba5e959e98248dbc";
-    const numberOfIngredients = 10; // Number of ingredients to fetch
-  
-    const response = await axios.get('https://api.spoonacular.com/food/ingredients/search/apiKey=${}', {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      params: {
-        query: '', // Leave it empty to fetch all ingredients
-        number: numberOfIngredients,
-        apiKey: apiKey // Include the apiKey as a query parameter
-      }
+
+  //API #1: 9d2d1b2f8727419fb36bba5c995a49b5
+  const apiKey = "09e317b538d94d98b7941e9d77ff593e";
+  const numberOfIngredients = 50; // Number of ingredients to fetch
+  let query = req.query.query; // Get the value of the "query" parameter from the request
+  if(!query){
+    const defaultCategories = ['spice', 'meat', 'vegetable', 'bread', 'fruit'];
+    const randomCategory = defaultCategories[Math.floor(Math.random() * defaultCategories.length)];
+    query = randomCategory;
+  }
+
+  if(query.trim() == "dinosaur"){
+    const misteryObj = {name : "T-rex thigh whole"};
+    const ingredients = [];
+    const images = [];
+    ingredients.push(misteryObj);
+    images.push("/dinomeat.jpg")
+    res.render('search', {list: ingredients, image_url:images});
+    return;
+  }
+
+  const url = `https://api.spoonacular.com/food/ingredients/search?query=${query}&number=${numberOfIngredients}&apiKey=${apiKey}`;
+
+  fetch(url)
+  .then(response => response.json())
+  .then(data => {
+    // Process the ingredients list and display them on your ingredient page
+    const ingredients = data.results;
+    const names = [];
+
+    ingredients.forEach(ingredient => {
+      const ingredientImageFileName = ingredient.image;
+      const ingredientImageUrl = `https://spoonacular.com/cdn/ingredients_100x100/${ingredientImageFileName}`;
+      names.push(ingredientImageUrl);
     });
-  
-    const ingredients = response.data.results.map((result) => ({
-      name: result.name,
-      image: result.image
-    }));
-
-    console.log(ingredients);
-
-    res.render('search', { list: ingredients }); // Pass the ingredients to your EJS template
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Internal Server Error');
-  }
+    
+    res.render('search', {list: ingredients, image_url: names});
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
 });
+//---------------------------------------------------------------------------------
+
+//-----------------------------Add and Remove ingredient function------------------
+// Receive ingredient name and add it to the list
+app.post('/getList', (req, res) => {
+  const { ingredientName } = req.body.ingredientName;
+
+  if (!ingredientList.includes(ingredientName)) {
+    ingredientList.push(ingredientName);
+  }
+
+  console.log(ingredientList);
+
+  res.json({ success: true });
+});
+
+// Remove ingredient from the list
+app.post('/removeIngredient', (req, res) => {
+  const { ingredientName } = req.body;
+
+  // Perform any necessary validation or data manipulation
+
+  // Send a response indicating success or failure
+  res.json({ success: true });
+});
+
+//---------------------------------------------------------------------------------
+
+//-----------------------------------Recipe page-----------------------------------
+/* This page will show the recipe that 
+   include the ingredients user input in the search page*/
+
+   ingredientList = [];
 
 //---------------------------------------------------------------------------------
 
@@ -494,10 +542,6 @@ app.get('/DOB', (req, res) => {
   res.render('DOB');
 });
 
-
-
-
-app.use(express.static(__dirname + "/public"));
 
 app.get("*", (req, res) => {
   res.status(404);
