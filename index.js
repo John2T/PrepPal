@@ -869,6 +869,10 @@ app.get('/easter', (req, res) => {
   res.render('easter');
 });
 
+app.post('/easter', (req, res) => {
+  res.render('easter');
+});
+
 app.get('/welcome', (req, res) => {
   res.render('welcome');
 });
