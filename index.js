@@ -842,41 +842,43 @@ app.get('/kitchen', (req, res) => {
       console.error('Error retrieving kitchen items from database:', err);
       res.status(500).send('Error retrieving kitchen items from database');
     } else {
-      const items = result.name.map((name, index) => ({
-        name: name,
-        bestBefore: result.bestBefore[index]
-      }));
+      let items = [];
+      if (result && result.items) {
+        items = result.items;
+      }
+      
       res.render('kitchen', { title: 'My Kitchen', items: items });
     }
   });
 });
 
 
-
-// POST request handler to save kitchen item
 app.post('/kitchen', (req, res) => {
+  console.log(req.body);
   const newItem = {
     email: req.session.email,
-    name: req.body.name,
-    bestBefore: req.body.bestBefore
+    name: req.body.items[0].name,
+    bestBefore: req.body.items[0].bestBefore
   };
-
-  // Save the new item to the database
-  kitchen.insertOne(newItem, (err, result) => {
-    if (err) {
-      console.error('Error saving item to database:', err);
-      res.status(500).send('Error saving item to database');
-    } else {
-      if (result && result.ops && result.ops.length > 0) {
-        console.log('Item saved to database:', result.ops[0]);
-      } else {
-        console.error('Error saving item to database: No result.ops found');
-      }
-      res.redirect('/kitchen'); // Redirect to the kitchen page after saving
-    }
-  });
   
+
+  kitchen.findOneAndUpdate(
+    { email: newItem.email, name: newItem.name },
+    { $set: { bestBefore: newItem.bestBefore } },
+    { upsert: true, returnOriginal: false },
+    (err, result) => {
+      if (err) {
+        console.error('Error updating or inserting item in the database:', err);
+        res.status(500).send('Error updating or inserting item in the database');
+      } else {
+        console.log(result ? 'Item updated in database:' : 'New item inserted into database:', result);
+        res.redirect('/kitchen'); // Redirect to the kitchen page after saving
+      }
+    }
+  );
 });
+
+
 
 
 
