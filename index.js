@@ -53,6 +53,7 @@ var {database} = include('databaseConnection');
 const userCollection = database.db(mongodb_database).collection('users');
 const favourites = database.db(mongodb_database).collection('favourites');
 const shoppinglist = database.db(mongodb_database).collection('shoppinglist');
+const kitchen = database.db(mongodb_database).collection('kitchen');
 
 app.set('view engine', 'ejs');
 
@@ -825,24 +826,56 @@ app.post('/recipeUpdate/:id', async (req, res) => {
 });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 //---------------------------------------personal page------------------------------
 app.get('/personal', (req, res) => {
   const username = req.session.username;
   const email = req.session.email || '';
   const dateOfBirth = req.session.dateOfBirth || ''; // Assuming the user's date of birth is stored in req.session.dateOfBirth
   res.render('personal', { username, email, dateOfBirth });
+});
+
+//---------------------------------------kitchen page------------------------------
+app.get('/kitchen', (req, res) => {
+  // Retrieve the user-specific kitchen items from the database
+  kitchen.findOne({ email: req.session.email }, (err, result) => {
+    if (err) {
+      console.error('Error retrieving kitchen items from database:', err);
+      res.status(500).send('Error retrieving kitchen items from database');
+    } else {
+      const items = result.name.map((name, index) => ({
+        name: name,
+        bestBefore: result.bestBefore[index]
+      }));
+      res.render('kitchen', { title: 'My Kitchen', items: items });
+    }
+  });
+});
+
+
+
+// POST request handler to save kitchen item
+app.post('/kitchen', (req, res) => {
+  const newItem = {
+    email: req.session.email,
+    name: req.body.name,
+    bestBefore: req.body.bestBefore
+  };
+
+  // Save the new item to the database
+  kitchen.insertOne(newItem, (err, result) => {
+    if (err) {
+      console.error('Error saving item to database:', err);
+      res.status(500).send('Error saving item to database');
+    } else {
+      if (result && result.ops && result.ops.length > 0) {
+        console.log('Item saved to database:', result.ops[0]);
+      } else {
+        console.error('Error saving item to database: No result.ops found');
+      }
+      res.redirect('/kitchen'); // Redirect to the kitchen page after saving
+    }
+  });
+  
 });
 
 

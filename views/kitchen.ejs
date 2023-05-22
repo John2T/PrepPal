@@ -1,0 +1,61 @@
+<%- include("templates/header") %>
+<div class="container" style="max-width: 800px; margin-top: 20px; background-color: rgba(245, 249, 226, 0.864)">
+    <h1 class="text-center">My Kitchen</h1>
+    <form action="/kitchen" method="POST">
+      <table id="kitchen-table" class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Best Before</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% items.forEach(function(item, index) { %>
+            <tr>
+              <td>
+                <input type="text" name="name" value="<%= item.name %>" style="width: 120px;">
+              </td>
+              <td>
+                <input type="date" name="bestBefore" value="<%= item.bestBefore %>">
+              </td>
+              <td>
+                <button type="button" onclick="removeRow(<%= index %>)">Remove</button>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+      <div class="text-center">
+        <button id="add-row-btn" type="button" onclick="addRow()">Add Row</button>
+        <button type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+  
+  
+  <script>
+    function addRow() {
+      const table = document.getElementById("kitchen-table");
+      const newRow = document.createElement("tr");
+      newRow.innerHTML = `
+        <td>
+          <input type="text" name="name">
+        </td>
+        <td>
+          <input type="date" name="bestBefore">
+        </td>
+        <td>
+          <button type="button" onclick="removeRow(this)">Remove</button>
+        </td>
+      `;
+      table.getElementsByTagName("tbody")[0].appendChild(newRow);
+    }
+  
+    function removeRow(button) {
+      const row = button.parentNode.parentNode;
+      row.parentNode.removeChild(row);
+    }
+  </script>
+  
+<%- include("templates/footer") %>
