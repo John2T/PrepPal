@@ -600,10 +600,15 @@ app.get('/shoppinglist', async (req, res) => {
       message = 'There is nothing in your shopping list!';
     }
 
-    // Render the template and pass the shopping list items and message
+    // Get kitchen items for the user
+    const kitchenItems = await kitchen.find({ email }).toArray();
+    const kitchenIngredients = kitchenItems.map(item => item.name.toLowerCase());
+
+    // Render the template and pass the shopping list items, message, and kitchen ingredients
     res.render('shoppinglist', {
       shoppingListItems,
-      message
+      message,
+      kitchenIngredients
     });
   } catch (error) {
     console.error(error);
@@ -864,26 +869,42 @@ app.post('/kitchen', (req, res) => {
 
   // Save each item individually
   async.each(items, (item, callback) => {
-    const newItem = {
-      email: req.session.email,
-      name: item.name,
-      bestBefore: item.bestBefore
-    };
-
-    kitchen.findOneAndUpdate(
-      { email: newItem.email, name: newItem.name },
-      { $set: { bestBefore: newItem.bestBefore } },
-      { upsert: true, returnOriginal: false },
-      (err, result) => {
-        if (err) {
-          console.error('Error updating or inserting item in the database:', err);
-          callback(err);
-        } else {
-          console.log(result ? 'Item updated in database:' : 'New item inserted into database:', result);
-          callback();
+    if (item.delete) { // Check if the item should be deleted
+      // Perform deletion operation in the database
+      kitchen.findOneAndDelete(
+        { email: req.session.email, name: item.name },
+        (err, result) => {
+          if (err) {
+            console.error('Error deleting item from the database:', err);
+            callback(err);
+          } else {
+            console.log('Item deleted from the database:', result);
+            callback();
+          }
         }
-      }
-    );
+      );
+    } else {
+      const newItem = {
+        email: req.session.email,
+        name: item.name,
+        bestBefore: item.bestBefore
+      };
+
+      kitchen.findOneAndUpdate(
+        { email: newItem.email, name: newItem.name },
+        { $set: { bestBefore: newItem.bestBefore } },
+        { upsert: true, returnOriginal: false },
+        (err, result) => {
+          if (err) {
+            console.error('Error updating or inserting item in the database:', err);
+            callback(err);
+          } else {
+            console.log(result ? 'Item updated in database:' : 'New item inserted into database:', result);
+            callback();
+          }
+        }
+      );
+    }
   }, (err) => {
     if (err) {
       res.status(500).send('Error updating or inserting items in the database');
