@@ -1,0 +1,140 @@
+<%- include("templates/header") %>
+<div
+  class="container"
+  style="
+    max-width: 800px;
+    margin-top: 20px;
+    background-color: rgba(245, 249, 226, 0.864);
+  "
+>
+  <h1 class="text-center">My Kitchen</h1>
+  <form id="kitchen-form" method="POST" action="/kitchen">
+    <table id="kitchen-table" class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Best Before</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% items.forEach(function(item, index) { %> <% const dueDate = new
+        Date(item.bestBefore); %> <% const currentDate = new Date(); %> <% const
+        differenceInDays = Math.floor((dueDate - currentDate) / (1000 * 60 * 60
+        * 24)); %>
+        <tr class="<%= differenceInDays <= 3 ? 'warning' : '' %>">
+          <td>
+            <input
+              type="text"
+              name="name"
+              value="<%= item.name %>"
+              style="width: 120px"
+            />
+          </td>
+          <td>
+            <input
+              type="date"
+              name="bestBefore"
+              value="<%= item.bestBefore %>"
+            />
+          </td>
+          <td>
+            <button type="button" onclick="removeRow(<%= index %>)">
+              Remove
+            </button>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <div class="text-center">
+      <button id="add-row-btn" type="button" onclick="addRow()">Add Row</button>
+      <button type="submit">Save</button>
+    </div>
+  </form>
+  <div style="margin: 30px; background-color: rgb(255, 183, 0);" >
+    <p>
+      Tip: A colored background indicates that the item in your kitchen will
+      expire within 3 days.
+    </p>
+  </div>
+</div>
+
+<style>
+  .warning {
+    background-color: rgb(255, 183, 0);
+  }
+</style>
+
+<script>
+  // Wrap the JavaScript code in a document ready function to ensure the DOM is fully loaded
+  document.addEventListener("DOMContentLoaded", () => {
+    const kitchenForm = document.getElementById("kitchen-form");
+    kitchenForm.addEventListener("submit", (event) => {
+      event.preventDefault(); // Prevent the form from submitting normally
+      saveItems();
+    });
+  });
+  function addRow() {
+    const table = document.getElementById("kitchen-table");
+    const newRow = document.createElement("tr");
+    newRow.innerHTML = `
+        <td>
+          <input type="text" name="name">
+        </td>
+        <td>
+          <input type="date" name="bestBefore">
+        </td>
+        <td>
+          <button type="button" onclick="removeRow(this)">Remove</button>
+        </td>
+      `;
+    table.getElementsByTagName("tbody")[0].appendChild(newRow);
+  }
+
+  function removeRow(button) {
+    const row = button.parentNode.parentNode;
+    row.parentNode.removeChild(row);
+  }
+
+  function saveItems() {
+    const rows = document.querySelectorAll("#kitchen-table tbody tr");
+    const items = [];
+
+    rows.forEach((row) => {
+      const nameInput = row.querySelector('input[name="name"]');
+      const bestBeforeInput = row.querySelector('input[name="bestBefore"]');
+      const name = nameInput.value.trim();
+      const bestBefore = bestBeforeInput.value.trim();
+
+      if (name && bestBefore) {
+        items.push({ name, bestBefore });
+      }
+    });
+
+    fetch("/kitchen", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("Items saved successfully");
+          window.location.reload(); // Refresh the page after saving
+        } else {
+          console.error("Error saving items:", response.statusText);
+        }
+      })
+      .catch((error) => {
+        console.error("Error saving items:", error);
+      });
+  }
+
+  const kitchenForm = document.getElementById("kitchen-form");
+  kitchenForm.addEventListener("submit", (event) => {
+    event.preventDefault(); // Prevent the form from submitting normally
+    saveItems();
+  });
+</script>
+
+<%- include("templates/footer") %>

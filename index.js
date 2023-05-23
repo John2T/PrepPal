@@ -7,6 +7,8 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
 const fs = require('fs');
+const async = require('async');
+
 
 //Jsonwebtoken to send OTP, reset password
 const jwt = require('jsonwebtoken');
@@ -53,6 +55,7 @@ var {database} = include('databaseConnection');
 const userCollection = database.db(mongodb_database).collection('users');
 const favourites = database.db(mongodb_database).collection('favourites');
 const shoppinglist = database.db(mongodb_database).collection('shoppinglist');
+const kitchen = database.db(mongodb_database).collection('kitchen');
 
 app.set('view engine', 'ejs');
 
@@ -825,24 +828,69 @@ app.post('/recipeUpdate/:id', async (req, res) => {
 });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 //---------------------------------------personal page------------------------------
 app.get('/personal', (req, res) => {
   const username = req.session.username;
   const email = req.session.email || '';
   const dateOfBirth = req.session.dateOfBirth || ''; // Assuming the user's date of birth is stored in req.session.dateOfBirth
   res.render('personal', { username, email, dateOfBirth });
+});
+
+//---------------------------------------kitchen page------------------------------
+app.get('/kitchen', (req, res) => {
+  // Retrieve the user-specific kitchen items from the database
+  kitchen.find({ email: req.session.email }).toArray((err, results) => {
+    if (err) {
+      console.error('Error retrieving kitchen items from the database:', err);
+      res.status(500).send('Error retrieving kitchen items from the database');
+    } else {
+      const items = results.map(result => ({
+        name: result.name,
+        bestBefore: result.bestBefore
+      }));
+
+      res.render('kitchen', { title: 'My Kitchen', items: items });
+    }
+  });
+});
+
+
+
+
+
+app.post('/kitchen', (req, res) => {
+  console.log(req.body);
+  const items = req.body.items;
+
+  // Save each item individually
+  async.each(items, (item, callback) => {
+    const newItem = {
+      email: req.session.email,
+      name: item.name,
+      bestBefore: item.bestBefore
+    };
+
+    kitchen.findOneAndUpdate(
+      { email: newItem.email, name: newItem.name },
+      { $set: { bestBefore: newItem.bestBefore } },
+      { upsert: true, returnOriginal: false },
+      (err, result) => {
+        if (err) {
+          console.error('Error updating or inserting item in the database:', err);
+          callback(err);
+        } else {
+          console.log(result ? 'Item updated in database:' : 'New item inserted into database:', result);
+          callback();
+        }
+      }
+    );
+  }, (err) => {
+    if (err) {
+      res.status(500).send('Error updating or inserting items in the database');
+    } else {
+      res.redirect('/kitchen'); // Redirect to the kitchen page after saving
+    }
+  });
 });
 
 
