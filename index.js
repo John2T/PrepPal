@@ -913,6 +913,10 @@ app.get('/DOB', (req, res) => {
   res.render('DOB');
 });
 
+app.get('/easter', (req, res) => {
+  res.render('easter');
+});
+
 app.post('/easter', (req, res) => {
   res.render('easter');
 });
