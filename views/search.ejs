@@ -17,7 +17,7 @@
       <ul class="nav nav-pills" id="selectedIngredientsList"></ul>
     </div>
   </div>
-  <form action="/easter" method="post">
+  <form action="/easter" method="get">
     <button class="btn btn-primary" type="submit" style="float: right  ;">Get Recipe</button>
   </form>
 </div>
@@ -49,6 +49,27 @@
     removeButton.classList.add('remove-button');
     removeButton.onclick = () => {
       ingredientList.removeChild(listItem);
+
+      // Send a request to the server to remove the ingredient
+    fetch('/removeIngredient', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ingredientName }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Handle the response from the server
+        console.log(data);
+        // Remove the listItem from the ingredientList DOM element if the server indicates success
+        if (data.success) {
+          ingredientList.removeChild(listItem);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
     };
 
     listItem.appendChild(removeButton);

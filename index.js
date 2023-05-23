@@ -265,21 +265,18 @@ app.get('/search', async (req, res) => {
   .catch(error => {
     console.error('Error:', error);
   });
-  console.log("hello" + req.body.name);
 });
 //---------------------------------------------------------------------------------
 
 //-----------------------------Add and Remove ingredient function------------------
 // Receive ingredient name and add it to the list
 app.post('/getList', (req, res) => {
-  const { ingredientName } = req.body.ingredientName;
+  const { ingredientName } = req.body;
 
   if (!ingredientList.includes(ingredientName)) {
     ingredientList.push(ingredientName);
   }
-
   console.log(ingredientList);
-
   res.json({ success: true });
 });
 
@@ -287,11 +284,20 @@ app.post('/getList', (req, res) => {
 app.post('/removeIngredient', (req, res) => {
   const { ingredientName } = req.body;
 
-  // Perform any necessary validation or data manipulation
+  // Find the index of the ingredient in the ingredientList array
+  const index = ingredientList.indexOf(ingredientName);
 
-  // Send a response indicating success or failure
-  res.json({ success: true });
+  // If the ingredient is found, remove it from the ingredientList array
+  if (index !== -1) {
+    ingredientList.splice(index, 1);
+    console.log(ingredientList);
+    res.json({ success: true });
+  } else {
+    res.json({ success: false });
+  }
 });
+
+
 
 //---------------------------------------------------------------------------------
 
