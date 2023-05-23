@@ -839,20 +839,23 @@ app.get('/personal', (req, res) => {
 //---------------------------------------kitchen page------------------------------
 app.get('/kitchen', (req, res) => {
   // Retrieve the user-specific kitchen items from the database
-  kitchen.findOne({ email: req.session.email }, (err, result) => {
+  kitchen.find({ email: req.session.email }).toArray((err, results) => {
     if (err) {
-      console.error('Error retrieving kitchen items from database:', err);
-      res.status(500).send('Error retrieving kitchen items from database');
+      console.error('Error retrieving kitchen items from the database:', err);
+      res.status(500).send('Error retrieving kitchen items from the database');
     } else {
-      let items = [];
-      if (result && result.items) {
-        items = result.items;
-      }
-      
+      const items = results.map(result => ({
+        name: result.name,
+        bestBefore: result.bestBefore
+      }));
+
       res.render('kitchen', { title: 'My Kitchen', items: items });
     }
   });
 });
+
+
+
 
 
 app.post('/kitchen', (req, res) => {
