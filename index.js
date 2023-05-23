@@ -7,6 +7,8 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
 const fs = require('fs');
+const async = require('async');
+
 
 //Jsonwebtoken to send OTP, reset password
 const jwt = require('jsonwebtoken');
@@ -855,30 +857,38 @@ app.get('/kitchen', (req, res) => {
 
 app.post('/kitchen', (req, res) => {
   console.log(req.body);
-  const newItem = {
-    email: req.session.email,
-    name: req.body.items[0].name,
-    bestBefore: req.body.items[0].bestBefore
-  };
-  
+  const items = req.body.items;
 
-  kitchen.findOneAndUpdate(
-    { email: newItem.email, name: newItem.name },
-    { $set: { bestBefore: newItem.bestBefore } },
-    { upsert: true, returnOriginal: false },
-    (err, result) => {
-      if (err) {
-        console.error('Error updating or inserting item in the database:', err);
-        res.status(500).send('Error updating or inserting item in the database');
-      } else {
-        console.log(result ? 'Item updated in database:' : 'New item inserted into database:', result);
-        res.redirect('/kitchen'); // Redirect to the kitchen page after saving
+  // Save each item individually
+  async.each(items, (item, callback) => {
+    const newItem = {
+      email: req.session.email,
+      name: item.name,
+      bestBefore: item.bestBefore
+    };
+
+    kitchen.findOneAndUpdate(
+      { email: newItem.email, name: newItem.name },
+      { $set: { bestBefore: newItem.bestBefore } },
+      { upsert: true, returnOriginal: false },
+      (err, result) => {
+        if (err) {
+          console.error('Error updating or inserting item in the database:', err);
+          callback(err);
+        } else {
+          console.log(result ? 'Item updated in database:' : 'New item inserted into database:', result);
+          callback();
+        }
       }
+    );
+  }, (err) => {
+    if (err) {
+      res.status(500).send('Error updating or inserting items in the database');
+    } else {
+      res.redirect('/kitchen'); // Redirect to the kitchen page after saving
     }
-  );
+  });
 });
-
-
 
 
 
