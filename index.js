@@ -941,11 +941,11 @@ app.get('/step4', (req, res) => {
   res.render('step4');
 });
 
-app.get("*", (req, res) => {
-  res.status(404);
-  res.render("404", { title: "Page Not Found",navLinks,currentURL: url.parse(req.url).pathname});
-});
 
+app.get('*', (req, res) => {
+  res.status(404);
+  res.render('404');
+});
 
 app.listen(port, () => {
 	console.log("Node application listening on port "+port);
