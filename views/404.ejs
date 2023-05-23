@@ -1,3 +1,11 @@
 <%- include("templates/header") %> 
-    Page not found - 404
+<section class="error-container">
+    <h1>Oops! Page Not Found</h1>
+    <img src="/404.jpg" alt="404 Error" class="error-image" style="display: block; margin: 0 auto;">
+    <p>We're sorry, but the page you are looking for does not exist.</p>
+    <ul class="suggestions">
+      <li>Double-check the URL for typos.</li>
+      <li>Go back to the <a href="/home">homepage</a>.</li>
+    </ul>
+  </section>
 <%- include("templates/footer") %> 

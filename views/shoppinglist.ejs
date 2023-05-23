@@ -3,15 +3,25 @@
 <div class="container" style="max-width: 800px; margin-top: 20px;background-color: #F5F5F5;">
   <h1 class="text-center" style="background-color: 	#00CED1;border-bottom-left-radius: 50%; border-bottom-right-radius: 50%;color: #FFFFFF;">Shopping List</h1>
 
-<% if (shoppingListItems.length > 0) { %>
-  
+  <% if (shoppingListItems.length > 0) { %>
     <div class="recipe-cards">
       <% shoppingListItems.forEach((recipe) => { %>
         <div class="recipe-card">
-          <h3 style="font-size: 20px;"><%= recipe.title %></h3>
+          <h3 style="font-size: 20px;">
+            <% if (kitchenIngredients.includes(recipe.title.toLowerCase())) { %>
+              <span style="background-color: #ff8000;"><%= recipe.title %></span>
+            <% } else { %>
+              <%= recipe.title %>
+            <% } %>
+          </h3>
           <ul>
-            <% recipe.ingredients.forEach((ingredient, index) => { %>
-              <li data-ingredient="<%= index %>" style="font-size: 15px;"><%= ingredient.original %></li>
+            <% recipe.ingredients.forEach((ingredient, index) => {
+              const ingredientWords = ingredient.original.toLowerCase().split(' ');
+              const highlight = ingredientWords.some(word => kitchenIngredients.includes(word));
+            %>
+              <li data-ingredient="<%= index %>" style="font-size: 15px;<% if (highlight) { %> color: #FF8000;<% } %>">
+                <%= ingredient.original %>
+              </li>
             <% }) %>
           </ul>
           <form id="deleteForm_<%= recipe._id %>" action="/shoppinglist/delete/<%= recipe._id %>" method="POST" style="display: inline;">
@@ -20,8 +30,7 @@
         </div>
       <% }) %>
     </div>
-  
-<% } else { %>
+  <% } else { %>
   <div class="text-center">
     <% if (message) { %>
       <p><%= message %></p>
