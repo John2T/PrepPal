@@ -51,6 +51,32 @@
 </style>
 
 <script>
+// Wrap the JavaScript code in a document ready function to ensure the DOM is fully loaded
+document.addEventListener("DOMContentLoaded", () => {
+  const kitchenForm = document.getElementById("kitchen-form");
+  kitchenForm.addEventListener("submit", (event) => {
+    event.preventDefault(); // Prevent the form from submitting normally
+    saveItems();
+  });
+});
+
+function addRow() {
+  const table = document.getElementById("kitchen-table");
+  const newRow = document.createElement("tr");
+  newRow.innerHTML = `
+    <td>
+      <input type="text" name="name">
+    </td>
+    <td>
+      <input type="date" name="bestBefore">
+    </td>
+    <td>
+      <button type="button" onclick="removeRow(this)">Remove</button>
+    </td>
+  `;
+  table.querySelector("tbody").appendChild(newRow);
+}
+
 function removeRow(button) {
   const row = button.parentNode.parentNode;
   const nameInput = row.querySelector('input[name="name"]');
@@ -59,7 +85,7 @@ function removeRow(button) {
   const bestBefore = bestBeforeInput.value.trim();
 
   // Remove the row from the DOM
-  row.parentNode.removeChild(row);
+  row.remove();
 
   // Prepare the item object for deletion
   const item = { name, bestBefore, delete: true };
@@ -97,7 +123,11 @@ function saveItems() {
     const bestBefore = bestBeforeInput.value.trim();
 
     if (name && bestBefore) {
-      items.push({ name, bestBefore });
+      const deleteInput = row.querySelector('input[name="delete"]');
+      const deleteFlag = deleteInput && deleteInput.checked;
+      if (!deleteFlag) {
+        items.push({ name, bestBefore });
+      }
     }
   });
 
