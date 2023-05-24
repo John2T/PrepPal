@@ -135,8 +135,8 @@ In summary, AI played a significant role in code generation, troubleshooting, an
 
 ### Did you encounter any limitations? What were they, and how did you overcome them? (TODO)
 
-## Contact Information
+## Contact Information (Contact Info needs to be updated)
 - NAinZhou 
 - LucasHYing
-- John2T (
+- John2T 
 - VietNguyen10
