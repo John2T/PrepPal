@@ -487,7 +487,7 @@ app.get('/recipe/:id', (req, res) => {
     res.redirect('/login');
   }
   const recipeId = req.params.id;
-  const api_key = "1bb15cce3c994921aaa86ea7d011cd20";//change api-------------------------------------------------------------------------------------------
+  const api_key = "322b73e9c1964f1ca8f162c7f6a3456d";//change api-------------------------------------------------------------------------------------------
   const detailed_recipe = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${api_key}`;
 
   // Nested API call to get detailed recipe information
@@ -558,6 +558,7 @@ app.post('/create-shoppinglist', async (req, res) => {
 
   const email = req.session.email;
   const { recipeId, title, ingredients } = req.body;
+  console.log(recipeId);
 
   try {
     const existingItem = await shoppinglist.findOne({ email, recipeId });
@@ -589,7 +590,7 @@ app.post('/create-shoppinglist', async (req, res) => {
 
 app.get('/shoppinglist', async (req, res) => {
   const email = req.session.email;
-
+  
   try {
     // Get shopping list items for the user
     const shoppingListItems = await shoppinglist.find({ email }).toArray();
@@ -604,12 +605,20 @@ app.get('/shoppinglist', async (req, res) => {
     const kitchenItems = await kitchen.find({ email }).toArray();
     const kitchenIngredients = kitchenItems.map(item => item.name.toLowerCase());
 
+     // Extract the recipeIds from the shopping list items
+     const recipeIds = shoppingListItems.map(item => item.recipeId);
+     recipeIds.forEach(recipeId => {
+       console.log('Recipe ID:', recipeId);
+     });
+
     // Render the template and pass the shopping list items, message, and kitchen ingredients
     res.render('shoppinglist', {
       shoppingListItems,
       message,
-      kitchenIngredients
+      kitchenIngredients,
+      recipeIds
     });
+
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
