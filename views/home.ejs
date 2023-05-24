@@ -1,16 +1,15 @@
 <%- include("templates/header") %>
-<div class="container" style="max-width: 800px; margin-top: 20px;">
-  <h1 class="text-center">Hello, <%= username %>!</h1>
-  <div id="favorite" class="col" style="background-color: rgba(245, 249, 226, 0.864); padding: 20px; box-shadow: 2px 2px 10px #888888; margin-bottom: 20px;">
-    <p style="text-decoration: none; display: inline-block; padding: 10px 20px;  font-weight: bold;">Your favorites</p>
-
+<div class="container" style="max-width: 800px; margin-top: 20px; background-color: #F5F5F5;">
+  <h2 class="text-center" style="background-color: 	#00CED1;border-bottom-left-radius: 50%; border-bottom-right-radius: 50%;color: #FFFFFF;">Hello, <%= username %>!</h1>
+  <div id="favorite" class="col" style="background-color:#FFFFFF; padding: 20px; box-shadow: 2px 2px 10px #888888; margin-bottom: 20px;">
+    <h2 style="font-weight: bold; font-size: 20px;">Your favorites</h2>
     <% if (favoriteRecipes.length > 0) { %>
       <div class="card-group" style="display: flex;">
         <% favoriteRecipes.slice(0, 2).forEach((recipe) => { %>
           <div class="card" style="width: 200px; margin-right: 10px;">
             <img src="<%= recipe.image %>" class="card-img-top" alt="<%= recipe.title %>">
             <div class="card-body">
-              <h5 class="card-title" style="text-align: center;"><%= recipe.title %></h5>
+              <h5 class="card-title" style="text-align: left; font-size: 15px;"><%= recipe.title %></h5>
               <a href="/allFavourites/<%= recipe.recipeId %>" class="btn btn-primary">Check</a>
             </div>
           </div>
@@ -30,12 +29,12 @@
   
   
 
-  <div id="top10" style="background-color: rgba(245, 249, 226, 0.864); padding: 10px; box-shadow: 2px 2px 10px #888888; margin-bottom: 20px;">
+  <div id="top10" style="background-color:#FFFFFF; padding: 10px; box-shadow: 2px 2px 10px #888888; margin-bottom: 20px;">
     <h2 style="font-weight: bold; font-size: 20px;">Top Recipes</h2>
     <% recipeData.forEach((recipe) => { %>
       <div class="recipe-card">
         <img src="<%= recipe.image %>" alt="<%= recipe.title %>">
-        <h3><%= recipe.title %></h3>
+        <h5 style="font-size: 15px;"><%= recipe.title %></h5>
         <a href="/recipe/<%= recipe.id %>" class="btn btn-primary">View Recipe</a>
       </div>
     <% }) %>
@@ -43,7 +42,7 @@
 
   <form action="/home/browsing" method="POST">
     <div class="d-grid gap-2">
-      <button type="submit" class="btn btn-success rounded-pill px-3" style="margin-bottom: 50px;">SEE MORE</button>
+      <button type="submit" class="btn  rounded-pill px-3" style="margin-bottom: 50px; background-color:	#00CED1; color: #FFFFFF;">SEE MORE</button>
     </div>
   </form>
   
