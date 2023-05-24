@@ -71,7 +71,7 @@
                 <% } %>
               </ul>
               <form id="list" method="POST" action="/create-shoppinglist">
-                <input type="hidden" name="recipeId" value="<%= recipe.id %>">
+                <input type="hidden" name="recipeId" value="<%= recipe.recipeId %>">
                 <input type="hidden" name="title" value="<%= recipe.title %>">
                 <input type="hidden" name="ingredients" value="<%= JSON.stringify(recipe.ingredients) %>">
                 <button id="shoppingList" type="submit">Create Shopping List</button>
