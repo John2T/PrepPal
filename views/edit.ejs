@@ -6,7 +6,7 @@
   <form id="editForm" method="POST" action="/recipeUpdate/<%=recipe.recipeId %>" style="padding-bottom: 60px;">
 
     <div class="form-group mb-3">
-      <label for="title">Title</label>
+      <label for="title" >Title</label>
       <input type="text" class="form-control" id="title" name="title" value="<%= recipe.title %>" required>
     </div>
     <div class="form-group mb-3">
@@ -108,7 +108,7 @@
     </a>
     <button type="button" class="btn btn-secondary float-end resetBtn" style="margin-left: 15px;">Reset</button>
     
-    <button type="submit" class="btn btn-primary float-end">Submit</button>
+    <button id = "submit" type="submit" class="btn btn-primary float-end">Submit</button>
  
     
 
@@ -284,6 +284,42 @@ let instructionCount = <%= recipe.instructions.length %>;
 
 </script>
 
+<style>
 
+h1{
+    background-color: 	
+    #00CED1;border-bottom-left-radius:
+     50%; border-bottom-right-radius: 
+     50%;color: #FFFFFF;
+     text-align: center;
+} 
+
+label{
+  font-weight: bold; 
+        font-size: 20px;
+}
+
+
+#submit{
+  background-color: #00CED1; 
+  color: white; 
+  border: none; 
+  border-radius: 10px;
+}
+
+#cancelLink{
+  color: white; 
+  border: none; 
+  border-radius: 10px;
+
+}
+
+.resetBtn{
+  color: white; 
+  border: none; 
+  border-radius: 10px;
+}
+
+</style>
 
 <%- include("templates/footer") %>

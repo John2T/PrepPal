@@ -74,7 +74,7 @@
                 <input type="hidden" name="recipeId" value="<%= recipe.id %>">
                 <input type="hidden" name="title" value="<%= recipe.title %>">
                 <input type="hidden" name="ingredients" value="<%= JSON.stringify(recipe.ingredients) %>">
-                <button type="submit">Create Shopping List</button>
+                <button id="shoppingList" type="submit">Create Shopping List</button>
               </form>
 
               
@@ -125,4 +125,25 @@
             
               </div>
             </div>
+
+            <style>
+              #title{
+            background-color: 	
+            #00CED1;border-bottom-left-radius:
+             50%; border-bottom-right-radius: 
+             50%;color: #FFFFFF;
+        }
+        
+        h2{
+          font-weight: bold; 
+          font-size: 20px;
+        }
+        
+        #shoppingList{
+          background-color: #00CED1; 
+          color: white; 
+          border: none; 
+          border-radius: 10px;
+        }
+            </style>
             <%- include("templates/footer") %>
