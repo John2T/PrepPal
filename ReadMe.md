@@ -63,7 +63,6 @@ Prepal is an ingredient-based recipe generator designed to help home-cooks use t
             
 
 ## How to Install or Run the Project
-## How to Install or Run the Project
 
 1. Install Visual Studio Code (VS Code): Download and install VS Code from the official website: [https://code.visualstudio.com/](https://code.visualstudio.com/).
 
@@ -116,7 +115,7 @@ Contributors
 
 ## How AI was Used in the Project
 
-###Did you use AI to help create your app?
+### Did you use AI to help create your app?
 
 Yes, AI was utilized during the development of our app in several ways:
 
@@ -128,11 +127,11 @@ Yes, AI was utilized during the development of our app in several ways:
 
 In summary, AI played a significant role in code generation, troubleshooting, and served as a valuable reference tool during the app development process. These AI-powered capabilities not only enhanced productivity but also facilitated faster development cycles and improved the overall quality of the application.
 
-###Did you use AI to create data sets or clean data sets? (TODO)
+### Did you use AI to create data sets or clean data sets? (TODO)
 
-###Does your app use AI? If so, how? (TODO)
+### Does your app use AI? If so, how? (TODO)
 
-###Did you encounter any limitations? What were they, and how did you overcome them? (TODO)
+### Did you encounter any limitations? What were they, and how did you overcome them? (TODO)
 
 ## Contact Information
 - NAinZhou 
