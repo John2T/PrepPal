@@ -64,7 +64,9 @@ Prepal is an ingredient-based recipe generator designed to help home-cooks use t
 ```
             
 
-## How to Install or Run the Project
+## How to Install or Run the Project (Needs to be updated)
+
+### What you need to install
 
 1. Install Visual Studio Code (VS Code): Download and install VS Code from the official website: [https://code.visualstudio.com/](https://code.visualstudio.com/).
 
@@ -81,6 +83,10 @@ Prepal is an ingredient-based recipe generator designed to help home-cooks use t
 7. You can now use terminal and use the following command to run the project on your localHost:
    ```shell
     nodemon .\index.js
+
+### 3rd party API(s)
+
+This app uses the spoonacular API. You will need to make an account to obtain and api key.
 
 ## How to Use the Product (Features)
 
