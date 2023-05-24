@@ -96,11 +96,18 @@
 
 
 
-  <script>
-    function deleteRecipe(recipeId) {
-      const deleteForm = document.getElementById(`deleteForm_${recipeId}`);
+<script>
+  function deleteRecipe(recipeId) {
+    const deleteForm = document.getElementById(`deleteForm_${recipeId}`);
+    
+    // Ask for confirmation using a dialog box
+    const confirmed = confirm("Are you sure you want to delete this recipe?");
+    
+    if (confirmed) {
       deleteForm.submit();
     }
-  </script>
+  }
+</script>
+
 
 <%- include("templates/footer") %>
