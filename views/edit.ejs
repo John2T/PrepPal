@@ -106,9 +106,10 @@
         Cancel
       </button>
     </a>
-    <button type="submit" class="btn btn-primary float-end">Submit</button>
-    <button type="button" class="btn btn-secondary float-end resetBtn">Reset</button>
+    <button type="button" class="btn btn-secondary float-end resetBtn" style="margin-left: 15px;">Reset</button>
     
+    <button type="submit" class="btn btn-primary float-end">Submit</button>
+ 
     
 
 
@@ -121,42 +122,46 @@
 
 const cancelLink = document.getElementById('cancelLink');
 cancelLink.addEventListener('click', function(event) {
-  const confirmed = confirm("Do you want to discard changes?"); // Display the confirmation popup
+  const confirmed = confirm("Are you sure you want to discard changes?"); // Display the confirmation popup
 
   if (!confirmed) {
     event.preventDefault(); // Cancel the default behavior of the link
   }
 });
 
-
 const resetButton = document.querySelector('.resetBtn');
 resetButton.addEventListener('click', function(event) {
   event.preventDefault(); // Cancel the default behavior of the button
 
-  // Reset all form values to their original state
-  document.getElementById('title').value = "<%= recipe.title %>";
-  document.getElementById('details').value = "<%= recipe.details %>";
-  document.getElementById('healthScore').value = "<%= recipe.healthScore %>";
-  document.getElementById('cookTime').value = "<%= recipe.cookTime %>";
-  document.getElementById('servings').value = "<%= recipe.servings %>";
+  const confirmed = confirm("Are you sure you want to reset the form?"); // Display the confirmation popup
 
-  const originalIngredients = document.querySelectorAll('input[name="originalIngredients"]');
-  const ingredientInputs = document.querySelectorAll('textarea[name="ingredients"]');
-  ingredientInputs.forEach((input, index) => {
-    input.value = originalIngredients[index].value;
-  });
+  if (confirmed) {
+    // Reset all form values to their original state
+    document.getElementById('title').value = "<%= recipe.title %>";
+    document.getElementById('details').value = "<%= recipe.details %>";
+    document.getElementById('healthScore').value = "<%= recipe.healthScore %>";
+    document.getElementById('cookTime').value = "<%= recipe.cookTime %>";
+    document.getElementById('servings').value = "<%= recipe.servings %>";
 
-  document.getElementById('calories').value = "<%= recipe.cal %>";
-  document.getElementById('protein').value = "<%= recipe.pro %>";
-  document.getElementById('carbs').value = "<%= recipe.carbs %>";
-  document.getElementById('fat').value = "<%= recipe.fat %>";
+    const originalIngredients = document.querySelectorAll('input[name="originalIngredients"]');
+    const ingredientInputs = document.querySelectorAll('textarea[name="ingredients"]');
+    ingredientInputs.forEach((input, index) => {
+      input.value = originalIngredients[index].value;
+    });
 
-  const originalInstructions = document.querySelectorAll('input[name="originalInstructions"]');
-  const instructionInputs = document.querySelectorAll('textarea[name="instructions"]');
-  instructionInputs.forEach((input, index) => {
-    input.value = originalInstructions[index].value;
-  });
+    document.getElementById('calories').value = "<%= recipe.cal %>";
+    document.getElementById('protein').value = "<%= recipe.pro %>";
+    document.getElementById('carbs').value = "<%= recipe.carbs %>";
+    document.getElementById('fat').value = "<%= recipe.fat %>";
+
+    const originalInstructions = document.querySelectorAll('input[name="originalInstructions"]');
+    const instructionInputs = document.querySelectorAll('textarea[name="instructions"]');
+    instructionInputs.forEach((input, index) => {
+      input.value = originalInstructions[index].value;
+    });
+  }
 });
+
 
 
 
