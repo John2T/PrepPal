@@ -101,10 +101,12 @@
     const deleteForm = document.getElementById(`deleteForm_${recipeId}`);
     
     // Ask for confirmation using a dialog box
-    const confirmed = confirm("Are you sure you want to delete this recipe?");
+    const confirmed = confirm("Are you sure you want to delete this shopping list?");
     
     if (confirmed) {
       deleteForm.submit();
+    } else {
+      event.preventDefault(); // Cancel the default form submission
     }
   }
 </script>
