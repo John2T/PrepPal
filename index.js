@@ -18,7 +18,7 @@ const nodeMailer = require('nodemailer');
 
 const saltRounds = 12;
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 
 const app = express();
 
@@ -227,6 +227,38 @@ app.get('/search', async (req, res) => {
     res.redirect('/');
     return;
   }
+  /* NOt wrking yet
+    if(!query){
+    const defaultIngredient = [];
+    const defaultPicture = [];
+    const defaultNumber = 1;
+    const defaultCategories = ['Cucumbers', 'Bananas', 'Avocados', 'Lettuce', 'Tomatoes',
+                               'Eggs', 'Milk', 'Eggs', 'Yogurt', 'Cheese', 
+                               'Ground beef', 'Chicken leg', 'Salmon', 'Shrimp', 'Pork', 
+                               'Apples', 'Grapes', 'Blueberries', 'Pineapple', 'Mangoes'];
+
+    for(let i = 0; i < defaultCategories; i++){
+      var defaulURL = `https://api.spoonacular.com/food/ingredients/search?query=${defaultCategories[i]}&number=${defaultNumber}&apiKey=${apiKey}`;
+      fetch(defaulURL)
+      .then(response => response.json())
+      .then(data => {
+        // Process the ingredients list and display them on your ingredient page
+        defaultIngredient.push(data.results);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+    defaultIngredient.forEach(ingredient => {
+      const ingredientImageFileName = ingredient.image;
+      const ingredientImageUrl = `https://spoonacular.com/cdn/ingredients_100x100/${ingredientImageFileName}`;
+      defaultPicture.push(ingredientImageUrl);
+    });
+
+    res.render('search', {list: defaultIngredient, image_url: defaultPicture});
+    return;
+  }
+  */
 
   //API #1: 9d2d1b2f8727419fb36bba5c995a49b5
   const apiKey = "09e317b538d94d98b7941e9d77ff593e";
@@ -299,16 +331,60 @@ app.post('/removeIngredient', (req, res) => {
     res.json({ success: false });
   }
 });
-
-
-
 //---------------------------------------------------------------------------------
 
-//-----------------------------------Recipe page-----------------------------------
+//-----------------------------------Searched Recipe page-----------------------------------
 /* This page will show the recipe that 
    include the ingredients user input in the search page*/
 
-   ingredientList = [];
+ingredientList = [];
+console.log(ingredientList);
+app.post('/searchedRecipe', (req, res) => {
+  const apiKey = "3dff3030733542408d95432be524a208";
+  const number = 10;
+  var ingredient = "";
+  for (let i = 0; i < ingredientList.length; i++) {
+    if (i === ingredientList.length - 1) {
+      ingredient += encodeURIComponent(ingredientList[i]);
+    } else {
+      ingredient += encodeURIComponent(ingredientList[i]) + ',+';
+    }
+  }
+
+  if(ingredientList.length == 0){
+    res.render(`noIngredientInput`);
+  }
+  
+  console.log(ingredient);
+  const url = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredient}&number=${number}&apiKey=${apiKey}`;
+  console.log(url);
+   fetch(url)
+  .then(response => response.json())
+  .then(data => {
+    // Process the ingredients list and display them on your ingredient page
+    const recipes = data;
+    const processedRecipes = recipes.map(recipe => {
+      const image = recipe.image;
+      const title = recipe.title;
+      const id = recipe.id;
+      const usedIngredients = recipe.usedIngredients.map(ingredient => ingredient.name);
+      const unusedIngredient = recipe.unusedIngredients.map(ingredient => ingredient.name);
+      const missedIngredient = recipe.missedIngredients.map(ingredient => ingredient.name);
+      
+      // Combine all ingredients into a single string
+      const allIngredients = [...usedIngredients, ...unusedIngredient, ...missedIngredient ].join(', ');
+
+      // Return the processed recipe object
+      return { image, title, id, allIngredients};
+    });
+
+    console.log(processedRecipes);
+    res.render('searchedRecipe', {list : recipes, processedRecipes});
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+})
 
 //---------------------------------------------------------------------------------
 
@@ -493,7 +569,7 @@ app.get('/recipe/:id', (req, res) => {
   if (!req.session.loggedin){
     res.redirect('/login');
   }
-  const recipeId = req.params.id;
+  const recipeId = req.params.id;  
   const api_key = "1bb15cce3c994921aaa86ea7d011cd20";//change api-------------------------------------------------------------------------------------------
   const detailed_recipe = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${api_key}`;
 
