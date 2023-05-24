@@ -9,19 +9,20 @@ Prepal is an ingredient-based recipe generator designed to help home-cooks use t
 - Database: MongoDB
 
 ## File Contents of Folder (This will need to be updated)
-│   │       LICENSE
-│   │       package.json
-│   │       README.md
+
+│   │   LICENSE
+│   │   package.json
+│   │   README.md
 │
 ├───public
-│       404.jpg
-│       dino.jpg
-│       dinomeat.jpg
-│       logo.jpeg
-│       step1.jpg
-│       step2.jpg
-│       step3.jpg
-│       step4.png
+│   │   404.jpg
+│   │   dino.jpg
+│   │   dinomeat.jpg
+│   │   logo.jpeg
+│   │   step1.jpg
+│   │   step2.jpg
+│   │   step3.jpg
+│   │   step4.png
 │
 └───views
     │   404.ejs
@@ -52,14 +53,15 @@ Prepal is an ingredient-based recipe generator designed to help home-cooks use t
     │   welcome.ejs
     │
     ├───dino
-    │       step4.ejs
+    │   │   step4.ejs
     │
     └───templates
-            favRecipeInfo.ejs
-            footer.ejs
-            header.ejs
-            ingredientCard.ejs
-            recipeCard.ejs
+        │   favRecipeInfo.ejs
+        │   footer.ejs
+        │   header.ejs
+        │   ingredientCard.ejs
+        │   recipeCard.ejs
+
             
 
 ## How to Install or Run the Project
