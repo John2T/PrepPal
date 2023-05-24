@@ -19,7 +19,7 @@
       <input type="number" class="form-control" id="healthScore" name="healthScore" value="<%= recipe.healthScore %>" required>
     </div>
     <div class="form-group mb-3">
-      <label for="cookTime">Cook Time</label>
+      <label for="cookTime">Cook Time (Minutes)</label>
       <input type="text" class="form-control" id="cookTime" name="cookTime" value="<%= recipe.cookTime %>" required>
     </div>
     <div class="form-group mb-3">
@@ -321,5 +321,118 @@ label{
 }
 
 </style>
+
+<script>
+// Validate numeric fields before submitting the form
+document.getElementById('editForm').addEventListener('submit', function(event) {
+  const healthScoreInput = document.getElementById('healthScore');
+  const cookTimeInput = document.getElementById('cookTime');
+  const servingsInput = document.getElementById('servings');
+
+  // Check if healthScoreInput is not a number or is less than 0
+  if (isNaN(healthScoreInput.value) || Number(healthScoreInput.value) < 0) {
+    event.preventDefault(); // Prevent form submission
+    alert('Please enter a valid health score.');
+    return;
+  }
+
+  // Check if cookTimeInput is not a number or is less than 0
+  if (isNaN(cookTimeInput.value) || Number(cookTimeInput.value) < 0) {
+    event.preventDefault(); // Prevent form submission
+    alert('Please enter a valid cook time.');
+    return;
+  }
+
+  // Check if servingsInput is not a number or is less than 0
+  if (isNaN(servingsInput.value) || Number(servingsInput.value) < 0) {
+    event.preventDefault(); // Prevent form submission
+    alert('Please enter a valid number of servings.');
+    return;
+  }
+});
+
+// Validate numeric fields before submitting the form
+document.getElementById('editForm').addEventListener('submit', function(event) {
+  const caloriesInput = document.getElementById('calories');
+  const proteinInput = document.getElementById('protein');
+  const carbsInput = document.getElementById('carbs');
+  const fatInput = document.getElementById('fat');
+
+  // Check if caloriesInput is not a valid numeric value
+  if (!isValidNumericValue(caloriesInput.value)) {
+    event.preventDefault(); // Prevent form submission
+    alert('Please enter a valid numeric value and valid unit for calories.');
+    return;
+  }
+
+  // Check if proteinInput is not a valid numeric value
+  if (!isValidNumericValue(proteinInput.value)) {
+    event.preventDefault(); // Prevent form submission
+    alert('Please enter a valid numeric value and valid unit for protein.');
+    return;
+  }
+
+  // Check if carbsInput is not a valid numeric value
+  if (!isValidNumericValue(carbsInput.value)) {
+    event.preventDefault(); // Prevent form submission
+    alert('Please enter a valid numeric value and valid unit for carbs.');
+    return;
+  }
+
+  // Check if fatInput is not a valid numeric value
+  if (!isValidNumericValue(fatInput.value)) {
+    event.preventDefault(); // Prevent form submission
+    alert('Please enter a valid numeric value and valid unit for fat.');
+    return;
+  }
+});
+
+// Validate if the input value is a valid numeric value with unit
+function isValidNumericValue(value) {
+  // Regular expression to match a number followed by a unit
+  const regex = /^(\d+(\.\d+)?)\s*([a-zA-Z]+)$/;
+
+  const match = value.trim().match(regex);
+  if (!match) {
+    return false;
+  }
+
+  const numericValue = parseFloat(match[1]);
+  const unit = match[3];
+
+  // Check if the numeric value is a valid number
+  if (isNaN(numericValue)) {
+    return false;
+  }
+
+  // Additional checks for valid units can be added here
+  // Example: if (unit !== 'kg' && unit !== 'g') { return false; }
+
+  return true;
+}
+
+// Validate if the unit is a valid unit
+function isValidUnit(unit) {
+  const validUnits = [
+    // Mass units
+    'g', 'mg', 'kg', 'oz', 'lb',
+
+    // Volume units
+    'ml', 'l', 'tsp', 'tbsp', 'fl oz', 'cup', 'pint', 'quart', 'gallon',
+
+    // Energy units
+    'kcal', 'cal',
+
+    // Other units
+    '%', 'IU'
+  ];
+  // Add more valid units as needed
+
+  return validUnits.includes(unit.toLowerCase());
+}
+
+
+
+</script>
 
 <%- include("templates/footer") %>
