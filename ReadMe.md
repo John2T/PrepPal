@@ -9,7 +9,7 @@ Prepal is an ingredient-based recipe generator designed to help home-cooks use t
 - Database: MongoDB
 
 ## File Contents of Folder (This will need to be updated)
-
+   ```shell
 │   │   LICENSE
 │   │   package.json
 │   │   README.md
@@ -61,7 +61,7 @@ Prepal is an ingredient-based recipe generator designed to help home-cooks use t
         │   header.ejs
         │   ingredientCard.ejs
         │   recipeCard.ejs
-
+```
             
 
 ## How to Install or Run the Project
