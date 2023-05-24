@@ -5,7 +5,7 @@
     <img class="mb-4" src="/logo.jpeg" alt="" width="100" height="100">
   </a>
   <form class="col-12 mb-3 mb-lg-0 me-lg-3" role="search" action="/search" method="GET">
-    <input type="search" class="form-control" name="query" placeholder="Search..." aria-label="Search">
+    <input type="search" class="form-control" name="query" placeholder="Enter what you have in your fridge" aria-label="Search">
   </form>
 </div>
 
@@ -17,8 +17,8 @@
       <ul class="nav nav-pills" id="selectedIngredientsList"></ul>
     </div>
   </div>
-  <form action="/easter" method="post">
-    <button class="btn btn-primary" type="submit" style="float: right;">Get Recipe</button>
+  <form action="/searchedRecipe" method="post">
+    <button class="btn btn-primary" type="submit" style="float: right  ;">Get Recipe</button>
   </form>
 </div>
 
@@ -34,32 +34,112 @@
 </div>
 
 <script>
-  // Function to add an ingredient to the list
-  function addToIngredientList(ingredientName) {
-    const ingredientList = document.getElementById('selectedIngredientsList');
+// Function to add an ingredient to the list
+function addToIngredientList(ingredientName) {
+  const ingredientList = document.getElementById('selectedIngredientsList');
+  const listItem = document.createElement('li');
+  listItem.textContent = ingredientName;
+  listItem.classList.add('nav-item');
+  listItem.style.backgroundColor = 'yellow';
+  listItem.style.borderRadius = '25px';
+  listItem.setAttribute('name', ingredientName);
+
+  const removeButton = document.createElement('button');
+  removeButton.textContent = 'x';
+  removeButton.classList.add('remove-button');
+  removeButton.onclick = () => {
+    ingredientList.removeChild(listItem);
+
+    // Send a request to the server to remove the ingredient
+    fetch('/removeIngredient', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ingredientName }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Handle the response from the server
+        console.log(data);
+        // Remove the listItem from the ingredientList DOM element if the server indicates success
+        if (data.success) {
+          ingredientList.removeChild(listItem);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+
+    // Remove the ingredient from local storage as well
+    const storedIngredients = JSON.parse(localStorage.getItem('ingredients')) || [];
+    const updatedIngredients = storedIngredients.filter(ingredient => ingredient !== ingredientName);
+    localStorage.setItem('ingredients', JSON.stringify(updatedIngredients));
+  };
+
+  listItem.appendChild(removeButton);
+  ingredientList.appendChild(listItem);
+
+  // Store the ingredient in local storage
+  const storedIngredients = JSON.parse(localStorage.getItem('ingredients')) || [];
+  storedIngredients.push(ingredientName);
+  localStorage.setItem('ingredients', JSON.stringify(storedIngredients));
+}
+
+// Function to remove an ingredient from the list
+function removeFromIngredientList(event) {
+  const listItem = event.target.parentNode;
+  const ingredientName = listItem.getAttribute('name');
+  
+  // Send a request to the server to remove the ingredient
+  fetch('/removeIngredient', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ ingredientName }),
+  })
+    .then(response => response.json())
+    .then(data => {
+      // Handle the response from the server
+      console.log(data);
+      // Remove the listItem from the ingredientList DOM element if the server indicates success
+      if (data.success) {
+        listItem.remove();
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+
+  // Remove the ingredient from local storage as well
+  const storedIngredients = JSON.parse(localStorage.getItem('ingredients')) || [];
+  const updatedIngredients = storedIngredients.filter(ingredient => ingredient !== ingredientName);
+  localStorage.setItem('ingredients', JSON.stringify(updatedIngredients));
+}
+
+// Restore the ingredient list from local storage when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+  const storedIngredients = JSON.parse(localStorage.getItem('ingredients')) || [];
+  const ingredientList = document.getElementById('selectedIngredientsList');
+
+  storedIngredients.forEach(ingredientName => {
     const listItem = document.createElement('li');
     listItem.textContent = ingredientName;
     listItem.classList.add('nav-item');
     listItem.style.backgroundColor = 'yellow';
-    listItem.style.borderRadius = "25px";
+    listItem.style.borderRadius = '25px';
+    listItem.setAttribute('name', ingredientName);
 
     const removeButton = document.createElement('button');
     removeButton.textContent = 'x';
     removeButton.classList.add('remove-button');
-    removeButton.onclick = () => {
-      ingredientList.removeChild(listItem);
-    };
+    removeButton.onclick = removeFromIngredientList;
 
     listItem.appendChild(removeButton);
     ingredientList.appendChild(listItem);
-  }
+  });
+});
 
-  // Function to remove an ingredient from the list
-  function removeFromIngredientList(event) {
-    const listItem = event.target.parentNode;
-    listItem.remove();
-  }
-
-  
 </script>
 <%- include("templates/footer") %>   
