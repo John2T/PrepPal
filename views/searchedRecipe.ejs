@@ -1,0 +1,8 @@
+<%- include("templates/header") %>
+<div class="container">
+    <h1>hello</h1>
+    <% for(var i = 0; i < list.length; i++) {%>
+        <%- include("templates/recipeCard", {recipe: list[i], allIngredients: processedRecipes[i].allIngredients}) %>
+    <% } %>
+</div>
+<%- include("templates/footer") %> 

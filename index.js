@@ -231,6 +231,38 @@ app.get('/search', async (req, res) => {
     res.redirect('/');
     return;
   }
+  /* NOt wrking yet
+    if(!query){
+    const defaultIngredient = [];
+    const defaultPicture = [];
+    const defaultNumber = 1;
+    const defaultCategories = ['Cucumbers', 'Bananas', 'Avocados', 'Lettuce', 'Tomatoes',
+                               'Eggs', 'Milk', 'Eggs', 'Yogurt', 'Cheese', 
+                               'Ground beef', 'Chicken leg', 'Salmon', 'Shrimp', 'Pork', 
+                               'Apples', 'Grapes', 'Blueberries', 'Pineapple', 'Mangoes'];
+
+    for(let i = 0; i < defaultCategories; i++){
+      var defaulURL = `https://api.spoonacular.com/food/ingredients/search?query=${defaultCategories[i]}&number=${defaultNumber}&apiKey=${apiKey}`;
+      fetch(defaulURL)
+      .then(response => response.json())
+      .then(data => {
+        // Process the ingredients list and display them on your ingredient page
+        defaultIngredient.push(data.results);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+    defaultIngredient.forEach(ingredient => {
+      const ingredientImageFileName = ingredient.image;
+      const ingredientImageUrl = `https://spoonacular.com/cdn/ingredients_100x100/${ingredientImageFileName}`;
+      defaultPicture.push(ingredientImageUrl);
+    });
+
+    res.render('search', {list: defaultIngredient, image_url: defaultPicture});
+    return;
+  }
+  */
 
   //API #1: 9d2d1b2f8727419fb36bba5c995a49b5
   const apiKey = "09e317b538d94d98b7941e9d77ff593e";
@@ -284,38 +316,85 @@ app.get('/search', async (req, res) => {
 
 // Receive ingredient name and add it to the list
 app.post('/getList', (req, res) => {
-  const {
-    ingredientName
-  } = req.body.ingredientName;
+  const { ingredientName } = req.body;
 
   if (!ingredientList.includes(ingredientName)) {
     ingredientList.push(ingredientName);
   }
-
   console.log(ingredientList);
-
-  res.json({
-    success: true
-  });
+  res.json({ success: true });
 });
 
 // Remove ingredient from the list
 app.post('/removeIngredient', (req, res) => {
-  const {
-    ingredientName
-  } = req.body;
+  const { ingredientName } = req.body;
 
-  // Send a response indicating success or failure
-  res.json({
-    success: true
-  });
+  // Find the index of the ingredient in the ingredientList array
+  const index = ingredientList.indexOf(ingredientName);
+
+  // If the ingredient is found, remove it from the ingredientList array
+  if (index !== -1) {
+    ingredientList.splice(index, 1);
+    console.log(ingredientList);
+    res.json({ success: true });
+  } else {
+    res.json({ success: false });
+  }
 });
-/* End of search page */
+//---------------------------------------------------------------------------------
 
+//-----------------------------------Searched Recipe page-----------------------------------
 /* This page will show the recipe that 
    include the ingredients user input in the search page*/
 
 ingredientList = [];
+console.log(ingredientList);
+app.post('/searchedRecipe', (req, res) => {
+  const apiKey = "3dff3030733542408d95432be524a208";
+  const number = 10;
+  var ingredient = "";
+  for (let i = 0; i < ingredientList.length; i++) {
+    if (i === ingredientList.length - 1) {
+      ingredient += encodeURIComponent(ingredientList[i]);
+    } else {
+      ingredient += encodeURIComponent(ingredientList[i]) + ',+';
+    }
+  }
+
+  if(ingredientList.length == 0){
+    res.render(`noIngredientInput`);
+  }
+  
+  console.log(ingredient);
+  const url = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredient}&number=${number}&apiKey=${apiKey}`;
+  console.log(url);
+   fetch(url)
+  .then(response => response.json())
+  .then(data => {
+    // Process the ingredients list and display them on your ingredient page
+    const recipes = data;
+    const processedRecipes = recipes.map(recipe => {
+      const image = recipe.image;
+      const title = recipe.title;
+      const id = recipe.id;
+      const usedIngredients = recipe.usedIngredients.map(ingredient => ingredient.name);
+      const unusedIngredient = recipe.unusedIngredients.map(ingredient => ingredient.name);
+      const missedIngredient = recipe.missedIngredients.map(ingredient => ingredient.name);
+      
+      // Combine all ingredients into a single string
+      const allIngredients = [...usedIngredients, ...unusedIngredient, ...missedIngredient ].join(', ');
+
+      // Return the processed recipe object
+      return { image, title, id, allIngredients};
+    });
+
+    console.log(processedRecipes);
+    res.render('searchedRecipe', {list : recipes, processedRecipes});
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+})
 
 /* Start of Forgot password page */
 app.get('/forgotpassword', (req, res, next) => {
