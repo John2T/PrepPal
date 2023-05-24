@@ -1,6 +1,5 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,300,1,0" />
-<link rel="stylesheet" href="/css/recipe.css">
+
 
 
 
@@ -55,7 +54,15 @@
     
         <div class="row justify-content-between">
           <div class="col-3 d-flex justify-content-start">
-            <p id = "healthScore">Health Score: <%= details.healthScore %> </p>
+            <p id="healthScore">
+              Health Score: <%= details.healthScore %>
+              <span class="tooltip-icon" onclick="toggleTooltip()">help</span>
+              <span class="tooltip-text">
+                The healthScore is a numerical rating assigned to recipes by Spoonacular to indicate their overall nutritional quality. 
+                It considers factors such as nutrient content, balance of macronutrients, presence of undesirable ingredients, and cooking methods. 
+                Higher healthScores indicate healthier recipes, but individual dietary needs and preferences should still be considered when making food choices.
+              </span>
+            </p>
           </div>
           <div class="col-3 d-flex justify-content-center">
             <p id = "cookTime">Cook time: <%= details.readyInMinutes %>m</p>
@@ -152,6 +159,61 @@ h2{
   border: none; 
   border-radius: 10px;
 }
-    </style>
+
+.tooltip-icon {
+  font-family: "Material Symbols Outlined", sans-serif;
+  font-size: 14px;
+  color: #999;
+  cursor: pointer;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 300px;
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+  padding: 5px;
+  border-radius: 5px;
+  position: absolute;
+  z-index: 1;
+  top: -120%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip-text.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+.superscript {
+  position: relative;
+  top: -0.7em;
+}
+</style>
+
+<script>
+  function toggleTooltip() {
+    var tooltipText = document.querySelector(".tooltip-text");
+    tooltipText.classList.toggle("show");
+  }
+  
+  function hideTooltip(event) {
+    var tooltipText = document.querySelector(".tooltip-text");
+    var tooltipIcon = document.querySelector(".tooltip-icon");
+  
+    if (!tooltipText.contains(event.target) && !tooltipIcon.contains(event.target)) {
+      tooltipText.classList.remove("show");
+    }
+  }
+  
+  document.addEventListener("click", hideTooltip);
+  </script>
+
+
+ 
 
 <%- include("templates/footer") %> 
