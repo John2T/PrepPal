@@ -25,7 +25,7 @@
               </li>
             <% }) %>
           </ul>
-          <a href="/recipe/<%= recipe.recipeId %>" class="btn btn-primary">View Recipe</a>
+          <a href="/recipe/<%= recipe.recipeId %>" class="btn" id = "viewRecipeBtn">View Recipe</a>
           <form id="deleteForm_<%= recipe._id %>" action="/shoppinglist/delete/<%= recipe._id %>" method="POST" style="display: inline;">
             <button class="btn btn-danger" onclick="deleteRecipe('<%= recipe._id %>')">Delete</button>
           </form>
@@ -55,6 +55,13 @@
 <style>
   body {
     margin-bottom: 50px;
+  }
+
+  #viewRecipeBtn{
+    background-color: #00CED1;
+    color: white;
+    border: none;
+    border-radius: 10px;
   }
 
   .recipe-cards {
