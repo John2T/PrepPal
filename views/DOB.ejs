@@ -1,12 +1,24 @@
 <%- include("templates/header") %>
 
+<h1
+class="text-center"
+style="
+  background-color: #00ced1;
+  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 50%;
+  color: #ffffff;
+"
+>
+Settings
+</h1>
+
 <div class="container mt-4">
 
   <div class="row justify-content-center">
     <div class="col-md-6">
-        <i id="back" class="material-icons md-36"><a href="/personal">arrow_back</a></i>
+        <i id="back" class="material-icons md-36"><a href="/settings">arrow_back</a></i>
       <div class="text-center mb-4"> <!-- Add container for center alignment -->
-        <h1>Settings</h1>
+        <h4>Change Date of Birth</h4>
       </div>
 
       <form method="POST" action="/settings">
