@@ -13,7 +13,7 @@ const app = express();                                         //Create an expre
 const jwt = require('jsonwebtoken');                           //Jsonwebtoken to send OTP, reset password
 const nodeMailer = require('nodemailer');                      //NodeMailer to send email to user
 const saltRounds = 12;                                         //Set the number of the salt rounds for bcrypt
-const port = process.env.PORT || 8080;                         //Set the port to 3000 or the port specified in the environment
+const port = process.env.PORT || 3000;                         //Set the port to 3000 or the port specified in the environment
 const axios = require('axios');                                //Import axiso
 const striptags = require('striptags');                        //Import striptages
 const {ObjectId} = require('mongodb');                         //Imports the ObjectId class from the mongodb package
@@ -357,7 +357,7 @@ app.post('/searchedRecipe', (req, res) => {
     });
 
     console.log(processedRecipes);
-    res.render('searchedRecipe', {list : recipes, processedRecipes});
+    res.render('searchedRecipe', {list : recipes, processedRecipes, ingredient});
   })
   .catch(error => {
     console.error('Error:', error);

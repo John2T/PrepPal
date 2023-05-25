@@ -1,16 +1,15 @@
 <%- include("templates/header") %>
 <!--Search bar and logo-->
-<div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-center">
-  <a href="/" class="d-flex align-items-center my-2 link-body-emphasis text-decoration-none">
-    <img class="mb-4" src="/logo.jpeg" alt="" width="100" height="100" style="border-radius: 25%;">
-  </a>
+<h1 style="text-align: center; background-color:#00CED1;border-bottom-left-radius: 50%; border-bottom-right-radius: 50%;color: #FFFFFF;">Search</h1>
+
+<div class="d-flex flex-wrap align-items-center mx-auto text-center" style="max-width: 800px;">
   <form class="col-12 mb-3 mb-lg-0 me-lg-3" role="search" action="/search" method="GET">
     <input type="search" class="form-control" name="query" placeholder="Enter what you have in your fridge" aria-label="Search">
   </form>
 </div>
 
 <!-- Ingredient list -->
-<div class="container my-5 py-5 rounded" style="border: 1px solid black; background-color: bisque;">
+<div class="container my-5 py-5 rounded" style="border: 1px solid black; background-color: white; max-width: 800px;">
   <div class="d-flex justify-content-start">
     <div class="col-sm-8 mx-auto justify-content-start">
       <h3 class="display-8 fw-normal">Your List </h1>
@@ -18,13 +17,13 @@
     </div>
   </div>
   <form action="/searchedRecipe" method="post">
-    <button class="btn btn-primary" type="submit" style="float: right  ;">Get Recipe</button>
+    <button class="btn" type="submit" style="float: right; background-color: #00CED1; color: white;">Get Recipe</button>
   </form>
 </div>
 
 <!-- Ingredient cards  -->
 <div class="album py-5 bg-body-tertiary">
-  <div class="container">
+  <div class="container" style="max-width: 800px;">
     <div class="row row-cols-2 g-3">
       <% for(var i = 0; i < list.length; i++) {%>
       <%- include("templates/ingredientCard", {ingredient: list[i], url: image_url[i]}) %>
@@ -40,13 +39,18 @@ function addToIngredientList(ingredientName) {
   const listItem = document.createElement('li');
   listItem.textContent = ingredientName;
   listItem.classList.add('nav-item');
-  listItem.style.backgroundColor = 'yellow';
+  listItem.style.backgroundColor = '#DCDCDC	';
   listItem.style.borderRadius = '25px';
+  listItem.style.border = "solid";
+  listItem.style.padding = "2px";
   listItem.setAttribute('name', ingredientName);
 
   const removeButton = document.createElement('button');
   removeButton.textContent = 'x';
   removeButton.classList.add('remove-button');
+  removeButton.style.border = "none";
+  removeButton.style.borderRadius = "30px";
+  removeButton.style.backgroundColor = "#DCDCDC";
   removeButton.onclick = () => {
     ingredientList.removeChild(listItem);
 
@@ -127,13 +131,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const listItem = document.createElement('li');
     listItem.textContent = ingredientName;
     listItem.classList.add('nav-item');
-    listItem.style.backgroundColor = 'yellow';
+    listItem.style.backgroundColor = '#DCDCDC	';
     listItem.style.borderRadius = '25px';
+    listItem.style.border = "solid";
+    listItem.style.padding = "2px";
     listItem.setAttribute('name', ingredientName);
 
     const removeButton = document.createElement('button');
     removeButton.textContent = 'x';
     removeButton.classList.add('remove-button');
+    removeButton.style.border = "none";
+    removeButton.style.borderRadius = "30px";
+    removeButton.style.backgroundColor = "#DCDCDC";
     removeButton.onclick = removeFromIngredientList;
 
     listItem.appendChild(removeButton);
