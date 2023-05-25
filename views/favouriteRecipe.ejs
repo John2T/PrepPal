@@ -1,128 +1,172 @@
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,300,1,0" />
+<link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+<link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,300,1,0"/>
 
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
 
 <%- include("templates/header") %>
-<div class="container pb-5">
-  <div class="card mb-3 p-3 bg-light" style="background-color: rgba(245, 249, 226, 0.864);">
-    <div class="card mb-3">
-      <div class="row g-0 flex-wrap">
-        <div class="col-md-4 text-center d-flex align-items-center justify-content-center">
-          <img src="<%= recipe.image %>" class="img-fluid" alt="Recipe Image">
-        </div>
-        <div class="col-md-8">
-          <div class="d-flex justify-content-between align-items-center">
-            <h1 id="title" class="card-title text-center p-3"><%= recipe.title %></h1>
-            <div class="d-flex justify-content-end ml-auto p-3">
-
-
-
-              <form id="fav" method="POST" action="/favorite">
-                <%- include("templates/favRecipeInfo") %>
-                <button id="favoriteButton" class="btn btn-outline-danger btn-sm">
-                  <span id="favIcon" class="material-symbols-outlined" style="font-variation-settings: 'FILL' <%= parseInt(isFavorited) %>, 'wght' 300, 'GRAD' 0, 'opsz' 48;">favorite</span>
-                </button>
-              </form>
-              
-              <form id="edit" method="POST" action="/allFavourites/<%= recipe.recipeId %>/edit">
-                <%- include("templates/favRecipeInfo") %>
-                <button id="editButton" class="btn btn-outline-secondary btn-sm" style="margin-left: 15px;">
-                  <span class="material-symbols-outlined">
-                    edit
-                  </span>
-                </button>
-              </form>
-
-
-            </div>
-          </div>
-          <hr>
-          <div id="details" class="p-3"><%- recipe.details %></div>
-        </div>
-      </div>
-    </div>
-    <div class="card mb-3">
-      <div class="card-body">
-        <h2 class="card-title text-center">Recipe Details</h2>
-        <div class="row justify-content-between">
-          <div class="col-3 d-flex justify-content-start">
-            <p id="healthScore">Health Score: <%= recipe.healthScore %></p>
-            </div>
-            <div class="col-3 d-flex justify-content-center">
-            <p id="cookTime">Cook time: <%= recipe.cookTime %>m</p>
-            </div>
-            <div class="col-3 d-flex justify-content-end">
-            <p id="weightPoints">Weight Watcher Points: <%= recipe.wwPoints %></p>
-            </div>
-            </div>
-            </div>
-            </div>
+    <div class="container pb-5">
+        <div
+            class="card mb-3 p-3 bg-light"
+            style="background-color: rgba(245, 249, 226, 0.864);">
             <div class="card mb-3">
-            <div class="card-body">
-            <h2 class="card-title text-center">Ingredients (Servings: <%= recipe.servings %>)</h2>
-            <ul id="ingredients" class="list-unstyled">
-                <% if (recipe.ingredients && recipe.ingredients.length > 0) { %>
-                  <% recipe.ingredients.forEach(function(ingredient, index) { %>
-                    <li data-ingredient="<%= index %>"><%= ingredient.original %></li>
-                  <% }); %>
-                <% } else { %>
-                  <li>No ingredients found.</li>
-                <% } %>
-              </ul>
-              <form id="list" method="POST" action="/create-shoppinglist">
-                <input type="hidden" name="recipeId" value="<%= recipe.id %>">
-                <input type="hidden" name="title" value="<%= recipe.title %>">
-                <input type="hidden" name="ingredients" value="<%= JSON.stringify(recipe.ingredients) %>">
-                <button type="submit">Create Shopping List</button>
-              </form>
+                <div class="row g-0 flex-wrap">
+                    <div
+                        class="col-md-4 text-center d-flex align-items-center justify-content-center">
+                        <img src="<%= recipe.image %>" class="img-fluid" alt="Recipe Image">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h1 id="title" class="card-title text-center p-3"><%= recipe.title %></h1>
+                            <div class="d-flex justify-content-end ml-auto p-3">
 
-              
-            </div>
-            </div>
-            <div class="card mb-3">
-            <div class="card-body">
-            <h2 class="card-title text-center">Nutritional Information</h2>
-            <div class="row justify-content-center">
-            <div class="col-md-8">
-            <table class="table">
-            <thead>
-            <tr>
-            <th>Calories</th>
-            <th>Protein</th>
-            <th>Carbs</th>
-            <th>Fat</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-            <td id="cal"><%= recipe.cal %></td>
-            <td id="pro"><%= recipe.pro %></td>
-            <td id="carb"><%= recipe.carbs %></td>
-            <td id="fat"><%= recipe.fat %></td>
-            </tr>
-            </tbody>
-            </table>
-            </div>
-            </div>
-            </div>
-            </div>
-            <div class="card mb-3">
-            <div class="card-body">
-            <h2 class="card-title text-center">Instructions</h2>
-            <ol id="instructions">
-                <% if (recipe.instructions && recipe.instructions.length > 0) { %>
-                  <% recipe.instructions.forEach(function(instruction, index) { %>
-                    <li data-instruction="<%= index %>"><%= instruction.step %></li>
-                  <% }); %>
-                <% } else { %>
-                  <li>No instructions found.</li>
-                <% } %>
-              </ol>
-              
-            </div>
-            </div>
-            
-              </div>
-            </div>
-            <%- include("templates/footer") %>
+                                <form id="fav" method="POST" action="/favorite">
+                                    <%- include("templates/favRecipeInfo") %>
+                                        <button id="favoriteButton" class="btn btn-outline-danger btn-sm">
+                                            <span
+                                                id="favIcon"
+                                                class="material-symbols-outlined"
+                                                style="font-variation-settings: 'FILL' <%= parseInt(isFavorited) %>, 'wght' 300, 'GRAD' 0, 'opsz' 48;">favorite</span>
+                                        </button>
+                                    </form>
+
+                                    <form
+                                        id="edit"
+                                        method="POST"
+                                        action="/allFavourites/<%= recipe.recipeId %>/edit">
+                                        <%- include("templates/favRecipeInfo") %>
+                                            <button
+                                                id="editButton"
+                                                class="btn btn-outline-secondary btn-sm"
+                                                style="margin-left: 15px;">
+                                                <span class="material-symbols-outlined">
+                                                    edit
+                                                </span>
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                </div>
+                                <hr>
+                                <div id="details" class="p-3">
+                                    <%- recipe.details %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h2 class="card-title text-center">Recipe Details</h2>
+                                <div class="row justify-content-between">
+                                    <div class="col-3 d-flex justify-content-start">
+                                        <p id="healthScore">Health Score:
+                                            <%= recipe.healthScore %></p>
+                                    </div>
+                                    <div class="col-3 d-flex justify-content-center">
+                                        <p id="cookTime">Cook time:
+                                            <%= recipe.cookTime %>m</p>
+                                    </div>
+                                    <div class="col-3 d-flex justify-content-end">
+                                        <p id="weightPoints">Weight Watcher Points:
+                                            <%= recipe.wwPoints %></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h2 class="card-title text-center">Ingredients (Servings:
+                                    <%= recipe.servings %>)</h2>
+                                <ul id="ingredients" class="list-unstyled">
+                                    <% if (recipe.ingredients && recipe.ingredients.length > 0) { %>
+                                        <% recipe.ingredients.forEach(function(ingredient, index) { %>
+                                            <li data-ingredient="<%= index %>"><%= ingredient.original %></li>
+                                            <% }); %>
+                                            <% } else { %>
+                                                <li>No ingredients found.</li>
+                                            <% } %>
+                                        </ul>
+                                        <form id="list" method="POST" action="/create-shoppinglist">
+                                            <input type="hidden" name="recipeId" value="<%= recipe.recipeId %>">
+                                            <input type="hidden" name="title" value="<%= recipe.title %>">
+                                            <input
+                                                type="hidden"
+                                                name="ingredients"
+                                                value="<%= JSON.stringify(recipe.ingredients) %>">
+                                            <button id="shoppingList" type="submit">Create Shopping List</button>
+                                        </form>
+
+                                    </div>
+                                </div>
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h2 class="card-title text-center">Nutritional Information</h2>
+                                        <div class="row justify-content-center">
+                                            <div class="col-md-8">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Calories</th>
+                                                            <th>Protein</th>
+                                                            <th>Carbs</th>
+                                                            <th>Fat</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td id="cal"><%= recipe.cal %></td>
+                                                            <td id="pro"><%= recipe.pro %></td>
+                                                            <td id="carb"><%= recipe.carbs %></td>
+                                                            <td id="fat"><%= recipe.fat %></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h2 class="card-title text-center">Instructions</h2>
+                                        <ol id="instructions">
+                                            <% if (recipe.instructions && recipe.instructions.length > 0) { %>
+                                                <% recipe.instructions.forEach(function(instruction, index) { %>
+                                                    <li data-instruction="<%= index %>"><%= instruction.step %></li>
+                                                    <% }); %>
+                                                    <% } else { %>
+                                                        <li>No instructions found.</li>
+                                                    <% } %>
+                                                </ol>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <style>
+                                    #title {
+                                        background-color: #00CED1;
+                                        border-bottom-left-radius: 50%;
+                                        border-bottom-right-radius: 50%;
+                                        color: #FFFFFF;
+                                    }
+
+                                    h2 {
+                                        font-weight: bold;
+                                        font-size: 20px;
+                                    }
+
+                                    #shoppingList {
+                                        background-color: #00CED1;
+                                        color: white;
+                                        border: none;
+                                        border-radius: 10px;
+                                    }
+                                </style>
+                                <%- include("templates/footer") %>

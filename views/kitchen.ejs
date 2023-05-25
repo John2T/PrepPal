@@ -1,0 +1,155 @@
+<%- include("templates/header") %>
+
+<h1 class="text-center" style="background-color: #00CED1;border-bottom-left-radius: 50%; border-bottom-right-radius: 50%;color: #FFFFFF;">My Kitchen</h1>
+<div class="container" style="margin-top: 20px; max-width: 800px;">
+  <i id="back" class="material-icons md-36"><a href="/personal">arrow_back</a></i>
+  <form id="kitchen-form" method="POST" action="/kitchen">
+    <div class="table-responsive">
+      <table id="kitchen-table" class="table">
+        <thead>
+          <tr style="font-size: 15px;">
+            <th>Name</th>
+            <th>Best Before</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody style="font-size: 15px;">
+          <% items.forEach(function(item, index) { %>
+          <% const dueDate = new Date(item.bestBefore); %>
+          <% const currentDate = new Date(); %>
+          <% const differenceInDays = Math.floor((dueDate - currentDate) / (1000 * 60 * 60 * 24)); %>
+          <tr class="<%= differenceInDays <= 3 ? 'warning' : '' %>">
+            <td>
+              <input type="text" name="name" value="<%= item.name %>" style="width: 100px" />
+            </td>
+            <td>
+              <input type="date" name="bestBefore" value="<%= item.bestBefore %>" />
+            </td>
+            <td>
+              <button type="button" onclick="removeRow(this)">Remove</button>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <div class="text-center">
+      <button id="add-row-btn" type="button" onclick="addRow()">Add Row</button>
+      <button type="submit">Save</button>
+    </div>
+  </form>
+  <div style="margin: 30px; background-color: rgb(255, 183, 0);">
+    <p style="font-size: 10px;">
+      Tip: A colored background indicates that the item in your kitchen will expire in 5 days.
+    </p>
+  </div>
+</div>
+
+<style>
+  .warning {
+    background-color: rgb(255, 183, 0);
+  }
+</style>
+
+<script>
+// Wrap the JavaScript code in a document ready function to ensure the DOM is fully loaded
+document.addEventListener("DOMContentLoaded", () => {
+  const kitchenForm = document.getElementById("kitchen-form");
+  kitchenForm.addEventListener("submit", (event) => {
+    event.preventDefault(); // Prevent the form from submitting normally
+    saveItems();
+  });
+});
+
+function addRow() {
+  const table = document.getElementById("kitchen-table");
+  const newRow = document.createElement("tr");
+  newRow.innerHTML = `
+    <td>
+      <input type="text" name="name">
+    </td>
+    <td>
+      <input type="date" name="bestBefore">
+    </td>
+    <td>
+      <button type="button" onclick="removeRow(this)">Remove</button>
+    </td>
+  `;
+  table.querySelector("tbody").appendChild(newRow);
+}
+
+function removeRow(button) {
+  const row = button.parentNode.parentNode;
+  const nameInput = row.querySelector('input[name="name"]');
+  const bestBeforeInput = row.querySelector('input[name="bestBefore"]');
+  const name = nameInput.value.trim();
+  const bestBefore = bestBeforeInput.value.trim();
+
+  // Remove the row from the DOM
+  row.remove();
+
+  // Prepare the item object for deletion
+  const item = { name, bestBefore, delete: true };
+
+  // Perform deletion operation on the server-side
+  deleteItem(item);
+}
+
+function deleteItem(item) {
+  fetch("/kitchen", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ items: [item] }),
+  })
+    .then((response) => {
+      if (response.ok) {
+        console.log("Item deleted successfully");
+      } else {
+        console.error("Error deleting item:", response.statusText);
+      }
+    })
+    .catch((error) => {
+      console.error("Error deleting item:", error);
+    });
+}
+
+function saveItems() {
+  const rows = document.querySelectorAll("#kitchen-table tbody tr");
+  const items = [];
+
+  rows.forEach((row) => {
+    const nameInput = row.querySelector('input[name="name"]');
+    const bestBeforeInput = row.querySelector('input[name="bestBefore"]');
+    const name = nameInput.value.trim();
+    const bestBefore = bestBeforeInput.value.trim();
+
+    if (name && bestBefore) {
+      const deleteInput = row.querySelector('input[name="delete"]');
+      const deleteFlag = deleteInput && deleteInput.checked;
+      if (!deleteFlag) {
+        items.push({ name, bestBefore });
+      }
+    }
+  });
+
+  fetch("/kitchen", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ items }),
+  })
+    .then((response) => {
+      if (response.ok) {
+        console.log("Items saved successfully");
+        window.location.reload(); // Refresh the page after saving
+      } else {
+        console.error("Error saving items:", response.statusText);
+      }
+    })
+    .catch((error) => {
+      console.error("Error saving items:", error);
+    });
+}
+
+</script>
+
+<%- include("templates/footer") %>

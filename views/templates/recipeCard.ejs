@@ -1,0 +1,17 @@
+<a href="/recipe/<%= recipe.id %>" >
+  <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+    <div class="col-auto px-auto" style="
+    margin-left: 0px;
+    margin-right: 0px;
+    padding-left: auto;
+    padding-right: 10px;
+    padding-left: 17px;
+    padding-top: 15px;">
+        <img src="<%= recipe.image %>" class="img-fluid recipe-image" alt="Recipe Image">
+      </div>
+    <div class="col p-4 d-flex flex-column position-static">
+      <strong class="d-inline-block mb-2 text-dark"><%= recipe.title %></strong>
+      <p class="card-text mb-auto">Ingredients: <%= allIngredients %></p>
+    </div>
+  </div>
+</a>    
