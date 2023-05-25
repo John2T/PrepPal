@@ -2,9 +2,19 @@
 
 
 <style>
-  hr {
-    color: #00CED1;
-  }
+
+  .hr-container {
+  width: 50%; /* Adjust the width as per your preference */
+  margin: 0 auto; /* Centers the container horizontally */
+}
+
+.custom-hr {
+  border: none;
+  border-top: 1px solid #00CED1; /* Customize the HR appearance */
+}
+
+
+
 </style>
 
 <h1
@@ -19,23 +29,15 @@ style="
 Settings
 </h1>
 
-<div class="id">
-    <div class="d-flex justify-content-between dark-turquoise pt-5 pb-2 ps-2 pe-2 fixed-top">
-      <div class="d-flex gap-3 ">
-        <i id="back" class="material-icons md-36"><a href="/personal">arrow_back</a></i>
-        <div class="d-flex column align-items-center">
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="hr-container">
+  <i id="back" class="material-icons md-36"><a href="/personal">arrow_back</a></i>
+  <br><br><br><br><br><br>
 
-<br><br><br><br><hr><br>
+  <hr class="custom-hr">
+</div>
+<br>
 
-  <div class="d-flex column justify-content-center ">
 
-  </div>
-
-  <br><hr><br>
   
   <div class="d-flex column justify-content-center ">
     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
@@ -44,13 +46,12 @@ Settings
   <h8><a href="/forgotPassword"><b>Changing Your Password</b></a> </h8>
   </div>
 
-  <br><hr><br>
 
-  <div class="d-flex column justify-content-center ">
-
+  <br>
+  <div class="hr-container">
+    <hr class="custom-hr">
   </div>
-
-  <br><hr><br>
+  <br>
 
   <div class="d-flex column justify-content-center ">
     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-balloon" viewBox="0 0 16 16">
@@ -60,7 +61,11 @@ Settings
     </div>
 
 
-  <br><hr><br>
+  <br>
+  <div class="hr-container">
+    <hr class="custom-hr">
+  </div>
+  <br>
 
   <div class="d-flex column justify-content-center ">
     <form method="POST" action="/logout">
@@ -69,7 +74,8 @@ Settings
   </div>
 
   
-  <br><br><hr><br><br><br><hr><br>
+
 
 <%- include("templates/footer") %> 
+
 
