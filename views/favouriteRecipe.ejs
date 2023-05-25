@@ -1,8 +1,10 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,300,1,0" />
 
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
 <%- include("templates/header") %>
-<div class="container">
+<div class="container pb-5">
   <div class="card mb-3 p-3 bg-light" style="background-color: rgba(245, 249, 226, 0.864);">
     <div class="card mb-3">
       <div class="row g-0 flex-wrap">
@@ -17,22 +19,18 @@
 
 
               <form id="fav" method="POST" action="/favorite">
-                <input type="hidden" name="recipeId" value="<%= recipe.recipeId %>">
-                <input type="hidden" name="title" value="<%= recipe.title %>">
-                <input type="hidden" name="image" value="<%= recipe.image %>">
-                <input type="hidden" name="details" value="<%= recipe.details %>">
-                <input type="hidden" name="healthScore" value="<%= recipe.healthScore %>">
-                <input type="hidden" name="cookTime" value="<%= recipe.cookTime %>">
-                <input type="hidden" name="wwPoints" value="<%= recipe.wwPoints %>">
-                <input type="hidden" name="servings" value="<%= recipe.servings %>">
-                <input type="hidden" name="ingredients" value="<%= JSON.stringify(recipe.ingredients2) %>">
-                <input type="hidden" name="cal" value="<%= recipe.cal %>">
-                <input type="hidden" name="pro" value="<%= recipe.pro %>">
-                <input type="hidden" name="carbs" value="<%= recipe.carbs %>">
-                <input type="hidden" name="fat" value="<%= recipe.fat %>">
-                <input type="hidden" name="instructions" value="<%= JSON.stringify(recipe.instructions2) %>">
+                <%- include("templates/favRecipeInfo") %>
                 <button id="favoriteButton" class="btn btn-outline-danger btn-sm">
                   <span id="favIcon" class="material-symbols-outlined" style="font-variation-settings: 'FILL' <%= parseInt(isFavorited) %>, 'wght' 300, 'GRAD' 0, 'opsz' 48;">favorite</span>
+                </button>
+              </form>
+              
+              <form id="edit" method="POST" action="/allFavourites/<%= recipe.recipeId %>/edit">
+                <%- include("templates/favRecipeInfo") %>
+                <button id="editButton" class="btn btn-outline-secondary btn-sm" style="margin-left: 15px;">
+                  <span class="material-symbols-outlined">
+                    edit
+                  </span>
                 </button>
               </form>
 
@@ -72,6 +70,13 @@
                   <li>No ingredients found.</li>
                 <% } %>
               </ul>
+              <form id="list" method="POST" action="/create-shoppinglist">
+                <input type="hidden" name="recipeId" value="<%= recipe.recipeId %>">
+                <input type="hidden" name="title" value="<%= recipe.title %>">
+                <input type="hidden" name="ingredients" value="<%= JSON.stringify(recipe.ingredients) %>">
+                <button id="shoppingList" type="submit">Create Shopping List</button>
+              </form>
+
               
             </div>
             </div>
@@ -120,4 +125,25 @@
             
               </div>
             </div>
+
+            <style>
+              #title{
+            background-color: 	
+            #00CED1;border-bottom-left-radius:
+             50%; border-bottom-right-radius: 
+             50%;color: #FFFFFF;
+        }
+        
+        h2{
+          font-weight: bold; 
+          font-size: 20px;
+        }
+        
+        #shoppingList{
+          background-color: #00CED1; 
+          color: white; 
+          border: none; 
+          border-radius: 10px;
+        }
+            </style>
             <%- include("templates/footer") %>

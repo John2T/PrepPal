@@ -1,0 +1,438 @@
+<%- include("templates/header") %>
+
+<div class="container pb-5">
+  <h1>Edit Recipe</h1>
+
+  <form id="editForm" method="POST" action="/recipeUpdate/<%=recipe.recipeId %>" style="padding-bottom: 60px;">
+
+    <div class="form-group mb-3">
+      <label for="title" >Title</label>
+      <input type="text" class="form-control" id="title" name="title" value="<%= recipe.title %>" required>
+    </div>
+    <div class="form-group mb-3">
+      <label for="details">Details</label>
+      <textarea class="form-control" id="details" name="details" rows="12" required><%= recipe.details%></textarea>
+    </div>
+    
+    <div class="form-group mb-3">
+      <label for="healthScore">Health Score</label>
+      <input type="number" class="form-control" id="healthScore" name="healthScore" value="<%= recipe.healthScore %>" required>
+    </div>
+    <div class="form-group mb-3">
+      <label for="cookTime">Cook Time (Minutes)</label>
+      <input type="text" class="form-control" id="cookTime" name="cookTime" value="<%= recipe.cookTime %>" required>
+    </div>
+    <div class="form-group mb-3">
+      <label for="servings">Servings</label>
+      <input type="number" class="form-control" id="servings" name="servings" value="<%= recipe.servings %>" required>
+    </div>
+
+    <div class="form-group border p-3 mb-3">
+      <div class="form-group mb-3">
+        <label for="ingredients">Ingredients</label>
+        <ul class="list-group" id="ingredientList">
+          <% for (let i = 0; i < recipe.ingredients.length; i++) { %>
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-md-10">
+                  <textarea class="form-control" id="ingredient<%= i %>" name="ingredients" rows="1" required><%= recipe.ingredients[i].original %></textarea>
+                  <input type="hidden" name="originalIngredients" value="<%= recipe.ingredients[i].original %>">
+                </div>
+                <div class="col-md-2">
+                  <% if (recipe.ingredients.length > 1) { %>
+                    <button type="button" class="btn btn-secondary addIngredientBtn">+</button>
+                    <button type="button" class="btn btn-secondary removeIngredientBtn">-</button>
+                  <% } %>
+                </div>
+              </div>
+            </li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+    
+    
+
+    <div class="form-group mb-3">
+      <label for="calories">Calories</label>
+      <input type="text" class="form-control" id="calories" name="calories" value="<%= recipe.cal %>" required>
+    </div>
+    <div class="form-group mb-3">
+      <label for="protein">Protein</label>
+      <input type="text" class="form-control" id="protein" name="protein" value="<%= recipe.pro %>" required>
+    </div>
+    <div class="form-group mb-3">
+      <label for="carbs">Carbs</label>
+      <input type="text" class="form-control" id="carbs" name="carbs" value="<%= recipe.carbs %>" required>
+    </div>
+    <div class="form-group mb-3">
+      <label for="fat">Fat</label>
+      <input type="text" class="form-control" id="fat" name="fat" value="<%= recipe.fat %>" required>
+    </div>
+
+    <div class="form-group border p-3 mb-3">
+      <div class="form-group mb-3">
+        <label for="instructions">Instructions</label>
+        <ol class="list-group" id="instructionList">
+          <% for (let i = 0; i < recipe.instructions.length; i++) { %>
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-md-2">
+                  <%= i + 1 %>.
+                </div>
+                <div class="col-md-8">
+                  <% const instruction = recipe.instructions[i].step; %>
+                  <textarea class="form-control" id="instruction<%= i %>" name="instructions" rows="<%= Math.ceil(instruction.length / 80) %>" required><%= instruction %></textarea>
+                  <input type="hidden" name="originalInstructions" value="<%= instruction %>">
+                </div>
+                <div class="col-md-2">
+                  <% if (recipe.instructions.length > 1) { %>
+                    <button type="button" class="btn btn-secondary addInstructionBtn">+</button>
+                    <button type="button" class="btn btn-secondary removeInstructionBtn">-</button>
+                  <% } %>
+                </div>
+              </div>
+            </li>
+          <% } %>
+        </ol>
+      </div>
+    </div>
+    
+    
+
+
+    <a href="/allFavourites/<%=recipe.recipeId %>" id="cancelLink">
+      <button type="button" class="btn btn-secondary float-end" style="margin-left: 15px;">
+        Cancel
+      </button>
+    </a>
+    <button type="button" class="btn btn-secondary float-end resetBtn" style="margin-left: 15px;">Reset</button>
+    
+    <button id = "submit" type="submit" class="btn btn-primary float-end">Submit</button>
+ 
+    
+
+
+  </form>
+</div>
+
+
+<script>
+
+
+const cancelLink = document.getElementById('cancelLink');
+cancelLink.addEventListener('click', function(event) {
+  const confirmed = confirm("Are you sure you want to discard changes?"); // Display the confirmation popup
+
+  if (!confirmed) {
+    event.preventDefault(); // Cancel the default behavior of the link
+  }
+});
+
+const resetButton = document.querySelector('.resetBtn');
+resetButton.addEventListener('click', function(event) {
+  event.preventDefault(); // Cancel the default behavior of the button
+
+  const confirmed = confirm("Are you sure you want to reset the form?"); // Display the confirmation popup
+
+  if (confirmed) {
+    // Reset all form values to their original state
+    document.getElementById('title').value = "<%= recipe.title %>";
+    document.getElementById('details').value = "<%= recipe.details %>";
+    document.getElementById('healthScore').value = "<%= recipe.healthScore %>";
+    document.getElementById('cookTime').value = "<%= recipe.cookTime %>";
+    document.getElementById('servings').value = "<%= recipe.servings %>";
+
+    const originalIngredients = document.querySelectorAll('input[name="originalIngredients"]');
+    const ingredientInputs = document.querySelectorAll('textarea[name="ingredients"]');
+    ingredientInputs.forEach((input, index) => {
+      input.value = originalIngredients[index].value;
+    });
+
+    document.getElementById('calories').value = "<%= recipe.cal %>";
+    document.getElementById('protein').value = "<%= recipe.pro %>";
+    document.getElementById('carbs').value = "<%= recipe.carbs %>";
+    document.getElementById('fat').value = "<%= recipe.fat %>";
+
+    const originalInstructions = document.querySelectorAll('input[name="originalInstructions"]');
+    const instructionInputs = document.querySelectorAll('textarea[name="instructions"]');
+    instructionInputs.forEach((input, index) => {
+      input.value = originalInstructions[index].value;
+    });
+  }
+});
+
+
+
+const ingredientList = document.getElementById('ingredientList');
+
+ingredientList.addEventListener('click', function(event) {
+  const target = event.target;
+
+  // Check if the clicked button is a remove ingredient button
+  if (target.classList.contains('removeIngredientBtn')) {
+    const ingredientItem = target.closest('.list-group-item');
+    ingredientItem.remove();
+    updateIngredientNumbers();
+  }
+
+  // Check if the clicked button is an add ingredient button
+  if (target.classList.contains('addIngredientBtn')) {
+    const ingredientItem = target.closest('.list-group-item');
+    const newIngredientLi = document.createElement('li');
+    newIngredientLi.className = 'list-group-item';
+    newIngredientLi.innerHTML = `
+      <div class="row">
+        <div class="col-md-10">
+          <textarea class="form-control" id="ingredient${ingredientCount}" name="ingredients" rows="1" required></textarea>
+        </div>
+        <div class="col-md-2">
+          <button type="button" class="btn btn-secondary addIngredientBtn">+</button>
+          <button type="button" class="btn btn-secondary removeIngredientBtn">-</button>
+        </div>
+      </div>
+    `;
+    ingredientItem.insertAdjacentElement('afterend', newIngredientLi);
+    ingredientCount++;
+
+    // Update the ingredient numbers for the remaining ingredients
+    updateIngredientNumbers();
+
+    // Add event listener to remove the ingredient when the minus sign is clicked
+    const removeIngredientButton = newIngredientLi.querySelector('.removeIngredientBtn');
+    removeIngredientButton.addEventListener('click', function() {
+      newIngredientLi.remove();
+      updateIngredientNumbers();
+    });
+  }
+});
+
+const updateIngredientNumbers = () => {
+  const ingredients = Array.from(ingredientList.getElementsByClassName('list-group-item'));
+  ingredients.forEach((item, index) => {
+    item.querySelector('.col-md-2').textContent = '';
+    item.querySelector('.col-md-2').innerHTML = `
+      <button type="button" class="btn btn-secondary addIngredientBtn">+</button>
+      <button type="button" class="btn btn-secondary removeIngredientBtn">-</button>
+    `;
+  });
+};
+
+let ingredientCount = <%= recipe.ingredients.length %>;
+
+
+
+
+
+
+
+
+
+
+const instructionList = document.getElementById('instructionList');
+
+instructionList.addEventListener('click', function(event) {
+  const target = event.target;
+
+  // Check if the clicked button is a remove instruction button
+  if (target.classList.contains('removeInstructionBtn')) {
+    const instructionItem = target.closest('.list-group-item');
+    instructionItem.remove();
+    updateInstructionNumbers();
+  }
+
+  // Check if the clicked button is an add instruction button
+  if (target.classList.contains('addInstructionBtn')) {
+    const instructionItem = target.closest('.list-group-item');
+    const newInstructionLi = document.createElement('li');
+    newInstructionLi.className = 'list-group-item';
+    newInstructionLi.innerHTML = `
+      <div class="row">
+        <div class="col-md-2">${instructionItem.querySelector('.col-md-2').textContent.trim()}</div>
+        <div class="col-md-8">
+          <textarea class="form-control" id="instruction${instructionCount}" name="instructions" rows="1" required></textarea>
+        </div>
+        <div class="col-md-2">
+          <button type="button" class="btn btn-secondary addInstructionBtn">+</button>
+          <button type="button" class="btn btn-secondary removeInstructionBtn">-</button>
+        </div>
+      </div>
+    `;
+    instructionItem.insertAdjacentElement('afterend', newInstructionLi);
+    instructionCount++;
+
+    // Update the instruction numbers for the remaining instructions
+    updateInstructionNumbers();
+
+    // Add event listener to remove the instruction when the minus sign is clicked
+    const removeInstructionButton = newInstructionLi.querySelector('.removeInstructionBtn');
+    removeInstructionButton.addEventListener('click', function() {
+      newInstructionLi.remove();
+      updateInstructionNumbers();
+    });
+  }
+});
+
+const updateInstructionNumbers = () => {
+  const instructions = Array.from(instructionList.getElementsByClassName('list-group-item'));
+  instructions.forEach((item, index) => {
+    item.querySelector('.col-md-2').textContent = `${index + 1}.`;
+  });
+};
+
+let instructionCount = <%= recipe.instructions.length %>;
+
+</script>
+
+<style>
+
+h1{
+    background-color: 	
+    #00CED1;border-bottom-left-radius:
+     50%; border-bottom-right-radius: 
+     50%;color: #FFFFFF;
+     text-align: center;
+} 
+
+label{
+  font-weight: bold; 
+        font-size: 20px;
+}
+
+
+#submit{
+  background-color: #00CED1; 
+  color: white; 
+  border: none; 
+  border-radius: 10px;
+}
+
+#cancelLink{
+  color: white; 
+  border: none; 
+  border-radius: 10px;
+
+}
+
+.resetBtn{
+  color: white; 
+  border: none; 
+  border-radius: 10px;
+}
+
+</style>
+
+<script>
+// Validate numeric fields before submitting the form
+document.getElementById('editForm').addEventListener('submit', function(event) {
+  const healthScoreInput = document.getElementById('healthScore');
+  const cookTimeInput = document.getElementById('cookTime');
+  const servingsInput = document.getElementById('servings');
+
+  // Check if healthScoreInput is not a number or is less than 0
+  if (isNaN(healthScoreInput.value) || Number(healthScoreInput.value) < 0) {
+    event.preventDefault(); // Prevent form submission
+    alert('Please enter a valid health score.');
+    return;
+  }
+
+  // Check if cookTimeInput is not a number or is less than 0
+  if (isNaN(cookTimeInput.value) || Number(cookTimeInput.value) < 0) {
+    event.preventDefault(); // Prevent form submission
+    alert('Please enter a valid cook time.');
+    return;
+  }
+
+  // Check if servingsInput is not a number or is less than 0
+  if (isNaN(servingsInput.value) || Number(servingsInput.value) < 0) {
+    event.preventDefault(); // Prevent form submission
+    alert('Please enter a valid number of servings.');
+    return;
+  }
+});
+
+// Validate numeric fields before submitting the form
+document.getElementById('editForm').addEventListener('submit', function(event) {
+  const caloriesInput = document.getElementById('calories');
+  const proteinInput = document.getElementById('protein');
+  const carbsInput = document.getElementById('carbs');
+  const fatInput = document.getElementById('fat');
+
+  // Check if caloriesInput is not a valid numeric value
+  if (!isValidNumericValue(caloriesInput.value)) {
+    event.preventDefault(); // Prevent form submission
+    alert('Please enter a valid numeric value and valid unit for calories.');
+    return;
+  }
+
+  // Check if proteinInput is not a valid numeric value
+  if (!isValidNumericValue(proteinInput.value)) {
+    event.preventDefault(); // Prevent form submission
+    alert('Please enter a valid numeric value and valid unit for protein.');
+    return;
+  }
+
+  // Check if carbsInput is not a valid numeric value
+  if (!isValidNumericValue(carbsInput.value)) {
+    event.preventDefault(); // Prevent form submission
+    alert('Please enter a valid numeric value and valid unit for carbs.');
+    return;
+  }
+
+  // Check if fatInput is not a valid numeric value
+  if (!isValidNumericValue(fatInput.value)) {
+    event.preventDefault(); // Prevent form submission
+    alert('Please enter a valid numeric value and valid unit for fat.');
+    return;
+  }
+});
+
+// Validate if the input value is a valid numeric value with unit
+function isValidNumericValue(value) {
+  // Regular expression to match a number followed by a unit
+  const regex = /^(\d+(\.\d+)?)\s*([a-zA-Z]+)$/;
+
+  const match = value.trim().match(regex);
+  if (!match) {
+    return false;
+  }
+
+  const numericValue = parseFloat(match[1]);
+  const unit = match[3];
+
+  // Check if the numeric value is a valid number
+  if (isNaN(numericValue)) {
+    return false;
+  }
+
+  // Additional checks for valid units can be added here
+  // Example: if (unit !== 'kg' && unit !== 'g') { return false; }
+
+  return true;
+}
+
+// Validate if the unit is a valid unit
+function isValidUnit(unit) {
+  const validUnits = [
+    // Mass units
+    'g', 'mg', 'kg', 'oz', 'lb',
+
+    // Volume units
+    'ml', 'l', 'tsp', 'tbsp', 'fl oz', 'cup', 'pint', 'quart', 'gallon',
+
+    // Energy units
+    'kcal', 'cal',
+
+    // Other units
+    '%', 'IU'
+  ];
+  // Add more valid units as needed
+
+  return validUnits.includes(unit.toLowerCase());
+}
+
+
+
+</script>
+
+<%- include("templates/footer") %>

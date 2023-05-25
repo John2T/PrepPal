@@ -1,29 +1,145 @@
 <%- include("templates/header") %>
 <!--Search bar and logo-->
-<div class="container">
-  <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-center">
-    <a href="/" class="d-flex align-items-center my-2 link-body-emphasis text-decoration-none">
-      <img class="mb-4" src="/logo.jpeg" alt="" width="100" height="100">
-    </a>
-    <form class="col-12 mb-3 mb-lg-0 me-lg-3" role="search">
-      <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
-    </form>
-  </div>
+<div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-center">
+  <a href="/" class="d-flex align-items-center my-2 link-body-emphasis text-decoration-none">
+    <img class="mb-4" src="/logo.jpeg" alt="" width="100" height="100">
+  </a>
+  <form class="col-12 mb-3 mb-lg-0 me-lg-3" role="search" action="/search" method="GET">
+    <input type="search" class="form-control" name="query" placeholder="Enter what you have in your fridge" aria-label="Search">
+  </form>
 </div>
-<!--Ingredient list-->
+
+<!-- Ingredient list -->
 <div class="container my-5 py-5 rounded" style="border: 1px solid black; background-color: bisque;">
   <div class="d-flex justify-content-start">
     <div class="col-sm-8 mx-auto justify-content-start">
       <h3 class="display-8 fw-normal">Your List </h1>
+      <ul class="nav nav-pills" id="selectedIngredientsList"></ul>
+    </div>
+  </div>
+  <form action="/searchedRecipe" method="post">
+    <button class="btn btn-primary" type="submit" style="float: right  ;">Get Recipe</button>
+  </form>
+</div>
+
+<!-- Ingredient cards  -->
+<div class="album py-5 bg-body-tertiary">
+  <div class="container">
+    <div class="row row-cols-2 g-3">
+      <% for(var i = 0; i < list.length; i++) {%>
+      <%- include("templates/ingredientCard", {ingredient: list[i], url: image_url[i]}) %>
+      <% } %>
     </div>
   </div>
 </div>
-  <% for(var i = 0; i < 5; i++) {%>
-  <%- include("templates/ingredientCard") %>
-  <% } %>
-<div class="container">
-  <button>Show More</button>
-</div>  
 
-<%- include("templates/footer") %>
-<!-- <%%> -->
+<script>
+// Function to add an ingredient to the list
+function addToIngredientList(ingredientName) {
+  const ingredientList = document.getElementById('selectedIngredientsList');
+  const listItem = document.createElement('li');
+  listItem.textContent = ingredientName;
+  listItem.classList.add('nav-item');
+  listItem.style.backgroundColor = 'yellow';
+  listItem.style.borderRadius = '25px';
+  listItem.setAttribute('name', ingredientName);
+
+  const removeButton = document.createElement('button');
+  removeButton.textContent = 'x';
+  removeButton.classList.add('remove-button');
+  removeButton.onclick = () => {
+    ingredientList.removeChild(listItem);
+
+    // Send a request to the server to remove the ingredient
+    fetch('/removeIngredient', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ingredientName }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Handle the response from the server
+        console.log(data);
+        // Remove the listItem from the ingredientList DOM element if the server indicates success
+        if (data.success) {
+          ingredientList.removeChild(listItem);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+
+    // Remove the ingredient from local storage as well
+    const storedIngredients = JSON.parse(localStorage.getItem('ingredients')) || [];
+    const updatedIngredients = storedIngredients.filter(ingredient => ingredient !== ingredientName);
+    localStorage.setItem('ingredients', JSON.stringify(updatedIngredients));
+  };
+
+  listItem.appendChild(removeButton);
+  ingredientList.appendChild(listItem);
+
+  // Store the ingredient in local storage
+  const storedIngredients = JSON.parse(localStorage.getItem('ingredients')) || [];
+  storedIngredients.push(ingredientName);
+  localStorage.setItem('ingredients', JSON.stringify(storedIngredients));
+}
+
+// Function to remove an ingredient from the list
+function removeFromIngredientList(event) {
+  const listItem = event.target.parentNode;
+  const ingredientName = listItem.getAttribute('name');
+  
+  // Send a request to the server to remove the ingredient
+  fetch('/removeIngredient', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ ingredientName }),
+  })
+    .then(response => response.json())
+    .then(data => {
+      // Handle the response from the server
+      console.log(data);
+      // Remove the listItem from the ingredientList DOM element if the server indicates success
+      if (data.success) {
+        listItem.remove();
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+
+  // Remove the ingredient from local storage as well
+  const storedIngredients = JSON.parse(localStorage.getItem('ingredients')) || [];
+  const updatedIngredients = storedIngredients.filter(ingredient => ingredient !== ingredientName);
+  localStorage.setItem('ingredients', JSON.stringify(updatedIngredients));
+}
+
+// Restore the ingredient list from local storage when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+  const storedIngredients = JSON.parse(localStorage.getItem('ingredients')) || [];
+  const ingredientList = document.getElementById('selectedIngredientsList');
+
+  storedIngredients.forEach(ingredientName => {
+    const listItem = document.createElement('li');
+    listItem.textContent = ingredientName;
+    listItem.classList.add('nav-item');
+    listItem.style.backgroundColor = 'yellow';
+    listItem.style.borderRadius = '25px';
+    listItem.setAttribute('name', ingredientName);
+
+    const removeButton = document.createElement('button');
+    removeButton.textContent = 'x';
+    removeButton.classList.add('remove-button');
+    removeButton.onclick = removeFromIngredientList;
+
+    listItem.appendChild(removeButton);
+    ingredientList.appendChild(listItem);
+  });
+});
+
+</script>
+<%- include("templates/footer") %>   

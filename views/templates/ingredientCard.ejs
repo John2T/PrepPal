@@ -1,25 +1,33 @@
-<div class="container h-25">
-    <div class="card shadow-sm" style="width: 50%; height: 50; float: left;">
-        <svg class="bd-placeholder-img card-img-top" width="100%" height="200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false">
-          <title>Placeholder</title>
-          <rect width="100%" height="100%" fill="#55595c"></rect>
-          <text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text>
-        </svg>
-        <div class="card-body">
-          <h5 class="card-title">Ingredient</h5>
-        </div>
+      <div class="col">
+        <div class="card shadow-sm">
+          <div class="ingredient-card" onclick="addToIngredientList('<%= ingredient.name %>'); sendIngredientName('<%= ingredient.name %>')">
+            <img src="<%= url %>" class="bd-placeholder-img card-img-top" width="100%" height="200" alt="<%= ingredient.name %>">          
+            <div class="card-body" style="text-align: center;">
+              <p class="card-text"><%= ingredient.name %></p>
+            </div>
+          </div>
+        </div> 
       </div>
-</div>
 
-<div class="container h-25">
-    <div class="card shadow-sm" style="width: 50%; height: 50; float: right;">
-        <svg class="bd-placeholder-img card-img-top" width="100%" height="200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false">
-          <title>Placeholder</title>
-          <rect width="100%" height="100%" fill="#55595c"></rect>
-          <text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text>
-        </svg>
-        <div class="card-body">
-          <h5 class="card-title">Ingredient</h5>
-        </div>
-    </div>
-</div>
+      <script>
+        // Function to send ingredient name to the server
+        function sendIngredientName(ingredientName) {
+          fetch('/getList', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ingredientName }),
+          })
+            .then(response => response.json())
+            .then(data => {
+              // Handle the response from the server
+              console.log(data);
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+        }
+      </script>
+
+
