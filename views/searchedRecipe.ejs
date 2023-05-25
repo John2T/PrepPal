@@ -1,8 +1,15 @@
 <%- include("templates/header") %>
-<div class="container">
-    <h1>hello</h1>
-    <% for(var i = 0; i < list.length; i++) {%>
-        <%- include("templates/recipeCard", {recipe: list[i], allIngredients: processedRecipes[i].allIngredients}) %>
-    <% } %>
+<div class="container mb-5">
+    <h1 style="text-align: center; background-color:#00CED1;border-bottom-left-radius: 50%; border-bottom-right-radius: 50%;color: #FFFFFF;">Recipes</h1>
+    <div class="recipe_link">
+        <% for(var i = 0; i < list.length; i++) {%>
+            <%- include("templates/recipeCard", {recipe: list[i], allIngredients: processedRecipes[i].allIngredients}) %>
+        <% } %>
+    </div>
+    <div style="display: flex; justify-content: center;">
+        <form onsubmit="">
+            <button class="btn btn-primary" type="submit">SEE MORE</button>
+        </form>
+    </div>
 </div>
-<%- include("templates/footer") %> 
+<%- include("templates/footer") %>

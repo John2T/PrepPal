@@ -13,7 +13,7 @@ const app = express();                                         //Create an expre
 const jwt = require('jsonwebtoken');                           //Jsonwebtoken to send OTP, reset password
 const nodeMailer = require('nodemailer');                      //NodeMailer to send email to user
 const saltRounds = 12;                                         //Set the number of the salt rounds for bcrypt
-const port = process.env.PORT || 3000;                         //Set the port to 3000 or the port specified in the environment
+const port = process.env.PORT || 8080;                         //Set the port to 3000 or the port specified in the environment
 const axios = require('axios');                                //Import axiso
 const striptags = require('striptags');                        //Import striptages
 const {ObjectId} = require('mongodb');                         //Imports the ObjectId class from the mongodb package
@@ -231,41 +231,8 @@ app.get('/search', async (req, res) => {
     res.redirect('/');
     return;
   }
-  /* NOt wrking yet
-    if(!query){
-    const defaultIngredient = [];
-    const defaultPicture = [];
-    const defaultNumber = 1;
-    const defaultCategories = ['Cucumbers', 'Bananas', 'Avocados', 'Lettuce', 'Tomatoes',
-                               'Eggs', 'Milk', 'Eggs', 'Yogurt', 'Cheese', 
-                               'Ground beef', 'Chicken leg', 'Salmon', 'Shrimp', 'Pork', 
-                               'Apples', 'Grapes', 'Blueberries', 'Pineapple', 'Mangoes'];
-
-    for(let i = 0; i < defaultCategories; i++){
-      var defaulURL = `https://api.spoonacular.com/food/ingredients/search?query=${defaultCategories[i]}&number=${defaultNumber}&apiKey=${apiKey}`;
-      fetch(defaulURL)
-      .then(response => response.json())
-      .then(data => {
-        // Process the ingredients list and display them on your ingredient page
-        defaultIngredient.push(data.results);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-    }
-    defaultIngredient.forEach(ingredient => {
-      const ingredientImageFileName = ingredient.image;
-      const ingredientImageUrl = `https://spoonacular.com/cdn/ingredients_100x100/${ingredientImageFileName}`;
-      defaultPicture.push(ingredientImageUrl);
-    });
-
-    res.render('search', {list: defaultIngredient, image_url: defaultPicture});
-    return;
-  }
-  */
-
-  //API #1: 9d2d1b2f8727419fb36bba5c995a49b5
-  const apiKey = "09e317b538d94d98b7941e9d77ff593e";
+  //API #1:  09e317b538d94d98b7941e9d77ff593e, ,9d2d1b2f8727419fb36bba5c995a49b5
+  const apiKey = "2e0b7915e440425bba09f072f1e3169b";
   const numberOfIngredients = 50; // Number of ingredients to fetch
   let query = req.query.query; // Get the value of the "query" parameter from the request
   if (!query) {
@@ -350,7 +317,8 @@ app.post('/removeIngredient', (req, res) => {
 ingredientList = [];
 console.log(ingredientList);
 app.post('/searchedRecipe', (req, res) => {
-  const apiKey = "3dff3030733542408d95432be524a208";
+  //API  3dff3030733542408d95432be524a208, , 9d2d1b2f8727419fb36bba5c995a49b5
+  const apiKey = "c3ea85f0c14f483389249c17a8548989";
   const number = 10;
   var ingredient = "";
   for (let i = 0; i < ingredientList.length; i++) {
