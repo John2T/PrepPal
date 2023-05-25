@@ -1,33 +1,54 @@
 <%- include("templates/header") %>
-<div class="container" style="max-width: 800px; margin-top: 20px; background-color: #F5F5F5;">
-  <h2 class="text-center" style="background-color: 	#00CED1;border-bottom-left-radius: 50%; border-bottom-right-radius: 50%;color: #FFFFFF;">Hello, <%= username %>!</h1>
-  <div id="favorite" class="col" style="background-color:#FFFFFF; padding: 20px; box-shadow: 2px 2px 10px #888888; margin-bottom: 20px;">
-    <h2 style="font-weight: bold; font-size: 20px;">Your favorites</h2>
-    <% if (favoriteRecipes.length > 0) { %>
-      <div class="card-group" style="display: flex;">
-        <% favoriteRecipes.slice(0, 2).forEach((recipe) => { %>
-          <div class="card" style="width: 200px; margin-right: 10px;">
-            <img src="<%= recipe.image %>" class="card-img-top" alt="<%= recipe.title %>">
-            <div class="card-body">
-              <h5 class="card-title" style="text-align: left; font-size: 15px;"><%= recipe.title %></h5>
-              <a href="/allFavourites/<%= recipe.recipeId %>" class="btn btn-primary">Check</a>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<h1 class="text-center" style="background-color: 	#00CED1;border-bottom-left-radius: 50%; border-bottom-right-radius: 50%;color: #FFFFFF;">Hello, <%= username %>!</h1>
+  
+    <div class="container" style="max-width: 800px; margin-top: 20px; background-color: #F5F5F5;">
+        <div class="dropdown">
+          <i class="fas fa-bars hamburger-icon"> </i>
+          <div class="dropdown-content" id="filter-dropdown">
+            <div id="filter-section">
+              <h2 style="font-weight: bold; font-size: 20px;">Filter Recipes</h2>
+              <div class="form-group d-flex">
+                <label for="healthScore">Cooking Time: &nbsp</label>
+                <input type="number" id="healthScore" class="form-control input-sm" placeholder="Below">
+                <p>&nbsp</p>
+                <button id="applyFilterBtn1" class="btn btn-primary btn-sm">Apply</button>
+              </div>
+              <div class="form-group d-flex">
+                <label for="cookTime">Health Score: &nbsp&nbsp</label>
+                <input type="number" id="cookTime" class="form-control input-sm" placeholder="Below">
+                <p>&nbsp</p>
+                <button id="applyFilterBtn2" class="btn btn-primary btn-sm">Apply</button>
+              </div>
             </div>
           </div>
-        <% }) %>
-      </div>
-      <% if (favoriteRecipesNum >= 3) { %>
-        <div class="text-center" style="margin-top: 10px;">
-          <a href="/allFavourites" class="btn btn-primary">View All</a>
         </div>
-      <% } %>
-    <% } else { %>
-      <p>You haven't saved any favorite recipes yet.</p>
-    <% } %>
-  </div>
+        
+      <div id="favorite" class="col" style="background-color:#FFFFFF; padding: 20px; box-shadow: 2px 2px 10px #888888; margin-bottom: 20px;">
+        <h2 style="font-weight: bold; font-size: 20px;">Your favorites</h2>
+        <% if (favoriteRecipes.length > 0) { %>
+          <div class="card-group" style="display: flex;">
+            <% favoriteRecipes.slice(0, 2).forEach((recipe) => { %>
+              <div class="card" style="width: 200px; margin-right: 10px;">
+                <img src="<%= recipe.image %>" class="card-img-top" alt="<%= recipe.title %>">
+                <div class="card-body">
+                  <h5 class="card-title" style="text-align: left; font-size: 15px;"><%= recipe.title %></h5>
+                  <a href="/allFavourites/<%= recipe.recipeId %>" class="btn btn-primary">Check</a>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+          <% if (favoriteRecipesNum >= 3) { %>
+            <div class="text-center" style="margin-top: 10px;">
+              <a href="/allFavourites" class="btn btn-primary">View All</a>
+            </div>
+          <% } %>
+        <% } else { %>
+          <p>You haven't saved any favorite recipes yet.</p>
+        <% } %>
+      </div>
 
-   
-  
-  
+
 
   <div id="top10" style="background-color:#FFFFFF; padding: 10px; box-shadow: 2px 2px 10px #888888; margin-bottom: 20px;">
     <h2 style="font-weight: bold; font-size: 20px;">Top Recipes</h2>
@@ -35,6 +56,8 @@
       <div class="recipe-card">
         <img src="<%= recipe.image %>" alt="<%= recipe.title %>">
         <h5 style="font-size: 15px;"><%= recipe.title %></h5>
+        <p style="display: inline;">Cook Time: </p><p style="display: inline;" class="health-score"><%= recipe.readyInMinutes %>min</p><br>
+        <p style="display: inline;">Health Score: </p><p style="display: inline;" class="cook-time"><%= recipe.healthScore %></p><br><br>
         <a href="/recipe/<%= recipe.id %>" class="btn btn-primary">View Recipe</a>
       </div>
     <% }) %>
@@ -45,53 +68,176 @@
       <button type="submit" class="btn  rounded-pill px-3" style="margin-bottom: 50px; background-color:	#00CED1; color: #FFFFFF;">SEE MORE</button>
     </div>
   </form>
+
   
 
   <style>
     body {
-        margin-bottom: 50px;
+      margin-bottom: 50px;
     }
     .recipe-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    grid-gap: 20px; 
-  }
-
-  .recipe-card {
-    background-color: #ffffff;
-    padding: 20px;
-    box-shadow: 2px 2px 10px #888888;
-    border-radius: 5px;
-    margin-bottom: 20px; /* Added margin-bottom to create spacing between cards */
-  }
-
-  .recipe-card img {
-    width: 100%;
-    max-height: 200px;
-    object-fit: cover;
-    border-radius: 5px;
-    margin-bottom: 10px;
-  }
-
-  .recipe-card h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
-
-  .recipe-card p {
-    margin-bottom: 10px;
-  }
-
-  .recipe-card ul {
-    padding-left: 20px;
-    margin-bottom: 10px;
-  }
-
-  .recipe-card li {
-    margin-bottom: 5px;
-  }
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-gap: 20px; 
+    }
+    .recipe-card {
+      background-color: #ffffff;
+      padding: 20px;
+      box-shadow: 2px 2px 10px #888888;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    .recipe-card img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    .recipe-card h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .recipe-card p {
+      margin-bottom: 10px;
+    }
+    .recipe-card ul {
+      padding-left: 20px;
+      margin-bottom: 10px;
+    }
+    .recipe-card li {
+      margin-bottom: 5px;
+    }
   </style>
 
+<style>
+  body {
+    font-family: Arial, sans-serif;
+  }
 
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    min-width: 325px; /* Adjust the width as needed */
+    padding: 20px; /* Adjust the padding as needed */
+    z-index: 1;
+  }
+
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+
+  .hamburger-icon {
+    cursor: pointer;
+    font-size: 20px;
+    color: #333;
+  }
+
+  #filter-section {
+    margin-bottom: 10px;
+  }
+
+  #filter-section h2 {
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .form-group {
+    margin-bottom: 10px;
+  }
+
+  .form-group label {
+    font-weight: bold;
+  }
+
+  .form-group input[type="number"] {
+    width: 100px;
+    height: 28px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+
+  .form-group button {
+    height: 28px;
+    line-height: 1;
+    padding: 2px 10px;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  // Wait for the DOM to load
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get references to the filter inputs and apply filter button
+    const healthScoreInput = document.getElementById('healthScore');
+    const cookTimeInput = document.getElementById('cookTime');
+    const applyFilterBtn1 = document.getElementById('applyFilterBtn1');
+    const applyFilterBtn2 = document.getElementById('applyFilterBtn2');
+
+
+    // Add a click event listener to the apply filter button
+    applyFilterBtn1.addEventListener('click', function() {
+      // Get the filter values entered by the user
+      const healthScoreFilter = parseFloat(healthScoreInput.value);
+
+      // Get all recipe cards
+      const recipeCards = document.querySelectorAll('.recipe-card');
+
+      // Loop through each recipe card and check if it matches the filter
+      recipeCards.forEach(function(recipeCard) {
+        const healthScore = parseFloat(recipeCard.querySelector('.health-score').textContent);
+
+        // Show or hide the recipe card based on the filter values
+        if (isNaN(healthScoreFilter) || healthScore <= healthScoreFilter) {
+          recipeCard.style.display = 'block'; // Show the recipe card
+        } else {
+          recipeCard.style.display = 'none'; // Hide the recipe card
+        }
+
+      });
+    });
+
+        // Add a click event listener to the apply filter button
+        applyFilterBtn2.addEventListener('click', function() {
+      // Get the filter values entered by the user
+      const cookTimeFilter = parseFloat(cookTimeInput.value);
+
+      // Get all recipe cards
+      const recipeCards = document.querySelectorAll('.recipe-card');
+
+      // Loop through each recipe card and check if it matches the filter
+      recipeCards.forEach(function(recipeCard) {
+        const cookTime = parseFloat(recipeCard.querySelector('.cook-time').textContent);
+
+        if (isNaN(cookTimeFilter) || cookTime <= cookTimeFilter) {
+          recipeCard.style.display = 'block'; // Show the recipe card
+        } else {
+          recipeCard.style.display = 'none'; // Hide the recipe card
+        }
+      });
+    });
+  });
+</script>
+
+<script>
+  document.querySelector('.hamburger-icon').addEventListener('click', function() {
+    document.getElementById('filter-dropdown').classList.toggle('show');
+  });
+</script>
 </div>
 <%- include("templates/footer") %>
