@@ -18,7 +18,7 @@ const nodeMailer = require('nodemailer');
 
 const saltRounds = 12;
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 const app = express();
 
@@ -227,41 +227,13 @@ app.get('/search', async (req, res) => {
     res.redirect('/');
     return;
   }
-  /* NOt wrking yet
-    if(!query){
-    const defaultIngredient = [];
-    const defaultPicture = [];
-    const defaultNumber = 1;
-    const defaultCategories = ['Cucumbers', 'Bananas', 'Avocados', 'Lettuce', 'Tomatoes',
-                               'Eggs', 'Milk', 'Eggs', 'Yogurt', 'Cheese', 
-                               'Ground beef', 'Chicken leg', 'Salmon', 'Shrimp', 'Pork', 
-                               'Apples', 'Grapes', 'Blueberries', 'Pineapple', 'Mangoes'];
+  /*
+  API #1: 9d2d1b2f8727419fb36bba5c995a49b5
+  API #2: c3ea85f0c14f483389249c17a8548989
+  API #3: 5598e1a262a24cb2ade3a0e679b3f8af
 
-    for(let i = 0; i < defaultCategories; i++){
-      var defaulURL = `https://api.spoonacular.com/food/ingredients/search?query=${defaultCategories[i]}&number=${defaultNumber}&apiKey=${apiKey}`;
-      fetch(defaulURL)
-      .then(response => response.json())
-      .then(data => {
-        // Process the ingredients list and display them on your ingredient page
-        defaultIngredient.push(data.results);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-    }
-    defaultIngredient.forEach(ingredient => {
-      const ingredientImageFileName = ingredient.image;
-      const ingredientImageUrl = `https://spoonacular.com/cdn/ingredients_100x100/${ingredientImageFileName}`;
-      defaultPicture.push(ingredientImageUrl);
-    });
-
-    res.render('search', {list: defaultIngredient, image_url: defaultPicture});
-    return;
-  }
   */
-
-  //API #1: 9d2d1b2f8727419fb36bba5c995a49b5
-  const apiKey = "09e317b538d94d98b7941e9d77ff593e";
+  const apiKey = "c3ea85f0c14f483389249c17a8548989";
   const numberOfIngredients = 50; // Number of ingredients to fetch
   let query = req.query.query; // Get the value of the "query" parameter from the request
   if(!query){
@@ -340,8 +312,12 @@ app.post('/removeIngredient', (req, res) => {
 ingredientList = [];
 console.log(ingredientList);
 app.post('/searchedRecipe', (req, res) => {
-  const apiKey = "3dff3030733542408d95432be524a208";
-  const number = 10;
+  /*
+  API #1: 3dff3030733542408d95432be524a208-out
+  API #2: 94347ff449dd47809d5af8c7d78bfef6
+  */
+  const apiKey = "94347ff449dd47809d5af8c7d78bfef6";
+  const number = 5;
   var ingredient = "";
   for (let i = 0; i < ingredientList.length; i++) {
     if (i === ingredientList.length - 1) {
@@ -379,7 +355,7 @@ app.post('/searchedRecipe', (req, res) => {
     });
 
     console.log(processedRecipes);
-    res.render('searchedRecipe', {list : recipes, processedRecipes});
+    res.render('searchedRecipe', {list : recipes, processedRecipes, ingredient});
   })
   .catch(error => {
     console.error('Error:', error);
