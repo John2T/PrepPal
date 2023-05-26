@@ -4,67 +4,65 @@
 Prepal is an ingredient-based recipe generator designed to help home-cooks use their ingredients effictively.
 
 ## Technologies Used
-- FrontEnd: HTML, CSS, JavaScript
+- FrontEnd: HTML, CSS, JavaScript，Bootstrap
 - Backend: Node.js, Express.js
 - Database: MongoDB
 
-## File Contents of Folder (This will need to be updated)
+## File Contents of Folder
    ```shell
 │   │   LICENSE
 │   │   package.json
 │   │   README.md
 │
-├───public
-│   │   404.jpg
-│   │   dino.jpg
-│   │   dinomeat.jpg
-│   │   logo.jpeg
-│   │   step1.jpg
-│   │   step2.jpg
-│   │   step3.jpg
-│   │   step4.png
-│
-└───views
-    │   404.ejs
-    │   allFavourites.ejs
-    │   DOB.ejs
-    │   easter.ejs
-    │   edit.ejs
-    │   errorMessage.ejs
-    │   favouriteRecipe.ejs
-    │   forgotPassword.ejs
-    │   home.ejs
-    │   index.ejs
-    │   kitchen.ejs
-    │   login.ejs
-    │   noIngredientInput.ejs
-    │   personal.ejs
-    │   recipe.ejs
-    │   resetPassword.ejs
-    │   search.ejs
-    │   searchedRecipe.ejs
-    │   settings.ejs
-    │   shoppinglist.ejs
-    │   signup.ejs
-    │   step1.ejs
-    │   step2.ejs
-    │   step3.ejs
-    │   step4.ejs
-    │   welcome.ejs
-    │
-    ├───dino
-    │   │   step4.ejs
-    │
-    └───templates
-        │   favRecipeInfo.ejs
-        │   footer.ejs
-        │   header.ejs
-        │   ingredientCard.ejs
-        │   recipeCard.ejs
+├+---public
+|       404.jpg
+|       dino.jpg
+|       dinomeat.jpg
+|       logo.jpeg
+|       step1.jpg
+|       step2.jpg
+|       step3.jpg
+|       step4.png
+|       
+\---views
+    |   404.ejs
+    |   allFavourites.ejs
+    |   DOB.ejs
+    |   easter.ejs
+    |   edit.ejs
+    |   errorMessage.ejs
+    |   favouriteRecipe.ejs
+    |   forgotPassword.ejs
+    |   home.ejs
+    |   index.ejs
+    |   kitchen.ejs
+    |   login.ejs
+    |   noIngredientInput.ejs
+    |   personal.ejs
+    |   recipe.ejs
+    |   resetPassword.ejs
+    |   search.ejs
+    |   searchedRecipe.ejs
+    |   settings.ejs
+    |   shoppinglist.ejs
+    |   signup.ejs
+    |   step1.ejs
+    |   step2.ejs
+    |   step3.ejs
+    |   step4.ejs
+    |   welcome.ejs
+    |   
+    \---templates
+            favRecipeInfo.ejs
+            footer.ejs
+            header.ejs
+            ingredientCard.ejs
+            recipeCard.ejs
+            
 ```
             
 
-## How to Install or Run the Project (Needs to be updated)
+## How to Install or Run the Project
 
 ### What you need to install
 
@@ -79,10 +77,15 @@ Prepal is an ingredient-based recipe generator designed to help home-cooks use t
 6. Install project dependencies: In the VS Code terminal, navigate to the project directory and run the following command to install the required npm packages:
    ```shell
    npm install
+7. Set up environment variables: Create a .env file in the project root directory. Add the necessary environment variables to the .env file. 
+
+8. Set up the database: Install and set up MongoDB. Configure the MongoDB connection URL in the .env file.
   
-7. You can now use terminal and use the following command to run the project on your localHost:
+9. You can now use terminal and use the following command to run the project on your localHost:
    ```shell
     nodemon .\index.js
+    
+10. Access the web app: Open a web browser. Enter the URL http://localhost:3000.
 
 ### 3rd party API(s)
 
@@ -114,18 +117,27 @@ Contributors
 - John2T
 - VietNguyen10
 
-### References (TODO)
-- 
+### References 
+-Node.js: Official website and documentation - https://nodejs.org
 
-### Licenses (TODO)
-- 
+-ChatGPT by OpenAI: OpenAI website and documentation - https://www.openai.com
 
+-Bootstrap: Official website and documentation - https://getbootstrap.com
 
-## How AI was Used in the Project
+-MongoDB: Official website and documentation - https://www.mongodb.com
 
-### Did you use AI to help create your app?
+-GitHub: Official website and documentation - https://github.com
 
-Yes, AI was utilized during the development of our app in several ways:
+-Studio3T: Official website and documentation - https://studio3t.com 
+
+-Spoonacular API - https://spoonacular.com/food-api/docs
+
+### Licenses 
+PrepPal 
+
+## Big help from AI
+
+AI was utilized during the development of our app in several ways:
 
 1. **Code Generation**: We employed AI-based code generation techniques to automate the process of writing code snippets. This involved training machine learning models on a large dataset of code examples, which allowed us to generate code snippets based on specific requirements or patterns.
 
@@ -135,14 +147,8 @@ Yes, AI was utilized during the development of our app in several ways:
 
 In summary, AI played a significant role in code generation, troubleshooting, and served as a valuable reference tool during the app development process. These AI-powered capabilities not only enhanced productivity but also facilitated faster development cycles and improved the overall quality of the application.
 
-### Did you use AI to create data sets or clean data sets? (TODO)
-
-### Does your app use AI? If so, how? (TODO)
-
-### Did you encounter any limitations? What were they, and how did you overcome them? (TODO)
-
 ## Contact Information (Contact Info needs to be updated)
-- NAinZhou 
-- LucasHYing
-- John2T 
-- VietNguyen10
+- NAinZhou (nainzhou@gmail.com)
+- LucasHYing ( hying3@my.bcit.ca)
+- John2T (johntu537@gmail.com)
+- VietNguyen10 (vnguyen141@my.bcit.ca)
