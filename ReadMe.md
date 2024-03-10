@@ -147,7 +147,7 @@ AI was utilized during the development of our app in several ways:
 
 In summary, AI played a significant role in code generation, troubleshooting, and served as a valuable reference tool during the app development process. These AI-powered capabilities not only enhanced productivity but also facilitated faster development cycles and improved the overall quality of the application.
 
-## Contact Information (Contact Info needs to be updated)
+## Contact Information 
 - NAinZhou (nainzhou@gmail.com)
 - LucasHYing ( hying3@my.bcit.ca)
 - John2T (johntu537@gmail.com)
