@@ -2,6 +2,7 @@
 
 ## Project Description 
 PrepPal is an ingredient-based recipe generator designed to help home-cooks use their ingredients effictively.
+View the Demo here: https://www.youtube.com/watch?v=KCSbIM2fX-I 
 
 ## Technologies Used
 - FrontEnd: HTML, CSS, JavaScript，Bootstrap
